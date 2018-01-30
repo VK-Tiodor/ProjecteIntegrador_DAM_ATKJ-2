@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="genero">
+        <item>Mujer</item>
+        <item>Hombre</item>
+        <item>Indefinido</item>
+    </string-array>
+    <string-array name="tipo_dependiente">
+        <item>Enfermo cronico</item>
+        <item>Persona mayor</item>
+        <item>Discapacitado</item>
+    </string-array>
+
+
+</resources>

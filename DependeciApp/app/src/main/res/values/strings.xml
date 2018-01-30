@@ -1,8 +1,19 @@
 <resources>
     <string name="app_name">DependeciApp</string>
-
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
-
     <string name="action_settings">Settings</string>
+    <string name="register_registro">Registro</string>
+    <string name="register_nombre">Nombre</string>
+    <string name="register_apellidos">Apellidos</string>
+    <string name="register_dni">DNI</string>
+    <string name="register_pass">Contraseña</string>
+    <string name="register_nacimiento">Fecha de nacimiento</string>
+    <string name="register_fecha_boton">Selecciona fecha</string>
+    <string name="register_genero">Genero</string>
+    <string name="register_tipo_dependiente">Tipo de dependiente</string>
+    <string name="aceptar">Aceptar</string>
+    <string name="cancelar">Cancelar</string>
+
+
 </resources>
