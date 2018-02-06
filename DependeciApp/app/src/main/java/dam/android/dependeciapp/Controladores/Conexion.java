@@ -16,25 +16,21 @@ public class Conexion {
     private Connection con;
 
     public Conexion() {
-
             CreaConexion();
-
-
     }
 
     public void CreaConexion() {
         try {
             //Registrando el Driver
             String driver = "com.mysql.jdbc.Driver";
-
             Class.forName(driver).newInstance();
             String jdbcUrl = "jdbc:mysql://localhost:3306/mydb";
-
             //Conectando
             Properties pc = new Properties();
             pc.put("user", "root");
             pc.put("password", "1234");
             this.con = DriverManager.getConnection(jdbcUrl, pc);
+
         } catch (InstantiationException e) {
             e.printStackTrace();
         } catch (IllegalAccessException e) {
@@ -44,10 +40,6 @@ public class Conexion {
         } catch (SQLException e) {
             e.printStackTrace();
         }
-
-        //Definiendo la conexion con la Base de Datos
-
-
     }
 
     public ResultSet IniciaSesion(String DNI, String pass) {
@@ -57,15 +49,11 @@ public class Conexion {
             login.setString(1, DNI);
             login.setString(2, pass);
             ResultSet rs = login.executeQuery();
-
             return rs;
         } catch (SQLException e) {
             e.printStackTrace();
             return null;
-
         }
-
-
     }
 
     public String toMD5(String md5) {
