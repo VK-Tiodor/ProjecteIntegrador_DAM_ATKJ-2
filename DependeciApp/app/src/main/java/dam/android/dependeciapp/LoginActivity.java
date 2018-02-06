@@ -31,13 +31,11 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import java.io.IOException;
 import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.List;
 
 import dam.android.dependeciapp.Controladores.Conexion;
-import dam.android.dependeciapp.Controladores.lanzaLlamada;
 
 import static android.Manifest.permission.READ_CONTACTS;
 
@@ -84,12 +82,7 @@ public class LoginActivity extends AppCompatActivity {
         btLogin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
-                System.out.println(0);
-                    lanzaLlamada llamada = new lanzaLlamada();
-
-                    llamada.execute("2");
-
+                attemptLogin();
             }
         });
         mLoginFormView = findViewById(R.id.login_form);
