@@ -80,8 +80,8 @@ public class LoginActivity extends AppCompatActivity {
                 return false;
             }
         });
-        Button btLogin = (Button) findViewById(R.id.DNI_sign_in_button);
-        btLogin.setOnClickListener(new View.OnClickListener() {
+        Button mDNIignInButton = (Button) findViewById(R.id.DNI_sign_in_button);
+        mDNIignInButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
 
