@@ -24,7 +24,7 @@ public class Conexion {
             //Registrando el Driver
             String driver = "com.mysql.jdbc.Driver";
             Class.forName(driver).newInstance();
-            String jdbcUrl = "jdbc:mysql://localhost:3306/mydb";
+            String jdbcUrl = "jdbc:mysql://10.0.2.2/mydb";
             //Conectando
             Properties pc = new Properties();
             pc.put("user", "root");
