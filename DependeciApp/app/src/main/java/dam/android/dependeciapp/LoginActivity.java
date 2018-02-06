@@ -31,8 +31,11 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.List;
+
+import dam.android.dependeciapp.Controladores.Conexion;
 
 import static android.Manifest.permission.READ_CONTACTS;
 
@@ -42,33 +45,28 @@ import static android.Manifest.permission.READ_CONTACTS;
 public class LoginActivity extends AppCompatActivity {
 
     /**
-     * Id to identity READ_CONTACTS permission request.
-     */
-    private static final int REQUEST_READ_CONTACTS = 0;
-
-    /**
-     * A dummy authentication store containing known user names and passwords.
-     * TODO: remove after connecting to a real authentication system.
-     */
- ;
-    /**
      * Keep track of the login task to ensure we can cancel it if requested.
      */
     private UserLoginTask mAuthTask = null;
 
     // UI references.
-    private AutoCompleteTextView mDNIView;
+    private EditText mDNIView;
     private EditText mPasswordView;
     private View mProgressView;
     private View mLoginFormView;
+    private Conexion con;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
         // Set up the login form.
-        mDNIView = (AutoCompleteTextView) findViewById(R.id.DNI);
+       setUI();
+        con = new Conexion();
+    }
 
+    private void setUI(){
+        mDNIView = (EditText) findViewById(R.id.DNI);
         mPasswordView = (EditText) findViewById(R.id.password);
         mPasswordView.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
@@ -80,7 +78,6 @@ public class LoginActivity extends AppCompatActivity {
                 return false;
             }
         });
-
         Button mDNIignInButton = (Button) findViewById(R.id.DNI_sign_in_button);
         mDNIignInButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -88,34 +85,24 @@ public class LoginActivity extends AppCompatActivity {
                 attemptLogin();
             }
         });
-
         mLoginFormView = findViewById(R.id.login_form);
         mProgressView = findViewById(R.id.login_progress);
     }
 
-
-    /**
-     * Attempts to sign in or register the account specified by the login form.
-     * If there are form errors (invalid email, missing fields, etc.), the
-     * errors are presented and no actual login attempt is made.
-     */
     private void attemptLogin() {
         if (mAuthTask != null) {
             return;
         }
 
-        // Reset errors.
         mDNIView.setError(null);
         mPasswordView.setError(null);
 
-        // Store values at the time of the login attempt.
         String DNI = mDNIView.getText().toString();
         String password = mPasswordView.getText().toString();
 
         boolean cancel = false;
         View focusView = null;
 
-        // Check for a valid password, if the user entered one.
         if (!TextUtils.isEmpty(password) && !isPasswordValid(password)) {
             mPasswordView.setError(getString(R.string.error_invalid_password));
             focusView = mPasswordView;
@@ -178,7 +165,8 @@ public class LoginActivity extends AppCompatActivity {
 
     private boolean isPasswordValid(String password) {
         //TODO: Replace this with your own logic
-        return password.length() > 4;
+       // return password.length() >= 4;
+       return true;
     }
 
     /**
@@ -236,9 +224,11 @@ public class LoginActivity extends AppCompatActivity {
         @Override
         protected Boolean doInBackground(Void... params) {
             // TODO: attempt authentication against a network service.
-
-
-            return true;
+            ResultSet rs = con.IniciaSesion(mDNI,mPassword);
+            if (rs!=null)
+                 return true;
+            else
+                return false;
         }
         protected void onPostExecute(final Boolean success) {
             mAuthTask = null;
