@@ -9,6 +9,7 @@
     <string name="appwidget_text">EXAMPLE</string>
     <string name="add_widget">Add widget</string>
     <string name="title_activity_login">DependenciApp</string>
+    <string name="aviso_enviadio">Se ha enviado un aviso a la central</string>
 
     <!-- Strings related to login -->
     <string name="prompt_dni">DNI</string>
@@ -20,7 +21,13 @@
     <string name="error_incorrect_password">La contraseña es incorrecta</string>
     <string name="error_field_required">Escribe un DNI</string>
     <string name="recordar">Recordar usuario y contraseña</string>
+    <string name="title_activity_main2">Main2Activity</string>
 
+
+    <string name="tab_text_1">Recordatorios</string>
+    <string name="tab_text_2">¿Donde estoy?</string>
+    <string name="tab_text_3">Boton</string>
+    <string name="section_format">Hello World from section: %1$d</string>
 
 
 </resources>
