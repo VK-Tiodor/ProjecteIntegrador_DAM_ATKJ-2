@@ -1,9 +1,11 @@
 package dam.android.dependeciapp.Controladores;
 
 import java.sql.Connection;
-import java.util.concurrent.ExecutionException;
-
-import dam.android.dependeciapp.AsyncTasks.CreaConexion;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.Properties;
 
 /**
  * Created by adria on 06/02/2018.
@@ -17,23 +19,42 @@ public class Conexion {
             CreaConexion();
     }
 
-    public Connection getConnection(){
-        return con;
-
-    }
     private void CreaConexion() {
         try {
-        CreaConexion cc = new CreaConexion();
-        cc.execute();
+            //Registrando el Driver
+            String driver = "com.mysql.jdbc.Driver";
+            Class.forName(driver).newInstance();
+            String jdbcUrl = "jdbc:mysql://10.0.2.2:3306/mydb";
+            //Conectando
+            Properties pc = new Properties();
+            pc.put("user", "root");
+            pc.put("password", "1234");
+            this.con = DriverManager.getConnection(jdbcUrl, pc);
 
-            con = cc.get();
-        } catch (InterruptedException e) {
+        } catch (InstantiationException e) {
             e.printStackTrace();
-        } catch (ExecutionException e) {
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        } catch (SQLException e) {
             e.printStackTrace();
         }
     }
 
+    public ResultSet IniciaSesion(String DNI, String pass) {
+        String sql = "call inicia_sesion(?, ?)";
+        try {
+            PreparedStatement login = this.con.prepareStatement(sql);
+            login.setString(1, DNI);
+            login.setString(2, pass);
+            ResultSet rs = login.executeQuery();
+            return rs;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
 
     public String toMD5(String md5) {
         try {
