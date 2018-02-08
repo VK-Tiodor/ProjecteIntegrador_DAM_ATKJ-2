@@ -22,7 +22,8 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import dam.android.dependeciapp.Controladores.lanzaLlamada;
+import dam.android.dependeciapp.Controladores.Conexion;
+import dam.android.dependeciapp.AsyncTasks.lanzaLlamada;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -33,6 +34,7 @@ public class MainActivity extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        Conexion con = new Conexion();
         setUI();
     }
 
