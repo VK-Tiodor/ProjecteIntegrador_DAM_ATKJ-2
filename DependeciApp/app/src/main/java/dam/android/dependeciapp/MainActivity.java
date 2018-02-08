@@ -60,10 +60,6 @@ public class MainActivity extends AppCompatActivity
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
-<<<<<<< HEAD
-=======
-        Toast.makeText(this, "Hello darkness my old friend", Toast.LENGTH_LONG);
->>>>>>> 10a8aabd6672faa640104fa7f8f8e8f5eeb26009
         mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
 
         // Set up the ViewPager with the sections adapter.
