@@ -22,8 +22,6 @@
     <string name="error_field_required">Escribe un DNI</string>
     <string name="recordar">Recordar usuario y contraseña</string>
 
-
-
     <!-- Strings related to "GetLocation" Class -->
     <string name="maps_right_required">La aplicación necesita permisos para utilizar Google Maps</string>
     <string name="gps_disabled">El gps ha sido desactivado</string>
@@ -33,7 +31,7 @@
     <string name="maps_marker_you_are_here">USTED ESTÁ AQUÍ</string>
     <string name="maps_this_may_take_a_few_seconds">Espere, por favor. La geolocalización puede tomar unos segundos</string>
 
-
+    <!-- Strings related to "MainActivity" Class -->
     <string name="tab_text_1">Recordatorios</string>
     <string name="tab_text_2">¿Donde estoy?</string>
     <string name="tab_text_3">Boton</string>

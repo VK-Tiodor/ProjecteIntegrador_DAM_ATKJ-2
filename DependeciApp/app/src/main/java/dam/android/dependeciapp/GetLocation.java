@@ -36,9 +36,7 @@ public class GetLocation extends FragmentActivity implements OnMapReadyCallback 
     private static final int REQUEST_MAPS = 1;
     private static String[] PERMISSIONS_MAPS = {Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION};
     private GoogleMap mMap;
-    private LocationManager locationManager;
 
-    @SuppressLint("MissingPermission")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -55,10 +53,9 @@ public class GetLocation extends FragmentActivity implements OnMapReadyCallback 
     private void setMarkerOnMyLocation(){
         mMap.setMyLocationEnabled(true);
 
-        locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-        LocationManager mlocManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-        MyLocationListener mlocListener = new MyLocationListener();
-        mlocManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, mlocListener);
+        LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+        MyLocationListener mylocatioListener = new MyLocationListener();
+        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, mylocatioListener);
     }
 
     @Override
