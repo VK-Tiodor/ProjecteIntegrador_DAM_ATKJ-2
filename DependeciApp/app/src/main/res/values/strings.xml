@@ -21,8 +21,20 @@
     <string name="error_incorrect_password">La contraseña es incorrecta</string>
     <string name="error_field_required">Escribe un DNI</string>
     <string name="recordar">Recordar usuario y contraseña</string>
+<<<<<<< HEAD
+    <string name="title_activity_get_ubication">Map</string>
+=======
     <string name="title_activity_main2">Main2Activity</string>
+>>>>>>> 0ca3fc10c17bb79c16db1bff62580012ae2e587f
 
+    <!-- Strings related to "GetLocation" Class -->
+    <string name="maps_right_required">La aplicación necesita permisos para utilizar Google Maps</string>
+    <string name="gps_disabled">El gps ha sido desactivado</string>
+    <string name="gps_enabled">El gps ha sido activado</string>
+    <string name="maps_provider_out_of_service">El proveedor del servicio gps está fuera de servicio</string>
+    <string name="maps_provider_temporarily_unavailable">El proveedor del servicio gps no está disponible temporalmente</string>
+    <string name="maps_marker_you_are_here">USTED ESTÁ AQUÍ</string>
+    <string name="maps_this_may_take_a_few_seconds">Espere, por favor. La geolocalización puede tomar unos segundos</string>
 
     <string name="tab_text_1">Recordatorios</string>
     <string name="tab_text_2">¿Donde estoy?</string>
