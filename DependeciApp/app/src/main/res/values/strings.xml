@@ -21,11 +21,10 @@
     <string name="error_incorrect_password">La contraseña es incorrecta</string>
     <string name="error_field_required">Escribe un DNI</string>
     <string name="recordar">Recordar usuario y contraseña</string>
-<<<<<<< HEAD
+
     <string name="title_activity_get_ubication">Map</string>
-=======
+
     <string name="title_activity_main2">Main2Activity</string>
->>>>>>> 0ca3fc10c17bb79c16db1bff62580012ae2e587f
 
     <!-- Strings related to "GetLocation" Class -->
     <string name="maps_right_required">La aplicación necesita permisos para utilizar Google Maps</string>

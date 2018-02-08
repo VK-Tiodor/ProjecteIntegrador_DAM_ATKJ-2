@@ -60,9 +60,6 @@ public class MainActivity extends AppCompatActivity
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
-<<<<<<< HEAD
-=======
-        Toast.makeText(this, "Hello darkness my old friend", Toast.LENGTH_LONG);
         mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
 
         // Set up the ViewPager with the sections adapter.
@@ -73,7 +70,6 @@ public class MainActivity extends AppCompatActivity
 
         mViewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout));
         tabLayout.addOnTabSelectedListener(new TabLayout.ViewPagerOnTabSelectedListener(mViewPager));
->>>>>>> 0ca3fc10c17bb79c16db1bff62580012ae2e587f
     }
 
     @Override
