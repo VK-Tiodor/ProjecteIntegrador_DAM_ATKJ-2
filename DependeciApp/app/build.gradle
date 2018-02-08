@@ -30,4 +30,5 @@ dependencies {
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.1'
     compile fileTree(dir: 'libs', include: ['*.jar'])
     compile files ('libs/mysql-connector-java-5.1.45-bin.jar')
+    compile 'de.hdodenhof:circleimageview:2.2.0'
 }
