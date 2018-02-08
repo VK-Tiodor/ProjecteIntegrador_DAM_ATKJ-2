@@ -2,6 +2,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="dam.android.dependeciapp">
 
+<<<<<<< HEAD
     <!--
          The ACCESS_COARSE/FINE_LOCATION permissions are not required to use
          Google Maps Android API v2, but you must specify either coarse or fine
@@ -10,6 +11,10 @@
     <uses-permission android:name="android.permission.INTERNET"/>
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+=======
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+>>>>>>> 0ca3fc10c17bb79c16db1bff62580012ae2e587f
 
     <application
         android:allowBackup="true"
@@ -26,18 +31,28 @@
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
+<<<<<<< HEAD
+=======
             </intent-filter>
         </activity>
-
+        <activity
+            android:name=".LoginActivity"
+            android:label="@string/title_activity_login">
+            <intent-filter>
+                <action android:name="dam.android.u3t1initialapp.STARTINGPOINT" />
+                <category android:name="android.intent.category.DEFAULT" />
+>>>>>>> 0ca3fc10c17bb79c16db1bff62580012ae2e587f
+            </intent-filter>
+        </activity>
         <receiver android:name=".BotonRojoWidget">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
             </intent-filter>
-
             <meta-data
                 android:name="android.appwidget.provider"
                 android:resource="@xml/boton_rojo_widget_info" />
         </receiver>
+<<<<<<< HEAD
 
         <activity
             android:name=".LoginActivity"
@@ -63,6 +78,8 @@
         <activity
             android:name=".GetLocation"
             android:label="@string/title_activity_get_ubication"></activity>
+=======
+>>>>>>> 0ca3fc10c17bb79c16db1bff62580012ae2e587f
     </application>
 
 </manifest>
