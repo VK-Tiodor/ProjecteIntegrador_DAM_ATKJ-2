@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="dam.android.dependeciapp">
+<<<<<<< HEAD
     <!--
          The ACCESS_COARSE/FINE_LOCATION permissions are not required to use
          Google Maps Android API v2, but you must specify either coarse or fine
@@ -9,6 +10,9 @@
     <uses-permission android:name="android.permission.INTERNET"/>
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+=======
+
+>>>>>>> 10a8aabd6672faa640104fa7f8f8e8f5eeb26009
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 
@@ -46,6 +50,7 @@
                 android:name="android.appwidget.provider"
                 android:resource="@xml/boton_rojo_widget_info" />
         </receiver>
+<<<<<<< HEAD
         <!--
              The API key for Google Maps-based APIs is defined as a string resource.
              (See the file "res/values/google_maps_api.xml").
@@ -61,6 +66,8 @@
         <activity
             android:name=".GetLocation"
             android:label="@string/title_activity_get_ubication"/>
+=======
+>>>>>>> 10a8aabd6672faa640104fa7f8f8e8f5eeb26009
     </application>
 
 </manifest>
