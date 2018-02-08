@@ -31,7 +31,9 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -126,8 +128,8 @@ public class LoginActivity extends AppCompatActivity {
             // Show a progress spinner, and kick off a background task to
             // perform the user login attempt.
             showProgress(true);
-            mAuthTask = new UserLoginTask(DNI, password);
-            mAuthTask.execute((Void) null);
+            mAuthTask = new UserLoginTask();
+            mAuthTask.execute(DNI,password);
 
         }
     }
@@ -211,24 +213,28 @@ public class LoginActivity extends AppCompatActivity {
      * Represents an asynchronous login/registration task used to authenticate
      * the user.
      */
-    public class UserLoginTask extends AsyncTask<Void, Void, Boolean> {
+    public class UserLoginTask extends AsyncTask<String, Void, Boolean> {
 
-        private final String mDNI;
-        private final String mPassword;
-
-        UserLoginTask(String email, String password) {
-            mDNI = email;
-            mPassword = password;
-        }
 
         @Override
-        protected Boolean doInBackground(Void... params) {
+        protected Boolean doInBackground(String... strings) {
             // TODO: attempt authentication against a network service.
-            ResultSet rs = con.IniciaSesion(mDNI,mPassword);
-            if (rs!=null)
-                 return true;
-            else
-                return false;
+            String sql = "call inicia_sesion(?, ?)";
+            ResultSet rs = null;
+            try {
+                PreparedStatement login = con.getConnection().prepareStatement(sql);
+                login.setString(1, strings[0]);
+                login.setString(2, strings[1]);
+               rs = login.executeQuery();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }finally {
+                if (rs!=null)
+                    return true;
+                else
+                    return false;
+            }
+
         }
         protected void onPostExecute(final Boolean success) {
             mAuthTask = null;
