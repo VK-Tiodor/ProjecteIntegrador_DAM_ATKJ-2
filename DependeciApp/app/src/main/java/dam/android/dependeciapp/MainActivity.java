@@ -44,7 +44,6 @@ public class MainActivity extends AppCompatActivity
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
-        Toast.makeText(this, "Hello darkness my old friend", Toast.LENGTH_LONG);
     }
 
     @Override
