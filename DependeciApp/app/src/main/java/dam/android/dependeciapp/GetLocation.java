@@ -100,6 +100,7 @@ public class GetLocation extends FragmentActivity implements OnMapReadyCallback 
         private static final float ZOOM_BUILDING_LEVEL = 20;
 
         private Location myLocation;
+        private Marker myMarker;
 
         @SuppressLint("MissingPermission")
         public MyLocationListener(Location lastKnownlocation){
@@ -125,8 +126,11 @@ public class GetLocation extends FragmentActivity implements OnMapReadyCallback 
                     if (!list.isEmpty()) {
                         Address address = list.get(0);
                         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(locationLatLng, ZOOM_STREET_LEVEL));
-                        mMap.addMarker(new MarkerOptions().position(locationLatLng).title(getString(R.string.maps_marker_you_are_here)).snippet(address.getAddressLine(0))).showInfoWindow();
-
+                        if(myMarker != null){
+                            myMarker.remove();
+                        }
+                        myMarker = mMap.addMarker(new MarkerOptions().position(locationLatLng).title(getString(R.string.maps_marker_you_are_here)).snippet(address.getAddressLine(0)));
+                        myMarker.showInfoWindow();
                     }
                 } catch (IOException e) {
                     e.printStackTrace();

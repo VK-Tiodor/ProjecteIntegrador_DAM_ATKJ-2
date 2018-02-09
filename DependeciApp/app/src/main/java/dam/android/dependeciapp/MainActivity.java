@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Address;
+import android.location.Criteria;
 import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationListener;
@@ -41,6 +42,7 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 import java.io.IOException;
@@ -250,10 +252,13 @@ public class MainActivity extends AppCompatActivity
             @SuppressLint("MissingPermission")
             private void setMarkerOnMyLocation() {
                 mMap.setMyLocationEnabled(true);
+
                 LocationManager locationManager = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
-                // LocationManager locationManager = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
-                MyLocationListener mylocatioListener = new MyLocationListener();
-                locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, mylocatioListener);
+                Criteria criteria = new Criteria();
+                Location lastKnownLocation = locationManager.getLastKnownLocation(locationManager.getBestProvider(criteria, false));
+                MyLocationListener myLocationListener = new MyLocationListener(lastKnownLocation);
+
+                locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, myLocationListener);
             }
 
             @Override
@@ -287,24 +292,40 @@ public class MainActivity extends AppCompatActivity
                 private static final float ZOOM_BUILDING_LEVEL = 20;
 
                 private Location myLocation;
+                private Marker myMarker;
+
+                @SuppressLint("MissingPermission")
+                public MyLocationListener(Location lastKnownlocation){
+                    myLocation = lastKnownlocation;
+                    LatLng myLocationLatLng = new LatLng(myLocation.getLatitude(), myLocation.getLongitude());
+                    setMarkerOnLatLng(myLocationLatLng);
+                }
 
                 @Override
                 public void onLocationChanged(Location loc) {
-                    if (myLocation == null || myLocation.distanceTo(loc) >= 100) {
+                    if(myLocation.distanceTo(loc) >= 100){
                         myLocation = loc;
-                        LatLng myLocLatLng = new LatLng(myLocation.getLatitude(), myLocation.getLongitude());
-                        if (myLocLatLng.latitude != 0.0 && myLocLatLng.longitude != 0.0) {
-                            try {
-                                Geocoder geocoder = new Geocoder(getContext(), Locale.getDefault());
-                                List<Address> list = geocoder.getFromLocation(myLocLatLng.latitude, myLocLatLng.longitude, 1);
-                                if (!list.isEmpty()) {
-                                    Address address = list.get(0);
-                                    mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(myLocLatLng, ZOOM_STREET_LEVEL));
-                                    mMap.addMarker(new MarkerOptions().position(myLocLatLng).title(getString(R.string.maps_marker_you_are_here)).snippet(address.getAddressLine(0))).showInfoWindow();
+                        LatLng myLocationLatLng = new LatLng(myLocation.getLatitude(), myLocation.getLongitude());
+                        setMarkerOnLatLng(myLocationLatLng);
+                    }
+                }
+
+                public void setMarkerOnLatLng(LatLng locationLatLng){
+                    if (locationLatLng.latitude != 0.0 && locationLatLng.longitude != 0.0) {
+                        try {
+                            Geocoder geocoder = new Geocoder(getContext(), Locale.getDefault());
+                            List<Address> list = geocoder.getFromLocation(locationLatLng.latitude, locationLatLng.longitude, 1);
+                            if (!list.isEmpty()) {
+                                Address address = list.get(0);
+                                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(locationLatLng, ZOOM_STREET_LEVEL));
+                                if(myMarker != null){
+                                    myMarker.remove();
                                 }
-                            } catch (IOException e) {
-                                e.printStackTrace();
+                                myMarker = mMap.addMarker(new MarkerOptions().position(locationLatLng).title(getString(R.string.maps_marker_you_are_here)).snippet(address.getAddressLine(0)));
+                                myMarker.showInfoWindow();
                             }
+                        } catch (IOException e) {
+                            e.printStackTrace();
                         }
                     }
                 }
