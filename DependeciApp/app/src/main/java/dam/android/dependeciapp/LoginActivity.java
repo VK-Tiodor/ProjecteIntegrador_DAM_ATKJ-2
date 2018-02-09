@@ -68,16 +68,13 @@ public class LoginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
         // Set up the login form.
-<<<<<<< HEAD
         startActivity(new Intent(this, MainActivity.class));
         //setUI();
         //con = new Conexion();
-=======
         setUI();
         cargaPreferencias();
         //TODO Si no se pudiera establecer conexion usar la SQLite
-        con = new Conexion();
->>>>>>> 7331d5ce37357124cb58ea80b1e973c2013d617b
+        //con = new Conexion();
     }
 
     private void setUI() {
