@@ -63,8 +63,9 @@ public class LoginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
         // Set up the login form.
-       setUI();
-        con = new Conexion();
+        startActivity(new Intent(this, MainActivity.class));
+        //setUI();
+        //con = new Conexion();
     }
 
     private void setUI(){

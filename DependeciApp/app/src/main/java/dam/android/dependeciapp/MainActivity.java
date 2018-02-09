@@ -1,9 +1,23 @@
 package dam.android.dependeciapp;
 
+import android.Manifest;
+import android.annotation.SuppressLint;
+import android.content.Context;
+import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.location.Address;
+import android.location.Geocoder;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
+import android.location.LocationProvider;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
@@ -22,6 +36,17 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MarkerOptions;
+
+import java.io.IOException;
+import java.util.List;
+import java.util.Locale;
+
 import dam.android.dependeciapp.Controladores.Conexion;
 import dam.android.dependeciapp.AsyncTasks.lanzaLlamada;
 
@@ -35,6 +60,8 @@ public class MainActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         Conexion con = new Conexion();
+
+
         setUI();
     }
 
@@ -113,18 +140,13 @@ public class MainActivity extends AppCompatActivity
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
-        if (id == R.id.nav_camera) {
-            // Handle the camera action
-        } else if (id == R.id.nav_gallery) {
+        switch (id) {
+            case R.id.nav_datosPersonales:
 
-        } else if (id == R.id.nav_slideshow) {
+                break;
+            case R.id.nav_datosAsistente:
 
-        } else if (id == R.id.nav_manage) {
-
-        } else if (id == R.id.nav_share) {
-
-        } else if (id == R.id.nav_send) {
-
+                break;
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -135,59 +157,176 @@ public class MainActivity extends AppCompatActivity
     /**
      * A placeholder fragment containing a simple view.
      */
-    public static class PlaceholderFragment extends Fragment {
-        /**
-         * The fragment argument representing the section number for this
-         * fragment.
-         */
-        private static final String ARG_SECTION_NUMBER = "section_number";
-
-        public PlaceholderFragment() {
-        }
 
         /**
          * Returns a new instance of this fragment for the given section
          * number.
          */
-        public static PlaceholderFragment newInstance(int sectionNumber) {
-            PlaceholderFragment fragment = new PlaceholderFragment();
-            Bundle args = new Bundle();
-            args.putInt(ARG_SECTION_NUMBER, sectionNumber);
-            fragment.setArguments(args);
-            return fragment;
+        public static class PlaceholderFragment extends Fragment {
+            /**
+             * The fragment argument representing the section number for this
+             * fragment.
+             */
+            private static final String ARG_SECTION_NUMBER = "section_number";
+
+            public PlaceholderFragment() {
+            }
+
+            /**
+             * Returns a new instance of this fragment for the given section
+             * number.
+             */
+            public static PlaceholderFragment newInstance(int sectionNumber) {
+                PlaceholderFragment fragment = new PlaceholderFragment();
+                Bundle args = new Bundle();
+                args.putInt(ARG_SECTION_NUMBER, sectionNumber);
+                fragment.setArguments(args);
+                return fragment;
+            }
+
+            @Override
+            public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                                     Bundle savedInstanceState) {
+                View rootView = null;
+                rootView = inflater.inflate(R.layout.fragment_main, container, false);
+                TextView textView = (TextView) rootView.findViewById(R.id.section_label);
+                textView.setText(getString(R.string.section_format, getArguments().getInt(ARG_SECTION_NUMBER)));
+                return rootView;
+            }
         }
 
-        @Override
-        public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                                 Bundle savedInstanceState) {
-            View rootView = inflater.inflate(R.layout.fragment_main, container, false);
-            TextView textView = (TextView) rootView.findViewById(R.id.section_label);
-            textView.setText(getString(R.string.section_format, getArguments().getInt(ARG_SECTION_NUMBER)));
-            return rootView;
+        /**
+         * A {@link FragmentPagerAdapter} that returns a fragment corresponding to
+         * one of the sections/tabs/pages.
+         */
+        public class SectionsPagerAdapter extends FragmentPagerAdapter {
+
+            public SectionsPagerAdapter(FragmentManager fm) {
+                super(fm);
+            }
+
+            @Override
+            public Fragment getItem(int position) {
+                // getItem is called to instantiate the fragment for the given page.
+                // Return a PlaceholderFragment (defined as a static inner class below).
+                if (position == 1) {
+                    return GetLocation.newInstance();
+                } else {
+                    return PlaceholderFragment.newInstance(position + 1);
+                }
+            }
+
+            @Override
+            public int getCount() {
+                return 3;
+            }
+        }
+
+        @SuppressLint("ValidFragment")
+        public static class GetLocation extends Fragment implements OnMapReadyCallback {
+
+            private static final int REQUEST_MAPS = 1;
+            private final String[] PERMISSIONS_MAPS = {Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION};
+            private GoogleMap mMap;
+            private SupportMapFragment mapFragment;
+
+            public static GetLocation newInstance() {
+                return new GetLocation();
+            }
+
+            @Override
+            public View onCreateView(LayoutInflater inflater, ViewGroup container, @Nullable Bundle savedInstanceState) {
+                View rootView = inflater.inflate(R.layout.activity_get_location, container, false);
+                SupportMapFragment mapFragment = (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.map);
+                mapFragment.getMapAsync(this);
+                Toast.makeText(getContext(), R.string.maps_this_may_take_a_few_seconds, Toast.LENGTH_LONG).show();
+                return rootView;
+            }
+
+
+            @SuppressLint("MissingPermission")
+            private void setMarkerOnMyLocation() {
+                mMap.setMyLocationEnabled(true);
+                LocationManager locationManager = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
+                // LocationManager locationManager = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
+                MyLocationListener mylocatioListener = new MyLocationListener();
+                locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, mylocatioListener);
+            }
+
+            @Override
+            public void onMapReady(GoogleMap googleMap) {
+                mMap = googleMap;
+                if (ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
+                        && ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED)
+                    ActivityCompat.requestPermissions(getActivity(), PERMISSIONS_MAPS, REQUEST_MAPS);
+                else {
+                    setMarkerOnMyLocation();
+                }
+            }
+
+            @Override
+            public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+                if (requestCode == REQUEST_MAPS) {
+                    if (grantResults[0] == PackageManager.PERMISSION_GRANTED && grantResults[1] == PackageManager.PERMISSION_GRANTED) {
+                        setMarkerOnMyLocation();
+                    } else {
+                        Toast.makeText(getContext(), R.string.maps_right_required, Toast.LENGTH_LONG).show();
+                    }
+                } else {
+                    super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+                }
+            }
+
+            private class MyLocationListener implements LocationListener {
+
+                private static final float ZOOM_CITY_LEVEL = 10;
+                private static final float ZOOM_STREET_LEVEL = 15;
+                private static final float ZOOM_BUILDING_LEVEL = 20;
+
+                private Location myLocation;
+
+                @Override
+                public void onLocationChanged(Location loc) {
+                    if (myLocation == null || myLocation.distanceTo(loc) >= 100) {
+                        myLocation = loc;
+                        LatLng myLocLatLng = new LatLng(myLocation.getLatitude(), myLocation.getLongitude());
+                        if (myLocLatLng.latitude != 0.0 && myLocLatLng.longitude != 0.0) {
+                            try {
+                                Geocoder geocoder = new Geocoder(getContext(), Locale.getDefault());
+                                List<Address> list = geocoder.getFromLocation(myLocLatLng.latitude, myLocLatLng.longitude, 1);
+                                if (!list.isEmpty()) {
+                                    Address address = list.get(0);
+                                    mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(myLocLatLng, ZOOM_STREET_LEVEL));
+                                    mMap.addMarker(new MarkerOptions().position(myLocLatLng).title(getString(R.string.maps_marker_you_are_here)).snippet(address.getAddressLine(0))).showInfoWindow();
+                                }
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    }
+                }
+
+                @Override
+                public void onProviderDisabled(String provider) {
+                    Toast.makeText(getContext(), R.string.gps_disabled, Toast.LENGTH_LONG).show();
+                }
+
+                @Override
+                public void onProviderEnabled(String provider) {
+                    Toast.makeText(getContext(), R.string.gps_enabled, Toast.LENGTH_LONG).show();
+                }
+
+                @Override
+                public void onStatusChanged(String provider, int status, Bundle extras) {
+                    switch (status) {
+                        case LocationProvider.OUT_OF_SERVICE:
+                            Toast.makeText(getContext(), R.string.maps_provider_out_of_service, Toast.LENGTH_LONG).show();
+                            break;
+                        case LocationProvider.TEMPORARILY_UNAVAILABLE:
+                            Toast.makeText(getContext(), R.string.maps_provider_temporarily_unavailable, Toast.LENGTH_LONG).show();
+                            break;
+                    }
+                }
+            }
         }
     }
-
-    /**
-     * A {@link FragmentPagerAdapter} that returns a fragment corresponding to
-     * one of the sections/tabs/pages.
-     */
-    public class SectionsPagerAdapter extends FragmentPagerAdapter {
-
-        public SectionsPagerAdapter(FragmentManager fm) {
-            super(fm);
-        }
-
-        @Override
-        public Fragment getItem(int position) {
-            // getItem is called to instantiate the fragment for the given page.
-            // Return a PlaceholderFragment (defined as a static inner class below).
-            return PlaceholderFragment.newInstance(position + 1);
-        }
-
-        @Override
-        public int getCount() {
-            // Show 3 total pages.
-            return 3;
-        }
-    }
-}

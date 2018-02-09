@@ -37,5 +37,8 @@
     <string name="tab_text_3">Boton</string>
     <string name="section_format">Hello World from section: %1$d</string>
 
+    <!-- Strings related to "activity_main_drawer" Layout -->
+    <string name="your_data">Tus datos</string>
+    <string name="assistant_data">Datos de tu asistente</string>
 
 </resources>
