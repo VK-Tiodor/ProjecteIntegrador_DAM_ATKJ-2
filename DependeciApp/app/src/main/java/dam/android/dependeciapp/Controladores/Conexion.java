@@ -1,6 +1,9 @@
 package dam.android.dependeciapp.Controladores;
 
 import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.concurrent.ExecutionException;
 
 import dam.android.dependeciapp.AsyncTasks.CreaConexion;
@@ -14,17 +17,18 @@ public class Conexion {
     private Connection con;
 
     public Conexion() {
-            CreaConexion();
+        CreaConexion();
     }
 
-    public Connection getConnection(){
+    public Connection getConnection() {
         return con;
 
     }
+
     private void CreaConexion() {
         try {
-        CreaConexion cc = new CreaConexion();
-        cc.execute();
+            CreaConexion cc = new CreaConexion();
+            cc.execute();
 
             con = cc.get();
         } catch (InterruptedException e) {
@@ -34,6 +38,24 @@ public class Conexion {
         }
     }
 
+    public ResultSet IniciaSesion(String DNI, String pass) {
+        try {
+            String sql = "call inicia_sesion(?, ?)";
+            PreparedStatement login = con.prepareStatement(sql);
+
+            login.setString(1, DNI);
+            login.setString(2, pass);
+            ResultSet rs = login.executeQuery();
+
+            return rs;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return null;
+
+        }
+
+
+    }
 
     public String toMD5(String md5) {
         try {
