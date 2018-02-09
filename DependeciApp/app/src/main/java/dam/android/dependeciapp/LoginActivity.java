@@ -4,6 +4,7 @@ import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
@@ -27,6 +28,7 @@ import android.view.inputmethod.EditorInfo;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -38,6 +40,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import dam.android.dependeciapp.Controladores.Conexion;
+import dam.android.dependeciapp.Pojo.Usuario;
 
 import static android.Manifest.permission.READ_CONTACTS;
 
@@ -50,24 +53,29 @@ public class LoginActivity extends AppCompatActivity {
      * Keep track of the login task to ensure we can cancel it if requested.
      */
     private UserLoginTask mAuthTask = null;
-
+    private static final String MYPREFS = "LoginPreferences";
     // UI references.
     private EditText mDNIView;
     private EditText mPasswordView;
     private View mProgressView;
     private View mLoginFormView;
     private Conexion con;
+    private CheckBox cbGuardaUsuarioPass;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
         // Set up the login form.
-       setUI();
+        setUI();
+        cargaPreferencias();
+        //TODO Si no se pudiera establecer conexion usar la SQLite
         con = new Conexion();
     }
 
-    private void setUI(){
+    private void setUI() {
+        cbGuardaUsuarioPass = (CheckBox) findViewById(R.id.cbGuarda);
         mDNIView = (EditText) findViewById(R.id.DNI);
         mPasswordView = (EditText) findViewById(R.id.password);
         mPasswordView.setOnEditorActionListener(new TextView.OnEditorActionListener() {
@@ -80,8 +88,8 @@ public class LoginActivity extends AppCompatActivity {
                 return false;
             }
         });
-        Button mDNIignInButton = (Button) findViewById(R.id.DNI_sign_in_button);
-        mDNIignInButton.setOnClickListener(new View.OnClickListener() {
+        Button btLogin = (Button) findViewById(R.id.DNI_sign_in_button);
+        btLogin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 attemptLogin();
@@ -95,7 +103,6 @@ public class LoginActivity extends AppCompatActivity {
         if (mAuthTask != null) {
             return;
         }
-
         mDNIView.setError(null);
         mPasswordView.setError(null);
 
@@ -110,7 +117,6 @@ public class LoginActivity extends AppCompatActivity {
             focusView = mPasswordView;
             cancel = true;
         }
-
         if (TextUtils.isEmpty(DNI)) {
             cancel = true;
             Toast.makeText(this, R.string.error_field_required, Toast.LENGTH_LONG).show();
@@ -119,32 +125,29 @@ public class LoginActivity extends AppCompatActivity {
             Toast.makeText(this, R.string.error_invalid_DNI, Toast.LENGTH_LONG).show();
             cancel = true;
         }
-
         if (cancel) {
             // There was an error; don't attempt login and focus the first
             // form field with an error.
-           // focusView.requestFocus();
+            // focusView.requestFocus();
         } else {
             // Show a progress spinner, and kick off a background task to
             // perform the user login attempt.
             showProgress(true);
             mAuthTask = new UserLoginTask();
-            mAuthTask.execute(DNI,password);
-
+            mAuthTask.execute(DNI, password);
         }
     }
 
+    //Metodo para comprobar que un DNI es real
     private boolean dniValido(String dniAComprobar) {
         char[] letraDni = {
                 'T', 'R', 'W', 'A', 'G', 'M', 'Y', 'F', 'P', 'D', 'X', 'B', 'N', 'J', 'Z', 'S', 'Q', 'V', 'H', 'L', 'C', 'K', 'E'
         };
         String num = "";
         int ind = 0;
-
         if (dniAComprobar.length() == 8) {
             dniAComprobar = "0" + dniAComprobar;
         }
-        
         if (!Character.isLetter(dniAComprobar.charAt(8))) {
             return false;
         }
@@ -166,9 +169,8 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private boolean isPasswordValid(String password) {
-        //TODO: Replace this with your own logic
-       // return password.length() >= 4;
-       return true;
+
+        return true;
     }
 
     /**
@@ -207,41 +209,61 @@ public class LoginActivity extends AppCompatActivity {
         }
     }
 
+    //Si el CheckBox guarda usuario contraseña esta pulsado se ejecutara
+    private void GuardaUsuarioPass(String usuario, String pass) {
+        SharedPreferences pref = getSharedPreferences(MYPREFS, MODE_PRIVATE);
+        SharedPreferences.Editor editor = pref.edit();
+        editor.putString("user", usuario);
+        editor.putString("pass", pass);
+        editor.putBoolean("guardaUserPass", true);
+        editor.commit();
+    }
 
+    //Carga las preferencias guardadas, si no las hay carga las predeterminadas
+    private void cargaPreferencias() {
+        SharedPreferences prefs = getSharedPreferences(MYPREFS, MODE_PRIVATE);
+
+        cbGuardaUsuarioPass.setChecked(prefs.getBoolean("guardaUserPass", false));
+        mDNIView.setText(prefs.getString("usuario", "DNI"));
+        mPasswordView.setText(prefs.getString("pass", ""));
+
+    }
 
     /**
      * Represents an asynchronous login/registration task used to authenticate
      * the user.
      */
     public class UserLoginTask extends AsyncTask<String, Void, Boolean> {
-
+        private Usuario user;
 
         @Override
         protected Boolean doInBackground(String... strings) {
-            // TODO: attempt authentication against a network service.
-            String sql = "call inicia_sesion(?, ?)";
-            ResultSet rs = null;
-            try {
-                PreparedStatement login = con.getConnection().prepareStatement(sql);
-                login.setString(1, strings[0]);
-                login.setString(2, strings[1]);
-               rs = login.executeQuery();
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }finally {
-                if (rs!=null)
-                    return true;
-                else
-                    return false;
-            }
+            String usuario = strings[0];
+            String pass = strings[1];
 
+            ResultSet rs = con.IniciaSesion(usuario, pass);
+            if (rs != null) {
+                try {
+                    //Si el Se ha marcado el CheckBox de guardar usuari y contraseña, se guardan
+                    if (cbGuardaUsuarioPass.isChecked()) {
+                        GuardaUsuarioPass(usuario, pass);
+                    }
+                    this.user = new Usuario(rs);
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+
+                return true;
+            } else
+                return false;
         }
+
         protected void onPostExecute(final Boolean success) {
             mAuthTask = null;
             showProgress(false);
-
             if (success) {
                 Intent i = new Intent(getApplicationContext(), MainActivity.class);
+                //i.putExtra("user",user);
                 startActivity(i);
                 finish();
             } else {
