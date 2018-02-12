@@ -1,9 +1,11 @@
-package dam.android.dependeciapp.dummy;
+package dam.android.dependeciapp.Controladores;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import dam.android.dependeciapp.Pojo.Recordatorio;
 
 /**
  * Helper class for providing sample content for user interfaces created by
@@ -53,22 +55,5 @@ public class RecordatorioContent {
     /**
      * A dummy item representing a piece of content.
      */
-    public static class Recordatorio {
-        public final String titulo;
-        public final String content;
-        public final String cuando;
-        public final String hora;
 
-        public Recordatorio(String titulo, String content, String cuando,String hora) {
-            this.titulo=titulo;
-            this.content = content;
-            this.cuando = cuando;
-            this.hora = hora;
-        }
-
-        @Override
-        public String toString() {
-            return content;
-        }
-    }
 }

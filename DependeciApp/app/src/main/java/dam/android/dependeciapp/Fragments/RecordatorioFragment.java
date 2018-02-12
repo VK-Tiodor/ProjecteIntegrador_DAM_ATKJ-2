@@ -10,9 +10,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import dam.android.dependeciapp.Controladores.RecordatorioAdapter;
+import dam.android.dependeciapp.Pojo.Recordatorio;
 import dam.android.dependeciapp.R;
-import dam.android.dependeciapp.dummy.RecordatorioContent;
-import dam.android.dependeciapp.dummy.RecordatorioContent.Recordatorio;
+import dam.android.dependeciapp.Controladores.RecordatorioContent;
 
 /**
  * A fragment representing a list of Items.

@@ -33,7 +33,6 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Locale;
 
-import dam.android.dependeciapp.MainActivity;
 import dam.android.dependeciapp.R;
 
 /**
@@ -53,7 +52,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.activity_get_location, container, false);
+        View rootView = inflater.inflate(R.layout.fragment_map, container, false);
         SupportMapFragment mapFragment = (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
         Toast.makeText(getContext(), R.string.maps_this_may_take_a_few_seconds, Toast.LENGTH_LONG).show();

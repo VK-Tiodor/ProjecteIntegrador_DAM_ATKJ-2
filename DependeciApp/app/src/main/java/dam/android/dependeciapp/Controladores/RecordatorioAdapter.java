@@ -1,4 +1,4 @@
-package dam.android.dependeciapp.Fragments;
+package dam.android.dependeciapp.Controladores;
 
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -6,8 +6,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import dam.android.dependeciapp.Fragments.RecordatorioFragment;
+import dam.android.dependeciapp.Pojo.Recordatorio;
 import dam.android.dependeciapp.R;
-import dam.android.dependeciapp.dummy.RecordatorioContent.Recordatorio;
 
 import java.util.List;
 
@@ -29,7 +30,7 @@ public class RecordatorioAdapter extends RecyclerView.Adapter<RecordatorioAdapte
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.fragment_recordatorio, parent, false);
+                .inflate(R.layout.recordatorio_item, parent, false);
         return new ViewHolder(view);
     }
 
@@ -47,7 +48,7 @@ public class RecordatorioAdapter extends RecyclerView.Adapter<RecordatorioAdapte
                 if (null != mListener) {
                     // Notify the active callbacks interface (the activity, if the
                     // fragment is attached to one) that an item has been selected.
-                    mListener.onListFragmentInteraction(holder.mItem);
+                   // mListener.onListFragmentInteraction(holder.mItem);
                 }
             }
         });

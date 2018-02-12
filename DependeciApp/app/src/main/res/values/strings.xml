@@ -36,11 +36,12 @@
     <string name="tab_text_1">Recordatorios</string>
     <string name="tab_text_2">¿Donde estoy?</string>
     <string name="tab_text_3">Boton</string>
-    <string name="section_format">Hello World from section: %1$d</string>
+    <string name="section_format">Avisa a un asistente</string>
 
     <!-- Strings related to "activity_main_drawer" Layout -->
     <string name="your_data">Tus datos</string>
     <string name="assistant_data">Datos de tu asistente</string>
+    <string name="cerrar_sesion">Cerrar sesión</string>
     <string name="title_item_list">Items</string>
     <string name="title_item_detail">Item Detail</string>
     <string name="inicia_sesion_automaticamente">Inicia sesion automaticamente</string>
