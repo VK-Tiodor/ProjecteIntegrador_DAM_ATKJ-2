@@ -10,6 +10,7 @@
     <string name="add_widget">Add widget</string>
     <string name="title_activity_login">DependenciApp</string>
     <string name="aviso_enviadio">Se ha enviado un aviso a la central</string>
+    <string name="aviso_fallido">Ha habido un error enviando el aviso</string>
 
     <!-- Strings related to login -->
     <string name="prompt_dni">DNI</string>
@@ -18,7 +19,7 @@
     <string name="action_sign_in_short">Sign in</string>
     <string name="error_invalid_DNI">Ese DNI no es valido</string>
     <string name="error_invalid_password">La contraseña es damasiado corta</string>
-    <string name="error_incorrect_password">La contraseña es incorrecta</string>
+    <string name="error_incorrect_password">Introduce la contraseña</string>
     <string name="error_field_required">Escribe un DNI</string>
     <string name="recordar">Recordar usuario y contraseña</string>
 
@@ -40,5 +41,8 @@
     <!-- Strings related to "activity_main_drawer" Layout -->
     <string name="your_data">Tus datos</string>
     <string name="assistant_data">Datos de tu asistente</string>
+    <string name="title_item_list">Items</string>
+    <string name="title_item_detail">Item Detail</string>
+    <string name="inicia_sesion_automaticamente">Inicia sesion automaticamente</string>
 
 </resources>

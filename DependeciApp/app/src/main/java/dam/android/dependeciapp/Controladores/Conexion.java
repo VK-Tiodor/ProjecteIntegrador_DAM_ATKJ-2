@@ -1,5 +1,6 @@
 package dam.android.dependeciapp.Controladores;
 
+import java.io.Serializable;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -12,7 +13,7 @@ import dam.android.dependeciapp.AsyncTasks.CreaConexion;
  * Created by adria on 06/02/2018.
  */
 
-public class Conexion {
+public class Conexion implements Serializable{
 
     private Connection con;
 
@@ -29,7 +30,6 @@ public class Conexion {
         try {
             CreaConexion cc = new CreaConexion();
             cc.execute();
-
             con = cc.get();
         } catch (InterruptedException e) {
             e.printStackTrace();
@@ -42,19 +42,14 @@ public class Conexion {
         try {
             String sql = "call inicia_sesion(?, ?)";
             PreparedStatement login = con.prepareStatement(sql);
-
             login.setString(1, DNI);
             login.setString(2, pass);
             ResultSet rs = login.executeQuery();
-
             return rs;
         } catch (SQLException e) {
             e.printStackTrace();
             return null;
-
         }
-
-
     }
 
     public String toMD5(String md5) {

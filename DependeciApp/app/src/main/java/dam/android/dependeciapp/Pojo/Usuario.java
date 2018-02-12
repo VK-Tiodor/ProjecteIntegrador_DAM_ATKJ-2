@@ -2,6 +2,7 @@ package dam.android.dependeciapp.Pojo;
 
 import com.google.android.gms.maps.MapView;
 
+import java.io.Serializable;
 import java.sql.Date;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -10,7 +11,7 @@ import java.sql.SQLException;
  * Created by adria on 09/02/2018.
  */
 
-public class Usuario {
+public class Usuario implements Serializable {
 
     private int idPersona;
     private String DNI;

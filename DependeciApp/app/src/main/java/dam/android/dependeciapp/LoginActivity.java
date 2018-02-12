@@ -5,44 +5,24 @@ import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.pm.PackageManager;
-import android.support.annotation.NonNull;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
-import android.app.LoaderManager.LoaderCallbacks;
 
-import android.content.CursorLoader;
-import android.content.Loader;
-import android.database.Cursor;
-import android.net.Uri;
 import android.os.AsyncTask;
 
 import android.os.Build;
 import android.os.Bundle;
-import android.provider.ContactsContract;
 import android.text.TextUtils;
-import android.view.KeyEvent;
 import android.view.View;
-import android.view.View.OnClickListener;
-import android.view.inputmethod.EditorInfo;
-import android.widget.ArrayAdapter;
-import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
-import android.widget.TextView;
 import android.widget.Toast;
 
-import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
 
 import dam.android.dependeciapp.Controladores.Conexion;
 import dam.android.dependeciapp.Pojo.Usuario;
-
-import static android.Manifest.permission.READ_CONTACTS;
 
 /**
  * A login screen that offers login via email/password.
@@ -55,69 +35,62 @@ public class LoginActivity extends AppCompatActivity {
     private UserLoginTask mAuthTask = null;
     private static final String MYPREFS = "LoginPreferences";
     // UI references.
-    private EditText mDNIView;
-    private EditText mPasswordView;
+    private EditText etDNI;
+    private EditText etPass;
     private View mProgressView;
     private View mLoginFormView;
     private Conexion con;
     private CheckBox cbGuardaUsuarioPass;
+    private CheckBox cbIniciaSesion;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_login);
-        // Set up the login form.
-        startActivity(new Intent(this, MainActivity.class));
-        //setUI();
-        //con = new Conexion();
-        setUI();
-        cargaPreferencias();
-        //TODO Si no se pudiera establecer conexion usar la SQLite
-        //con = new Conexion();
+        con = new Conexion();
+        boolean resultado = IniciaSesionAutomaticamente();
+        //TODO Si no se pudiera establecer conexion usar la SQLite}
+        //Si la sesion se inicia automaticamente no se cargan ni la UI ni las preferencais
+        //para ahorrar recursos y tiempo
+        if (!resultado) {
+            setContentView(R.layout.activity_login);
+            setUI();
+            cargaPreferencias();
+        }
     }
 
     private void setUI() {
         cbGuardaUsuarioPass = (CheckBox) findViewById(R.id.cbGuarda);
-        mDNIView = (EditText) findViewById(R.id.DNI);
-        mPasswordView = (EditText) findViewById(R.id.password);
-        mPasswordView.setOnEditorActionListener(new TextView.OnEditorActionListener() {
-            @Override
-            public boolean onEditorAction(TextView textView, int id, KeyEvent keyEvent) {
-                if (id == EditorInfo.IME_ACTION_DONE || id == EditorInfo.IME_NULL) {
-                    attemptLogin();
-                    return true;
-                }
-                return false;
-            }
-        });
+        cbIniciaSesion = (CheckBox) findViewById(R.id.cbSesion);
+        etDNI = (EditText) findViewById(R.id.DNI);
+        etPass = (EditText) findViewById(R.id.password);
         Button btLogin = (Button) findViewById(R.id.DNI_sign_in_button);
         btLogin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                attemptLogin();
+                intentaLogear();
             }
         });
-        mLoginFormView = findViewById(R.id.login_form);
         mProgressView = findViewById(R.id.login_progress);
+        mLoginFormView = findViewById(R.id.login_form);
     }
 
-    private void attemptLogin() {
+    private void intentaLogear() {
         if (mAuthTask != null) {
             return;
         }
-        mDNIView.setError(null);
-        mPasswordView.setError(null);
+        etDNI.setError(null);
+        etPass.setError(null);
 
-        String DNI = mDNIView.getText().toString();
-        String password = mPasswordView.getText().toString();
+        String DNI = etDNI.getText().toString();
+        String password = etPass.getText().toString();
 
         boolean cancel = false;
         View focusView = null;
 
-        if (!TextUtils.isEmpty(password) && !isPasswordValid(password)) {
-            mPasswordView.setError(getString(R.string.error_invalid_password));
-            focusView = mPasswordView;
+        if (TextUtils.isEmpty(password)) {
+            etPass.setError(getString(R.string.error_invalid_password));
+            focusView = etPass;
             cancel = true;
         }
         if (TextUtils.isEmpty(DNI)) {
@@ -131,7 +104,7 @@ public class LoginActivity extends AppCompatActivity {
         if (cancel) {
             // There was an error; don't attempt login and focus the first
             // form field with an error.
-            // focusView.requestFocus();
+             focusView.requestFocus();
         } else {
             // Show a progress spinner, and kick off a background task to
             // perform the user login attempt.
@@ -171,11 +144,6 @@ public class LoginActivity extends AppCompatActivity {
         return true;
     }
 
-    private boolean isPasswordValid(String password) {
-
-        return true;
-    }
-
     /**
      * Shows the progress UI and hides the login form.
      */
@@ -184,31 +152,33 @@ public class LoginActivity extends AppCompatActivity {
         // On Honeycomb MR2 we have the ViewPropertyAnimator APIs, which allow
         // for very easy animations. If available, use these APIs to fade-in
         // the progress spinner.
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB_MR2) {
-            int shortAnimTime = getResources().getInteger(android.R.integer.config_shortAnimTime);
+        if (mLoginFormView != null) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB_MR2) {
+                int shortAnimTime = getResources().getInteger(android.R.integer.config_shortAnimTime);
 
-            mLoginFormView.setVisibility(show ? View.GONE : View.VISIBLE);
-            mLoginFormView.animate().setDuration(shortAnimTime).alpha(
-                    show ? 0 : 1).setListener(new AnimatorListenerAdapter() {
-                @Override
-                public void onAnimationEnd(Animator animation) {
-                    mLoginFormView.setVisibility(show ? View.GONE : View.VISIBLE);
-                }
-            });
+                mLoginFormView.setVisibility(show ? View.GONE : View.VISIBLE);
+                mLoginFormView.animate().setDuration(shortAnimTime).alpha(
+                        show ? 0 : 1).setListener(new AnimatorListenerAdapter() {
+                    @Override
+                    public void onAnimationEnd(Animator animation) {
+                        mLoginFormView.setVisibility(show ? View.GONE : View.VISIBLE);
+                    }
+                });
 
-            mProgressView.setVisibility(show ? View.VISIBLE : View.GONE);
-            mProgressView.animate().setDuration(shortAnimTime).alpha(
-                    show ? 1 : 0).setListener(new AnimatorListenerAdapter() {
-                @Override
-                public void onAnimationEnd(Animator animation) {
-                    mProgressView.setVisibility(show ? View.VISIBLE : View.GONE);
-                }
-            });
-        } else {
-            // The ViewPropertyAnimator APIs are not available, so simply show
-            // and hide the relevant UI components.
-            mProgressView.setVisibility(show ? View.VISIBLE : View.GONE);
-            mLoginFormView.setVisibility(show ? View.GONE : View.VISIBLE);
+                mProgressView.setVisibility(show ? View.VISIBLE : View.GONE);
+                mProgressView.animate().setDuration(shortAnimTime).alpha(
+                        show ? 1 : 0).setListener(new AnimatorListenerAdapter() {
+                    @Override
+                    public void onAnimationEnd(Animator animation) {
+                        mProgressView.setVisibility(show ? View.VISIBLE : View.GONE);
+                    }
+                });
+            } else {
+                // The ViewPropertyAnimator APIs are not available, so simply show
+                // and hide the relevant UI components.
+                mProgressView.setVisibility(show ? View.VISIBLE : View.GONE);
+                mLoginFormView.setVisibility(show ? View.GONE : View.VISIBLE);
+            }
         }
     }
 
@@ -219,17 +189,37 @@ public class LoginActivity extends AppCompatActivity {
         editor.putString("user", usuario);
         editor.putString("pass", pass);
         editor.putBoolean("guardaUserPass", true);
+        //Si es null significa que se ha iniciado sesion automaticamente, no ha pasado por SetUI
+        if (cbGuardaUsuarioPass == null)
+            editor.putBoolean("iniciaSesion", true);
+        else {
+            //Si se ha marcado el CheckBox de inicia sesion, se guardan
+            if (cbIniciaSesion.isChecked())
+                editor.putBoolean("iniciaSesion", true);
+        }
         editor.commit();
     }
 
     //Carga las preferencias guardadas, si no las hay carga las predeterminadas
     private void cargaPreferencias() {
         SharedPreferences prefs = getSharedPreferences(MYPREFS, MODE_PRIVATE);
-
         cbGuardaUsuarioPass.setChecked(prefs.getBoolean("guardaUserPass", false));
-        mDNIView.setText(prefs.getString("usuario", "DNI"));
-        mPasswordView.setText(prefs.getString("pass", ""));
-
+        etDNI.setText(prefs.getString("user", ""));
+        etPass.setText(prefs.getString("pass", ""));
+    }
+    //Si en las prefrencias pone que se inicie sesion automaticamente se trata de iniciar la sesion
+    //y devuelve un booleano para ver si iniciamos el SetUi
+    private boolean IniciaSesionAutomaticamente() {
+        SharedPreferences prefs = getSharedPreferences(MYPREFS, MODE_PRIVATE);
+        boolean iniciaSesion = prefs.getBoolean("iniciaSesion", false);
+        if (iniciaSesion) {
+            String DNI = prefs.getString("user", "");
+            String pass = prefs.getString("pass", "");
+            mAuthTask = new UserLoginTask();
+            mAuthTask.execute(DNI, pass);
+            return true;
+        }
+        return false;
     }
 
     /**
@@ -243,14 +233,18 @@ public class LoginActivity extends AppCompatActivity {
         protected Boolean doInBackground(String... strings) {
             String usuario = strings[0];
             String pass = strings[1];
-
             ResultSet rs = con.IniciaSesion(usuario, pass);
             if (rs != null) {
                 try {
-                    //Si el Se ha marcado el CheckBox de guardar usuari y contraseña, se guardan
-                    if (cbGuardaUsuarioPass.isChecked()) {
+                    //Si es null significa que se ha iniciado sesion automaticamente, no ha pasado por SetUI
+                    if (cbGuardaUsuarioPass == null)
                         GuardaUsuarioPass(usuario, pass);
+                    else {
+                        //Si se ha marcado el CheckBox de guardar usuari y contraseña, se guardan
+                        if (cbGuardaUsuarioPass.isChecked())
+                            GuardaUsuarioPass(usuario, pass);
                     }
+                    //A partir del result set se crea el Usuario, que sera enviado al MainActivity
                     this.user = new Usuario(rs);
                 } catch (SQLException e) {
                     e.printStackTrace();
@@ -264,14 +258,16 @@ public class LoginActivity extends AppCompatActivity {
         protected void onPostExecute(final Boolean success) {
             mAuthTask = null;
             showProgress(false);
+            //Si el logeo es correcto se crea el Intento del MainActivity y le pasamos el Usuario
             if (success) {
                 Intent i = new Intent(getApplicationContext(), MainActivity.class);
-                //i.putExtra("user",user);
+               // i.putExtra("user",user);
+              //  i.putExtra("conexion",con);
                 startActivity(i);
                 finish();
             } else {
-                mPasswordView.setError(getString(R.string.error_incorrect_password));
-                mPasswordView.requestFocus();
+                etPass.setError(getString(R.string.error_incorrect_password));
+                etPass.requestFocus();
             }
         }
 

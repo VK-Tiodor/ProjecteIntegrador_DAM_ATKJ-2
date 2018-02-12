@@ -3,7 +3,6 @@ package dam.android.dependeciapp;
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.content.Context;
-import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Address;
 import android.location.Criteria;
@@ -31,14 +30,18 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
@@ -48,40 +51,41 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import java.io.IOException;
 import java.util.List;
 import java.util.Locale;
+import java.util.concurrent.ExecutionException;
 
-import dam.android.dependeciapp.Controladores.Conexion;
 import dam.android.dependeciapp.AsyncTasks.LanzaLlamada;
+import dam.android.dependeciapp.Controladores.Conexion;
+import dam.android.dependeciapp.Pojo.Usuario;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
     private ViewPager mViewPager;
     private SectionsPagerAdapter mSectionsPagerAdapter;
+    private FloatingActionButton fab;
+    private int fabSize;
+    private Usuario user;
+    private Conexion con;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        Conexion con = new Conexion();
-
+        //  user = (Usuario) getIntent().getSerializableExtra("user");
+        //  con = (Conexion) getIntent().getSerializableExtra("conexion");
         setUI();
-        // Conexion con = new Conexion();
-        //startActivity(new Intent(getApplicationContext(), dam.android.dependeciapp.GetLocation.class));
-        // setUI();
+
     }
 
     private void setUI() {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+        fab = (FloatingActionButton) findViewById(R.id.fab);
+        fabSize = fab.getLayoutParams().width;
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                LanzaLlamada llamada = new LanzaLlamada();
+                LanzaLlamada llamada = new LanzaLlamada(view, getApplicationContext());
                 llamada.execute("31"); //TODO SUSTITUIR POR ID
-                Snackbar.make(view, getString(R.string.aviso_enviadio), Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-
             }
         });
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -89,20 +93,36 @@ public class MainActivity extends AppCompatActivity
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.addDrawerListener(toggle);
         toggle.syncState();
-
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
-
         mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
-
         // Set up the ViewPager with the sections adapter.
         mViewPager = (ViewPager) findViewById(R.id.container);
         mViewPager.setAdapter(mSectionsPagerAdapter);
-
         TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
-
         mViewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout));
         tabLayout.addOnTabSelectedListener(new TabLayout.ViewPagerOnTabSelectedListener(mViewPager));
+        tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+            @Override
+            public void onTabSelected(TabLayout.Tab tab) {
+                int posicion = tab.getPosition();
+                if (posicion == 2) {
+                    fab.getLayoutParams().height = 1000;
+                    fab.getLayoutParams().width = 1000;
+                } else {
+                    fab.getLayoutParams().height = fabSize;
+                    fab.getLayoutParams().width = fabSize;
+                }
+            }
+
+            @Override
+            public void onTabUnselected(TabLayout.Tab tab) {
+            }
+
+            @Override
+            public void onTabReselected(TabLayout.Tab tab) {
+            }
+        });
     }
 
     @Override
@@ -114,7 +134,6 @@ public class MainActivity extends AppCompatActivity
             super.onBackPressed();
         }
     }
-
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -129,12 +148,10 @@ public class MainActivity extends AppCompatActivity
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
-
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
             return true;
         }
-
         return super.onOptionsItemSelected(item);
     }
 
@@ -143,29 +160,49 @@ public class MainActivity extends AppCompatActivity
     public boolean onNavigationItemSelected(MenuItem item) {
         // Handle navigation view item clicks here.
         int id = item.getItemId();
-
         switch (id) {
             case R.id.nav_datosPersonales:
-
                 break;
             case R.id.nav_datosAsistente:
-
                 break;
         }
-
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }
 
     /**
-     * A placeholder fragment containing a simple view.
+     * A {@link FragmentPagerAdapter} that returns a fragment corresponding to
+     * one of the sections/tabs/pages.
      */
+    public class SectionsPagerAdapter extends FragmentPagerAdapter {
 
-    /**
-     * Returns a new instance of this fragment for the given section
-     * number.
-     */
+        public SectionsPagerAdapter(FragmentManager fm) {
+            super(fm);
+        }
+
+        @Override
+        public Fragment getItem(int position) {
+            // getItem is called to instantiate the fragment for the given page.
+            // Return a PlaceholderFragment (defined as a static inner class below).
+            switch (position) {
+                case 0:
+                    return PlaceholderFragment.newInstance(position + 1);
+                case 1:
+                    return new dam.android.dependeciapp.Fragments.MapFragment();
+                case 2:
+                    return PlaceholderFragment.newInstance(position + 1);
+            }
+            return null;
+        }
+
+        @Override
+        public int getCount() {
+            return 3;
+        }
+    }
+
+
     public static class PlaceholderFragment extends Fragment {
         /**
          * The fragment argument representing the section number for this
@@ -191,6 +228,7 @@ public class MainActivity extends AppCompatActivity
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container,
                                  Bundle savedInstanceState) {
+            int position = getArguments().getInt(ARG_SECTION_NUMBER);
             View rootView = null;
             rootView = inflater.inflate(R.layout.fragment_main, container, false);
             TextView textView = (TextView) rootView.findViewById(R.id.section_label);
@@ -198,161 +236,4 @@ public class MainActivity extends AppCompatActivity
             return rootView;
         }
     }
-
-    /**
-     * A {@link FragmentPagerAdapter} that returns a fragment corresponding to
-     * one of the sections/tabs/pages.
-     */
-    public class SectionsPagerAdapter extends FragmentPagerAdapter {
-
-        public SectionsPagerAdapter(FragmentManager fm) {
-            super(fm);
-        }
-
-        @Override
-        public Fragment getItem(int position) {
-            // getItem is called to instantiate the fragment for the given page.
-            // Return a PlaceholderFragment (defined as a static inner class below).
-            if (position == 1) {
-                return GetLocation.newInstance();
-            } else {
-                return PlaceholderFragment.newInstance(position + 1);
-            }
-        }
-
-        @Override
-        public int getCount() {
-            return 3;
-        }
-    }
-
-
-        @SuppressLint("ValidFragment")
-        public static class GetLocation extends Fragment implements OnMapReadyCallback {
-
-            private static final int REQUEST_MAPS = 1;
-            private final String[] PERMISSIONS_MAPS = {Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION};
-            private GoogleMap mMap;
-            private SupportMapFragment mapFragment;
-
-            public static GetLocation newInstance() {
-                return new GetLocation();
-            }
-
-            @Override
-            public View onCreateView(LayoutInflater inflater, ViewGroup container, @Nullable Bundle savedInstanceState) {
-                View rootView = inflater.inflate(R.layout.activity_get_location, container, false);
-                SupportMapFragment mapFragment = (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.map);
-                mapFragment.getMapAsync(this);
-                Toast.makeText(getContext(), R.string.maps_this_may_take_a_few_seconds, Toast.LENGTH_LONG).show();
-                return rootView;
-            }
-
-
-            @SuppressLint("MissingPermission")
-            private void setMarkerOnMyLocation() {
-                mMap.setMyLocationEnabled(true);
-
-                LocationManager locationManager = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
-                Criteria criteria = new Criteria();
-                Location lastKnownLocation = locationManager.getLastKnownLocation(locationManager.getBestProvider(criteria, false));
-                MyLocationListener myLocationListener = new MyLocationListener(lastKnownLocation);
-
-                locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, myLocationListener);
-            }
-
-            @Override
-            public void onMapReady(GoogleMap googleMap) {
-                mMap = googleMap;
-                if (ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
-                        && ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED)
-                    ActivityCompat.requestPermissions(getActivity(), PERMISSIONS_MAPS, REQUEST_MAPS);
-                else {
-                    setMarkerOnMyLocation();
-                }
-            }
-
-            @Override
-            public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-                if (requestCode == REQUEST_MAPS) {
-                    if (grantResults[0] == PackageManager.PERMISSION_GRANTED && grantResults[1] == PackageManager.PERMISSION_GRANTED) {
-                        setMarkerOnMyLocation();
-                    } else {
-                        Toast.makeText(getContext(), R.string.maps_right_required, Toast.LENGTH_LONG).show();
-                    }
-                } else {
-                    super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-                }
-            }
-
-            private class MyLocationListener implements LocationListener {
-
-                private static final float ZOOM_CITY_LEVEL = 10;
-                private static final float ZOOM_STREET_LEVEL = 15;
-                private static final float ZOOM_BUILDING_LEVEL = 20;
-
-                private Location myLocation;
-                private Marker myMarker;
-
-                @SuppressLint("MissingPermission")
-                public MyLocationListener(Location lastKnownlocation){
-                    myLocation = lastKnownlocation;
-                    LatLng myLocationLatLng = new LatLng(myLocation.getLatitude(), myLocation.getLongitude());
-                    setMarkerOnLatLng(myLocationLatLng);
-                }
-
-                @Override
-                public void onLocationChanged(Location loc) {
-                    if(myLocation.distanceTo(loc) >= 100){
-                        myLocation = loc;
-                        LatLng myLocationLatLng = new LatLng(myLocation.getLatitude(), myLocation.getLongitude());
-                        setMarkerOnLatLng(myLocationLatLng);
-                    }
-                }
-
-                public void setMarkerOnLatLng(LatLng locationLatLng){
-                    if (locationLatLng.latitude != 0.0 && locationLatLng.longitude != 0.0) {
-                        try {
-                            Geocoder geocoder = new Geocoder(getContext(), Locale.getDefault());
-                            List<Address> list = geocoder.getFromLocation(locationLatLng.latitude, locationLatLng.longitude, 1);
-                            if (!list.isEmpty()) {
-                                Address address = list.get(0);
-                                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(locationLatLng, ZOOM_STREET_LEVEL));
-                                if(myMarker != null){
-                                    myMarker.remove();
-                                }
-                                myMarker = mMap.addMarker(new MarkerOptions().position(locationLatLng).title(getString(R.string.maps_marker_you_are_here)).snippet(address.getAddressLine(0)));
-                                myMarker.showInfoWindow();
-                            }
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                }
-
-                @Override
-                public void onProviderDisabled(String provider) {
-                    Toast.makeText(getContext(), R.string.gps_disabled, Toast.LENGTH_LONG).show();
-                }
-
-                @Override
-                public void onProviderEnabled(String provider) {
-                    Toast.makeText(getContext(), R.string.gps_enabled, Toast.LENGTH_LONG).show();
-                }
-
-                @Override
-                public void onStatusChanged(String provider, int status, Bundle extras) {
-                    switch (status) {
-                        case LocationProvider.OUT_OF_SERVICE:
-                            Toast.makeText(getContext(), R.string.maps_provider_out_of_service, Toast.LENGTH_LONG).show();
-                            break;
-                        case LocationProvider.TEMPORARILY_UNAVAILABLE:
-                            Toast.makeText(getContext(), R.string.maps_provider_temporarily_unavailable, Toast.LENGTH_LONG).show();
-                            break;
-                    }
-                }
-            }
-
-    }
-
 }

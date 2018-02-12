@@ -19,11 +19,11 @@ public class CreaConexion extends AsyncTask<String,Void,Connection> {
             //Registrando el Driver
             String driver = "com.mysql.jdbc.Driver";
             Class.forName(driver).newInstance();
-            String jdbcUrl = "jdbc:mysql://10.0.2.2:3306/mydb";
+            String jdbcUrl = "jdbc:mysql://149.202.8.230:3306/proyecto1";
             //Conectando
             Properties pc = new Properties();
-            pc.put("user", "root");
-            pc.put("password", "1234");
+            pc.put("user", "grupo1");
+            pc.put("password", "jatk1");
             Connection con = DriverManager.getConnection(jdbcUrl, pc);
             return con;
         } catch (InstantiationException e) {

@@ -73,6 +73,13 @@
                     android:maxLines="1"
                     android:singleLine="true" />
 
+                <CheckBox
+                    android:id="@+id/cbSesion"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/inicia_sesion_automaticamente" />
+
             </android.support.design.widget.TextInputLayout>
 
             <Button
