@@ -18,11 +18,11 @@ import java.util.List;
  */
 public class RecordatorioAdapter extends RecyclerView.Adapter<RecordatorioAdapter.ViewHolder> {
 
-    private final List<Recordatorio> mValues;
+    private final List<Recordatorio> recordatorioList;
     private final RecordatorioFragment.OnListFragmentInteractionListener mListener;
 
     public RecordatorioAdapter(List<Recordatorio> items, RecordatorioFragment.OnListFragmentInteractionListener listener) {
-        mValues = items;
+        recordatorioList = items;
         mListener = listener;
     }
 
@@ -35,9 +35,11 @@ public class RecordatorioAdapter extends RecyclerView.Adapter<RecordatorioAdapte
 
     @Override
     public void onBindViewHolder(final ViewHolder holder, int position) {
-        holder.mItem = mValues.get(position);
-        holder.mIdView.setText(mValues.get(position).id);
-        holder.mContentView.setText(mValues.get(position).content);
+        holder.mItem = recordatorioList.get(position);
+        holder.tvTitulo.setText(recordatorioList.get(position).titulo);
+        holder.tvContenido.setText(recordatorioList.get(position).content);
+        holder.tvHora.setText(recordatorioList.get(position).hora);
+        holder.tvCuando.setText(recordatorioList.get(position).cuando);
 
         holder.mView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -53,25 +55,26 @@ public class RecordatorioAdapter extends RecyclerView.Adapter<RecordatorioAdapte
 
     @Override
     public int getItemCount() {
-        return mValues.size();
+        return recordatorioList.size();
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
         public final View mView;
-        public final TextView mIdView;
-        public final TextView mContentView;
+        public final TextView tvTitulo;
+        public final TextView tvContenido;
+        public final TextView tvHora;
+        public final TextView tvCuando;
         public Recordatorio mItem;
 
         public ViewHolder(View view) {
             super(view);
             mView = view;
-            mIdView = (TextView) view.findViewById(R.id.id);
-            mContentView = (TextView) view.findViewById(R.id.content);
+            tvTitulo = (TextView) view.findViewById(R.id.tvTitulo);
+           tvContenido = (TextView) view.findViewById(R.id.tvContenido);
+           tvHora=(TextView) view.findViewById(R.id.tvHora);
+           tvCuando=(TextView)view.findViewById(R.id.tvCuando);
         }
 
-        @Override
-        public String toString() {
-            return super.toString() + " '" + mContentView.getText() + "'";
-        }
+
     }
 }

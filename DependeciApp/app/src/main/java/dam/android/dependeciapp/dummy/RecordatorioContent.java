@@ -21,7 +21,7 @@ public class RecordatorioContent {
     /**
      * A map of sample (dummy) items, by ID.
      */
-    public static final Map<String, Recordatorio> ITEM_MAP = new HashMap<String, Recordatorio>();
+    //public static final Map<String, Recordatorio> ITEM_MAP = new HashMap<String, Recordatorio>();
 
     private static final int COUNT = 25;
 
@@ -34,11 +34,11 @@ public class RecordatorioContent {
 
     private static void addItem(Recordatorio item) {
         ITEMS.add(item);
-        ITEM_MAP.put(item.id, item);
+        //ITEM_MAP.put(item.id, item);
     }
 
     private static Recordatorio createDummyItem(int position) {
-        return new Recordatorio(String.valueOf(position), "Item " + position, makeDetails(position));
+        return new Recordatorio("Tomar droga","Pero "+position+" pastillas","Hoy","12:"+position);
     }
 
     private static String makeDetails(int position) {
@@ -54,14 +54,16 @@ public class RecordatorioContent {
      * A dummy item representing a piece of content.
      */
     public static class Recordatorio {
-        public final String id;
+        public final String titulo;
         public final String content;
-        public final String details;
+        public final String cuando;
+        public final String hora;
 
-        public Recordatorio(String id, String content, String details) {
-            this.id = id;
+        public Recordatorio(String titulo, String content, String cuando,String hora) {
+            this.titulo=titulo;
             this.content = content;
-            this.details = details;
+            this.cuando = cuando;
+            this.hora = hora;
         }
 
         @Override
