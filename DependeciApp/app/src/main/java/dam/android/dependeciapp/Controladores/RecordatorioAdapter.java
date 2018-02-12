@@ -12,11 +12,7 @@ import dam.android.dependeciapp.R;
 
 import java.util.List;
 
-/**
- * {@link RecyclerView.Adapter} that can display a {@link Recordatorio} and makes a call to the
- * specified {@link RecordatorioFragment.OnListFragmentInteractionListener}.
- * TODO: Replace the implementation with code for your data type.
- */
+
 public class RecordatorioAdapter extends RecyclerView.Adapter<RecordatorioAdapter.ViewHolder> {
 
     private final List<Recordatorio> recordatorioList;
@@ -46,6 +42,7 @@ public class RecordatorioAdapter extends RecyclerView.Adapter<RecordatorioAdapte
             @Override
             public void onClick(View v) {
                 if (null != mListener) {
+                    //TODO Hacer que se abra un activity con los datos
                     // Notify the active callbacks interface (the activity, if the
                     // fragment is attached to one) that an item has been selected.
                    // mListener.onListFragmentInteraction(holder.mItem);

@@ -56,7 +56,7 @@ public class MainActivity extends AppCompatActivity
             @Override
             public void onClick(View view) {
                 LanzaLlamada llamada = new LanzaLlamada(view, getApplicationContext());
-                llamada.execute("31"); //TODO SUSTITUIR POR ID
+                llamada.execute(user.getIdPersona()+"");
             }
         });
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -157,7 +157,7 @@ public class MainActivity extends AppCompatActivity
 
             switch (position) {
                 case 0:
-                    return RecordatorioFragment.newInstance(1);
+                    return RecordatorioFragment.newInstance();
                 case 1:
                     return new MapFragment();
                 case 2:
