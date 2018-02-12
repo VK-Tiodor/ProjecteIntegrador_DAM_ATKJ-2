@@ -55,6 +55,7 @@ import java.util.concurrent.ExecutionException;
 
 import dam.android.dependeciapp.AsyncTasks.LanzaLlamada;
 import dam.android.dependeciapp.Controladores.Conexion;
+import dam.android.dependeciapp.Fragments.RecordatorioFragment;
 import dam.android.dependeciapp.Pojo.Usuario;
 
 public class MainActivity extends AppCompatActivity
@@ -187,7 +188,7 @@ public class MainActivity extends AppCompatActivity
             // Return a PlaceholderFragment (defined as a static inner class below).
             switch (position) {
                 case 0:
-                    return PlaceholderFragment.newInstance(position + 1);
+                    return RecordatorioFragment.newInstance(1);
                 case 1:
                     return new dam.android.dependeciapp.Fragments.MapFragment();
                 case 2:
@@ -228,11 +229,14 @@ public class MainActivity extends AppCompatActivity
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container,
                                  Bundle savedInstanceState) {
-            int position = getArguments().getInt(ARG_SECTION_NUMBER);
             View rootView = null;
-            rootView = inflater.inflate(R.layout.fragment_main, container, false);
-            TextView textView = (TextView) rootView.findViewById(R.id.section_label);
-            textView.setText(getString(R.string.section_format, getArguments().getInt(ARG_SECTION_NUMBER)));
+
+            int position = getArguments().getInt(ARG_SECTION_NUMBER);
+
+                rootView = inflater.inflate(R.layout.fragment_main, container, false);
+                TextView textView = (TextView) rootView.findViewById(R.id.section_label);
+                textView.setText(getString(R.string.section_format, getArguments().getInt(ARG_SECTION_NUMBER)));
+
             return rootView;
         }
     }
