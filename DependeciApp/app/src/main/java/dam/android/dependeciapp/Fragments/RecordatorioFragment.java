@@ -85,7 +85,7 @@ public class RecordatorioFragment extends Fragment {
      * >Communicating with Other Fragments</a> for more information.
      */
     public interface OnListFragmentInteractionListener {
-        // TODO: Hacer lo que toca
+        // MEDICAMENTO: Hacer lo que toca
         void onListFragmentInteraction(Recordatorio item);
     }
 }

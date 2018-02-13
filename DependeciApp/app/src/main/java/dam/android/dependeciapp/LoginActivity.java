@@ -49,7 +49,7 @@ public class LoginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         con = new Conexion();
         boolean resultado = IniciaSesionAutomaticamente();
-        //TODO Si no se pudiera establecer conexion usar la SQLite}
+        //MEDICAMENTO Si no se pudiera establecer conexion usar la SQLite}
         //Si la sesion se inicia automaticamente no se cargan ni la UI ni las preferencais
         //para ahorrar recursos y tiempo
         if (!resultado) {
