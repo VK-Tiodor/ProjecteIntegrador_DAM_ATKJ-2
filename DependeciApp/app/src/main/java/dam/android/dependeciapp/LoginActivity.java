@@ -48,8 +48,16 @@ public class LoginActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         con = new Conexion();
+        Intent i = getIntent();
+        boolean hasCerradoSesion = false;
+        if (i != null)
+            hasCerradoSesion = i.getBooleanExtra("CIERRA_SESION", false);
+        if (hasCerradoSesion)
+            borrarPreferencias();
         boolean resultado = IniciaSesionAutomaticamente();
-        //MEDICAMENTO Si no se pudiera establecer conexion usar la SQLite}
+
+
+        //TODO Si no se pudiera establecer conexion usar la SQLite}
         //Si la sesion se inicia automaticamente no se cargan ni la UI ni las preferencais
         //para ahorrar recursos y tiempo
         if (!resultado) {
@@ -104,7 +112,7 @@ public class LoginActivity extends AppCompatActivity {
         if (cancel) {
             // There was an error; don't attempt login and focus the first
             // form field with an error.
-             focusView.requestFocus();
+            focusView.requestFocus();
         } else {
             // Show a progress spinner, and kick off a background task to
             // perform the user login attempt.
@@ -207,6 +215,12 @@ public class LoginActivity extends AppCompatActivity {
         etDNI.setText(prefs.getString("user", ""));
         etPass.setText(prefs.getString("pass", ""));
     }
+
+    private void borrarPreferencias() {
+        SharedPreferences pref = getSharedPreferences(MYPREFS, MODE_PRIVATE);
+        pref.edit().clear().commit();
+    }
+
     //Si en las prefrencias pone que se inicie sesion automaticamente se trata de iniciar la sesion
     //y devuelve un booleano para ver si iniciamos el SetUi
     private boolean IniciaSesionAutomaticamente() {
@@ -243,6 +257,9 @@ public class LoginActivity extends AppCompatActivity {
                         //Si se ha marcado el CheckBox de guardar usuari y contraseña, se guardan
                         if (cbGuardaUsuarioPass.isChecked())
                             GuardaUsuarioPass(usuario, pass);
+                        //Y si se ha marcado el inicia sesion tambien se guardan
+                        else if (cbIniciaSesion.isChecked())
+                            GuardaUsuarioPass(usuario, pass);
                     }
                     //A partir del result set se crea el Usuario, que sera enviado al MainActivity
                     this.user = new Usuario(rs);
@@ -261,8 +278,8 @@ public class LoginActivity extends AppCompatActivity {
             //Si el logeo es correcto se crea el Intento del MainActivity y le pasamos el Usuario
             if (success) {
                 Intent i = new Intent(getApplicationContext(), MainActivity.class);
-               // i.putExtra("user",user);
-              //  i.putExtra("conexion",con);
+                 i.putExtra("user",user);
+                // i.putExtra("conexion",con);
                 startActivity(i);
                 finish();
             } else {

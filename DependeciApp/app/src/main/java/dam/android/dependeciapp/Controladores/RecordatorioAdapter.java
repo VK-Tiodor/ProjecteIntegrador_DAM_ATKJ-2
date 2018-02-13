@@ -1,9 +1,11 @@
 package dam.android.dependeciapp.Controladores;
 
 import android.content.Context;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
+import android.view.Menu;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
@@ -19,15 +21,15 @@ import java.util.List;
 public class RecordatorioAdapter extends RecyclerView.Adapter<RecordatorioAdapter.ViewHolder> {
 
     private final List<Recordatorio> recordatorioList;
-    private final RecordatorioFragment.OnListFragmentInteractionListener mListener;
     private Context context;
     private RecordatorioAdapter adapter;
+    private Menu appBarMenu;
 
 
-    public RecordatorioAdapter(List<Recordatorio> items, RecordatorioFragment.OnListFragmentInteractionListener listener,Context con) {
+    public RecordatorioAdapter(List<Recordatorio> items, Context con, Menu menu) {
         recordatorioList = items;
-        mListener = listener;
-        context=con;
+        context = con;
+        appBarMenu = menu;
     }
 
     @Override
@@ -44,22 +46,27 @@ public class RecordatorioAdapter extends RecyclerView.Adapter<RecordatorioAdapte
         holder.tvContenido.setText(recordatorioList.get(position).content);
         holder.tvHora.setText(recordatorioList.get(position).hora);
         holder.tvCuando.setText(recordatorioList.get(position).cuando);
-        adapter=this;
+        adapter = this;
         holder.mView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //if (null != mListener) {
-                //MEDICAMENTO Hacer que se abra un activity con los datos
-                RecordatorioDetalleFragment rdf = RecordatorioDetalleFragment.newInstance(holder.mItem,adapter);
-            try{
-                ((FragmentActivity)context).getSupportFragmentManager().beginTransaction().replace(R.id.fragment_content,rdf).addToBackStack(null).commit();
-                // Notify the active callbacks interface (the activity, if the
-                // fragment is attached to one) that an item has been selected.
-                // mListener.onListFragmentInteraction(holder.mItem);
-                // }
-            }catch (Exception e){
-                System.out.println(e.getMessage());
-            }
+                try {
+                    //Creamos una nueva instancia del Fragment de Detalle
+                    RecordatorioDetalleFragment fragmentDetalle = RecordatorioDetalleFragment.newInstance(holder.mItem, adapter, appBarMenu);
+                    //Obtenemos la lista de fragments activos
+                    List<Fragment> listFragment = ((FragmentActivity) context).getSupportFragmentManager().getFragments();
+                    //Seleccionamos el fragment que sea RecordatorioDetalleFragment y lo eliminamos
+                    for (Fragment fragment : listFragment) {
+                        if (fragment instanceof RecordatorioDetalleFragment)
+                            ((FragmentActivity) context).getSupportFragmentManager().beginTransaction().remove(fragment).commit();
+                    }
+                    //Introducimos el Fragment Detalle en el FrameLayout correspondiente
+                    ((FragmentActivity) context).getSupportFragmentManager().beginTransaction().replace(R.id.fragment_content, fragmentDetalle).addToBackStack(null).commit();
+                    //Al hacerlo, hacemos visible el menu
+                    appBarMenu.findItem(R.id.action_close_fragment).setVisible(true);
+                } catch (Exception e) {
+                    System.out.println(e.getMessage());
+                }
             }
         });
     }
@@ -70,9 +77,10 @@ public class RecordatorioAdapter extends RecyclerView.Adapter<RecordatorioAdapte
         return recordatorioList.size();
     }
 
-    public List<Recordatorio> getRecordatorioList(){
+    public List<Recordatorio> getRecordatorioList() {
         return recordatorioList;
     }
+
     public class ViewHolder extends RecyclerView.ViewHolder {
         public final View mView;
         public final TextView tvTitulo;
@@ -89,7 +97,6 @@ public class RecordatorioAdapter extends RecyclerView.Adapter<RecordatorioAdapte
             tvHora = (TextView) view.findViewById(R.id.tvHora);
             tvCuando = (TextView) view.findViewById(R.id.tvCuando);
         }
-
 
     }
 }

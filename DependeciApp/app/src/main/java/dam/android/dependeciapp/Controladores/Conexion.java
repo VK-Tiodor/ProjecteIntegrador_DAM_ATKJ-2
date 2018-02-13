@@ -21,10 +21,15 @@ public class Conexion implements Serializable{
         CreaConexion();
     }
 
-    public Connection getConnection() {
+    public Connection getCon() {
         return con;
-
     }
+
+    public void setCon(Connection con) {
+        this.con = con;
+    }
+
+
 
     private void CreaConexion() {
         try {

@@ -39,9 +39,9 @@ public class RecordatorioContent {
     }
 
     private static Recordatorio createDummyItem(int position) {
-        return new Recordatorio(position,"Tomar droga","Pero "+position+" pastillas","Hoy","12:"+position);
+        return new Recordatorio(position,"Tomar medicina","Tomar Ibuprofeno 600mg, tomar "+position+" pastillas","Hoy","12:"+position);
     }
-
+    //TODO aprobechar este metodo con sus modifiaciones para hacer el contenido de los Recordatorios
     private static String makeDetails(int position) {
         StringBuilder builder = new StringBuilder();
         builder.append("Details about Item: ").append(position);

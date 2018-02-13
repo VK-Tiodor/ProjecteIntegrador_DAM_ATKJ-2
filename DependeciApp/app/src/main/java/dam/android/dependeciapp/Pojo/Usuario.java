@@ -23,16 +23,15 @@ public class Usuario implements Serializable {
     private Date fAlta;
 
     public Usuario(ResultSet rs) throws SQLException {
-       DNI= rs.getString("DNI");
-       nombre=rs.getString("Nombre");
-       apellidos=rs.getString("Apellido");
-       fNacimiento=rs.getDate("Nacimiento");
-       genero=rs.getString("Genero");
-       tipoDeDependiente=rs.getString("Tipo de Dependiente");
-       fAlta=rs.getDate("Fecha de Alta");
-
+        rs.first();
+        DNI = rs.getString("DNI");
+        nombre = rs.getString("Nombre");
+        apellidos = rs.getString("Apellidos");
+        fNacimiento = rs.getDate("Nacimiento");
+        genero = rs.getString("Genero");
+        tipoDeDependiente = rs.getString("Tipo de Dependiente");
+        fAlta = rs.getDate("FechaAlta");
     }
-
 
 
     public int getIdPersona() {

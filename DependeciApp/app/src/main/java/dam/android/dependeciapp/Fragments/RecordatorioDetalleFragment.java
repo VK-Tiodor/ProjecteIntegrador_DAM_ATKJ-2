@@ -5,10 +5,13 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
+import android.view.Menu;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.TextView;
+import android.widget.Toolbar;
 
 import dam.android.dependeciapp.Controladores.RecordatorioAdapter;
 import dam.android.dependeciapp.Pojo.Recordatorio;
@@ -17,18 +20,12 @@ import dam.android.dependeciapp.R;
 /**
  * A simple {@link Fragment} subclass.
  * Activities that contain this fragment must implement the
- * {@link RecordatorioDetalleFragment.OnFragmentInteractionListener} interface
  * to handle interaction events.
  * Use the {@link RecordatorioDetalleFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
 public class RecordatorioDetalleFragment extends Fragment {
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
 
-    // TODO: Rename and change types of parameters
     private TextView titulo;
     private TextView contenido;
     private TextView cuando;
@@ -37,23 +34,29 @@ public class RecordatorioDetalleFragment extends Fragment {
     private RecordatorioAdapter adapter;
     private Button btTerminado;
     private Fragment fragment;
+    private Context context;
+    private Menu appBarMenu;
 
-    private OnFragmentInteractionListener mListener;
+
 
     public RecordatorioDetalleFragment() {
         // Required empty public constructor
     }
 
 
-    public static RecordatorioDetalleFragment newInstance(Recordatorio recordatorio,RecordatorioAdapter adapter) {
+
+    public static RecordatorioDetalleFragment newInstance(Recordatorio recordatorio, RecordatorioAdapter adapter, Menu menu) {
         RecordatorioDetalleFragment fragment = new RecordatorioDetalleFragment();
         fragment.setAdapter(adapter);
         fragment.setRecordatorio(recordatorio);
+        fragment.setAppBarMenu(menu);
         return fragment;
     }
     public void setAdapter(RecordatorioAdapter adapter){
         this.adapter=adapter;
-
+    }
+    public void setAppBarMenu(Menu appBarMenu) {
+        this.appBarMenu = appBarMenu;
     }
     public void setRecordatorio(Recordatorio recordatorio){
         this.recordatorio=recordatorio;
@@ -61,7 +64,6 @@ public class RecordatorioDetalleFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
     }
 
     @Override
@@ -81,6 +83,7 @@ public class RecordatorioDetalleFragment extends Fragment {
                 adapter.getRecordatorioList().remove(recordatorio);
                 adapter.notifyDataSetChanged();
                 getFragmentManager().beginTransaction().remove(fragment).commit();
+                appBarMenu.findItem(R.id.action_close_fragment).setVisible(false);
             }
         });
         titulo.setText(recordatorio.getTitulo());
@@ -90,28 +93,10 @@ public class RecordatorioDetalleFragment extends Fragment {
         return v;
     }
 
-    // TODO: Rename method, update argument and hook method into UI event
-    public void onButtonPressed(Uri uri) {
-        if (mListener != null) {
-            mListener.onFragmentInteraction(uri);
-        }
-    }
-
-    @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-        if (context instanceof OnFragmentInteractionListener) {
-            mListener = (OnFragmentInteractionListener) context;
-        } else {
-           // throw new RuntimeException(context.toString()
-            //        + " must implement OnFragmentInteractionListener");
-        }
-    }
 
     @Override
     public void onDetach() {
         super.onDetach();
-        mListener = null;
     }
 
     /**
@@ -124,8 +109,5 @@ public class RecordatorioDetalleFragment extends Fragment {
      * "http://developer.android.com/training/basics/fragments/communicating.html"
      * >Communicating with Other Fragments</a> for more information.
      */
-    public interface OnFragmentInteractionListener {
-        // TODO: Update argument type and name
-        void onFragmentInteraction(Uri uri);
-    }
+
 }
