@@ -39,7 +39,7 @@ public class RecordatorioContent {
     }
 
     private static Recordatorio createDummyItem(int position) {
-        return new Recordatorio("Tomar droga","Pero "+position+" pastillas","Hoy","12:"+position);
+        return new Recordatorio(position,"Tomar droga","Pero "+position+" pastillas","Hoy","12:"+position);
     }
 
     private static String makeDetails(int position) {

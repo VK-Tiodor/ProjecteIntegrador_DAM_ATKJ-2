@@ -157,7 +157,8 @@ public class MainActivity extends AppCompatActivity
 
             switch (position) {
                 case 0:
-                    return RecordatorioFragment.newInstance();
+
+                    return RecordatorioFragment.newInstance(getApplicationContext());
                 case 1:
                     return new MapFragment();
                 case 2:

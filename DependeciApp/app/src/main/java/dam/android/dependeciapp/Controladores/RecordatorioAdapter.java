@@ -1,11 +1,14 @@
 package dam.android.dependeciapp.Controladores;
 
+import android.content.Context;
+import android.support.v4.app.FragmentActivity;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import dam.android.dependeciapp.Fragments.RecordatorioDetalleFragment;
 import dam.android.dependeciapp.Fragments.RecordatorioFragment;
 import dam.android.dependeciapp.Pojo.Recordatorio;
 import dam.android.dependeciapp.R;
@@ -17,10 +20,14 @@ public class RecordatorioAdapter extends RecyclerView.Adapter<RecordatorioAdapte
 
     private final List<Recordatorio> recordatorioList;
     private final RecordatorioFragment.OnListFragmentInteractionListener mListener;
+    private Context context;
+    private RecordatorioAdapter adapter;
 
-    public RecordatorioAdapter(List<Recordatorio> items, RecordatorioFragment.OnListFragmentInteractionListener listener) {
+
+    public RecordatorioAdapter(List<Recordatorio> items, RecordatorioFragment.OnListFragmentInteractionListener listener,Context con) {
         recordatorioList = items;
         mListener = listener;
+        context=con;
     }
 
     @Override
@@ -37,25 +44,35 @@ public class RecordatorioAdapter extends RecyclerView.Adapter<RecordatorioAdapte
         holder.tvContenido.setText(recordatorioList.get(position).content);
         holder.tvHora.setText(recordatorioList.get(position).hora);
         holder.tvCuando.setText(recordatorioList.get(position).cuando);
-
+        adapter=this;
         holder.mView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (null != mListener) {
-                    //MEDICAMENTO Hacer que se abra un activity con los datos
-                    // Notify the active callbacks interface (the activity, if the
-                    // fragment is attached to one) that an item has been selected.
-                   // mListener.onListFragmentInteraction(holder.mItem);
-                }
+                //if (null != mListener) {
+                //MEDICAMENTO Hacer que se abra un activity con los datos
+                RecordatorioDetalleFragment rdf = RecordatorioDetalleFragment.newInstance(holder.mItem,adapter);
+            try{
+                ((FragmentActivity)context).getSupportFragmentManager().beginTransaction().replace(R.id.fragment_content,rdf).addToBackStack(null).commit();
+                // Notify the active callbacks interface (the activity, if the
+                // fragment is attached to one) that an item has been selected.
+                // mListener.onListFragmentInteraction(holder.mItem);
+                // }
+            }catch (Exception e){
+                System.out.println(e.getMessage());
+            }
             }
         });
     }
+
 
     @Override
     public int getItemCount() {
         return recordatorioList.size();
     }
 
+    public List<Recordatorio> getRecordatorioList(){
+        return recordatorioList;
+    }
     public class ViewHolder extends RecyclerView.ViewHolder {
         public final View mView;
         public final TextView tvTitulo;
@@ -68,9 +85,9 @@ public class RecordatorioAdapter extends RecyclerView.Adapter<RecordatorioAdapte
             super(view);
             mView = view;
             tvTitulo = (TextView) view.findViewById(R.id.tvTitulo);
-           tvContenido = (TextView) view.findViewById(R.id.tvContenido);
-           tvHora=(TextView) view.findViewById(R.id.tvHora);
-           tvCuando=(TextView)view.findViewById(R.id.tvCuando);
+            tvContenido = (TextView) view.findViewById(R.id.tvContenido);
+            tvHora = (TextView) view.findViewById(R.id.tvHora);
+            tvCuando = (TextView) view.findViewById(R.id.tvCuando);
         }
 
 

@@ -9,6 +9,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import dam.android.dependeciapp.Controladores.RecordatorioAdapter;
 import dam.android.dependeciapp.Pojo.Recordatorio;
@@ -20,6 +21,7 @@ public class RecordatorioFragment extends Fragment {
 
     private static final String ARG_COLUMN_COUNT = "column-count";
     private OnListFragmentInteractionListener mListener;
+    private Context context;
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
@@ -29,11 +31,17 @@ public class RecordatorioFragment extends Fragment {
     }
 
 
-    public static RecordatorioFragment newInstance() {
+    public static RecordatorioFragment newInstance(Context con) {
         RecordatorioFragment fragment = new RecordatorioFragment();
+        fragment.SetContext(con);
         return fragment;
     }
+    public void SetContext(Context con){
+        this.context=con;
+    }
+    public void setAdapter(RecordatorioAdapter adapter){
 
+    }
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -43,7 +51,6 @@ public class RecordatorioFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_recordatorio_list, container, false);
-
         // Set the adapter
         if (view instanceof RecyclerView) {
             Context context = view.getContext();
@@ -51,7 +58,7 @@ public class RecordatorioFragment extends Fragment {
             //Segun el numero de columnas se pone el linear o el grid
                 recyclerView.setLayoutManager(new LinearLayoutManager(context));
 
-            recyclerView.setAdapter(new RecordatorioAdapter(RecordatorioContent.ITEMS, mListener));
+            recyclerView.setAdapter(new RecordatorioAdapter(RecordatorioContent.ITEMS, mListener,context));
         }
         return view;
     }
