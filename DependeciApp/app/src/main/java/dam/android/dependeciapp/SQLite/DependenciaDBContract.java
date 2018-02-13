@@ -17,14 +17,14 @@ public final class DependenciaDBContract {
         public static final String _ID = "_id";
         public static final String MEDICAMENTO = "medicamento";
         public static final String DOSIS = "dosis";
-        public static final String HORA = "hora";
+        public static final String FECHA_HORA = "fecha_hora";
 
         public static final String CREATE_TABLE = "CREATE TABLE " + RecordatoriosDBContract.TABLE_NAME
                 + " ("
                 + RecordatoriosDBContract._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
                 + RecordatoriosDBContract.MEDICAMENTO + " TEXT NOT NULL, "
                 + RecordatoriosDBContract.DOSIS + " REAL NOT NULL, "
-                + RecordatoriosDBContract.HORA + " TEXT NOT NULL, "
+                + RecordatoriosDBContract.FECHA_HORA + " TEXT NOT NULL "
                 + ");";
 
         public static final String DELETE_TABLE = "DROP TABLE IF EXISTS " + RecordatoriosDBContract.TABLE_NAME;
@@ -45,9 +45,37 @@ public final class DependenciaDBContract {
                 + UbicacionesDBContract._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
                 + UbicacionesDBContract.LATITUD + " REAL NOT NULL, "
                 + UbicacionesDBContract.LONGITUD + " REAL NOT NULL, "
-                + UbicacionesDBContract.DIRECCION + " TEXT, "
+                + UbicacionesDBContract.DIRECCION + " TEXT NOT NULL"
                 + ");";
 
         public static final String DELETE_TABLE = "DROP TABLE IF EXISTS " + UbicacionesDBContract.TABLE_NAME;
+    }
+
+    public static class UsuarioDBContract {
+
+        public static final String TABLE_NAME = "usuario";
+
+        public static final String _ID = "_id";
+        public static final String DNI = "dni";
+        public static final String NOMBRE = "nombre";
+        public static final String APELLIDOS = "apellidos";
+        public static final String FECHA_NACIMIENTO = "fecha_nacimiento";
+        public static final String GENERO = "genero";
+        public static final String TIPO_DEPENDIENTE = "tipo_dependiente";
+        public static final String FECHA_ALTA = "fecha_alta";
+
+        public static final String CREATE_TABLE = "CREATE TABLE " + UsuarioDBContract.TABLE_NAME
+                + " ("
+                + UsuarioDBContract._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
+                + UsuarioDBContract.DNI + " TEXT NOT NULL, "
+                + UsuarioDBContract.NOMBRE + " TEXT NOT NULL, "
+                + UsuarioDBContract.APELLIDOS + " TEXT NOT NULL, "
+                + UsuarioDBContract.FECHA_NACIMIENTO + " TEXT NOT NULL, "
+                + UsuarioDBContract.GENERO + " TEXT NOT NULL, "
+                + UsuarioDBContract.TIPO_DEPENDIENTE + " TEXT NOT NULL, "
+                + UsuarioDBContract.FECHA_ALTA + " TEXT NOT NULL "
+                + ");";
+
+        public static final String DELETE_TABLE = "DROP TABLE IF EXISTS " + UsuarioDBContract.TABLE_NAME;
     }
 }
