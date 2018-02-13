@@ -1,4 +1,4 @@
-package dam.android.u4t8database.data;
+package dam.android.dependeciapp.SQLite;
 
 import android.content.ContentValues;
 import android.content.Context;
@@ -11,80 +11,150 @@ import android.database.sqlite.SQLiteDatabase;
 
 public class DependenciaDBManager {
 
-    private TodoListDBHelper todoListDBHelper;
+    public class RecordatoriosDBManager {
 
-    public DependenciaDBManager(Context context){
-        todoListDBHelper = TodoListDBHelper.getInstance(context);
-    }
+        private DependenciaDBHelper.RecordatoriosDBHelper recordatoriosDBHelper;
 
-    public void insert(String todo, String when, String priority, String status, String description){
-        SQLiteDatabase sqLiteDatabase = todoListDBHelper.getWritableDatabase();
+        public RecordatoriosDBManager(Context context) {
+            recordatoriosDBHelper = DependenciaDBHelper.RecordatoriosDBHelper.getInstance(context);
+        }
 
-        if(sqLiteDatabase != null){
-            ContentValues contentValues = new ContentValues();
+        public void insert(String medicamento, String dosis, String hora) {
+            SQLiteDatabase sqLiteDatabase = recordatoriosDBHelper.getWritableDatabase();
 
-            contentValues.put(TodoListDBContract.Tasks.TODO, todo);
-            contentValues.put(TodoListDBContract.Tasks.TO_ACCOMPLISH, when);
-            contentValues.put(TodoListDBContract.Tasks.PRIORITY, priority);
-            contentValues.put(TodoListDBContract.Tasks.STATUS, status);
-            contentValues.put(TodoListDBContract.Tasks.DESCRIPTION, description);
+            if (sqLiteDatabase != null) {
+                ContentValues contentValues = new ContentValues();
 
-            sqLiteDatabase.insert(TodoListDBContract.Tasks.TABLE_NAME, null, contentValues);
+                contentValues.put(DependenciaDBContract.RecordatoriosDBContract.MEDICAMENTO, medicamento);
+                contentValues.put(DependenciaDBContract.RecordatoriosDBContract.DOSIS, dosis);
+                contentValues.put(DependenciaDBContract.RecordatoriosDBContract.HORA, hora);
 
-            sqLiteDatabase.close();
+                sqLiteDatabase.insert(DependenciaDBContract.RecordatoriosDBContract.TABLE_NAME, null, contentValues);
+
+                sqLiteDatabase.close();
+            }
+        }
+
+        public void update(String id, String medicamento, String dosis, String hora) {
+            SQLiteDatabase sqLiteDatabase = recordatoriosDBHelper.getWritableDatabase();
+
+            if (sqLiteDatabase != null) {
+                sqLiteDatabase.execSQL("UPDATE " + DependenciaDBContract.RecordatoriosDBContract.TABLE_NAME + " SET "
+                        + DependenciaDBContract.RecordatoriosDBContract.MEDICAMENTO + " = '" + medicamento + "', "
+                        + DependenciaDBContract.RecordatoriosDBContract.DOSIS + " = '" + dosis + "', "
+                        + DependenciaDBContract.RecordatoriosDBContract.HORA + " = '" + hora + "', "
+                        + " WHERE " + DependenciaDBContract.RecordatoriosDBContract._ID + " = " + id);
+
+                sqLiteDatabase.close();
+            }
+        }
+
+        public void delete(String id) {
+            SQLiteDatabase sqLiteDatabase = recordatoriosDBHelper.getWritableDatabase();
+
+            if (sqLiteDatabase != null) {
+                sqLiteDatabase.execSQL("DELETE FROM " + DependenciaDBContract.RecordatoriosDBContract.TABLE_NAME + " WHERE "
+                        + DependenciaDBContract.RecordatoriosDBContract._ID + " = '" + id + "'");
+
+                sqLiteDatabase.close();
+            }
+        }
+
+        public Cursor getRows() {
+            Cursor cursor = null;
+
+            SQLiteDatabase sqLiteDatabase = recordatoriosDBHelper.getReadableDatabase();
+
+            if (sqLiteDatabase != null) {
+                String[] projection = new String[]{DependenciaDBContract.RecordatoriosDBContract._ID,
+                        DependenciaDBContract.RecordatoriosDBContract.MEDICAMENTO,
+                        DependenciaDBContract.RecordatoriosDBContract.DOSIS,
+                        DependenciaDBContract.RecordatoriosDBContract.HORA};
+
+                cursor = sqLiteDatabase.query(DependenciaDBContract.RecordatoriosDBContract.TABLE_NAME,
+                        projection,
+                        null,
+                        null,
+                        null,
+                        null,
+                        null);
+            }
+
+            return cursor;
         }
     }
 
-    public void update(String id, String todo, String when, String priority, String status, String description){
-        SQLiteDatabase sqLiteDatabase = todoListDBHelper.getWritableDatabase();
+    public class UbicacionesDBManager {
 
-        if(sqLiteDatabase != null){
-            sqLiteDatabase.execSQL("UPDATE " + TodoListDBContract.Tasks.TABLE_NAME + " SET "
-                    + TodoListDBContract.Tasks.TODO + " = '" + todo + "', "
-                    + TodoListDBContract.Tasks.TO_ACCOMPLISH + " = '" + when + "', "
-                    + TodoListDBContract.Tasks.PRIORITY + " = '" + priority + "', "
-                    + TodoListDBContract.Tasks.STATUS + " = '" + status + "', "
-                    + TodoListDBContract.Tasks.DESCRIPTION + " = '" + description + "'"
-                    + " WHERE " + TodoListDBContract.Tasks._ID + " = " + id);
+        private DependenciaDBHelper.UbicacionesDBHelper ubicacionesDBHelper;
 
-            sqLiteDatabase.close();
-        }
-    }
-
-    public void delete(String id){
-        SQLiteDatabase sqLiteDatabase = todoListDBHelper.getWritableDatabase();
-
-        if(sqLiteDatabase != null){
-            sqLiteDatabase.execSQL("DELETE FROM " + TodoListDBContract.Tasks.TABLE_NAME + " WHERE "
-                    + TodoListDBContract.Tasks._ID + " = '" + id + "'");
-
-            sqLiteDatabase.close();
-        }
-    }
-
-    public Cursor getRows(){
-        Cursor cursor = null;
-
-        SQLiteDatabase sqLiteDatabase = todoListDBHelper.getReadableDatabase();
-
-        if(sqLiteDatabase != null){
-            String[] projection = new String[]{TodoListDBContract.Tasks._ID,
-                                                TodoListDBContract.Tasks.TODO,
-                                                TodoListDBContract.Tasks.TO_ACCOMPLISH,
-                                                TodoListDBContract.Tasks.PRIORITY,
-                                                TodoListDBContract.Tasks.STATUS,
-                                                TodoListDBContract.Tasks.DESCRIPTION};
-
-            cursor = sqLiteDatabase.query(TodoListDBContract.Tasks.TABLE_NAME,
-                                            projection,
-                                            null,
-                                            null,
-                                            null,
-                                            null,
-                                            null);
+        public UbicacionesDBManager(Context context) {
+            ubicacionesDBHelper = DependenciaDBHelper.UbicacionesDBHelper.getInstance(context);
         }
 
-        return cursor;
-    }
+        public void insert(String latitud, String longitud, String direccion) {
+            SQLiteDatabase sqLiteDatabase = ubicacionesDBHelper.getWritableDatabase();
 
+            if (sqLiteDatabase != null) {
+                ContentValues contentValues = new ContentValues();
+
+                contentValues.put(DependenciaDBContract.UbicacionesDBContract.LATITUD, latitud);
+                contentValues.put(DependenciaDBContract.UbicacionesDBContract.LONGITUD, longitud);
+                contentValues.put(DependenciaDBContract.UbicacionesDBContract.DIRECCION, direccion);
+
+                sqLiteDatabase.insert(DependenciaDBContract.UbicacionesDBContract.TABLE_NAME, null, contentValues);
+
+                sqLiteDatabase.close();
+            }
+        }
+
+        public void update(String id, String latitud, String longitud, String direccion) {
+            SQLiteDatabase sqLiteDatabase = ubicacionesDBHelper.getWritableDatabase();
+
+            if (sqLiteDatabase != null) {
+                sqLiteDatabase.execSQL("UPDATE " + DependenciaDBContract.UbicacionesDBContract.TABLE_NAME + " SET "
+                        + DependenciaDBContract.UbicacionesDBContract.LATITUD + " = '" + latitud + "', "
+                        + DependenciaDBContract.UbicacionesDBContract.LONGITUD + " = '" + longitud + "', "
+                        + DependenciaDBContract.UbicacionesDBContract.DIRECCION + " = '" + direccion + "', "
+                        + " WHERE " + DependenciaDBContract.UbicacionesDBContract._ID + " = " + id);
+
+                sqLiteDatabase.close();
+            }
+        }
+
+        public void delete(String id) {
+            SQLiteDatabase sqLiteDatabase = ubicacionesDBHelper.getWritableDatabase();
+
+            if (sqLiteDatabase != null) {
+                sqLiteDatabase.execSQL("DELETE FROM " + DependenciaDBContract.UbicacionesDBContract.TABLE_NAME + " WHERE "
+                        + DependenciaDBContract.UbicacionesDBContract._ID + " = '" + id + "'");
+
+                sqLiteDatabase.close();
+            }
+        }
+
+        public Cursor getRows() {
+            Cursor cursor = null;
+
+            SQLiteDatabase sqLiteDatabase = ubicacionesDBHelper.getReadableDatabase();
+
+            if (sqLiteDatabase != null) {
+                String[] projection = new String[]{DependenciaDBContract.UbicacionesDBContract._ID,
+                        DependenciaDBContract.UbicacionesDBContract.LATITUD,
+                        DependenciaDBContract.UbicacionesDBContract.LONGITUD,
+                        DependenciaDBContract.UbicacionesDBContract.DIRECCION};
+
+                cursor = sqLiteDatabase.query(DependenciaDBContract.UbicacionesDBContract.TABLE_NAME,
+                        projection,
+                        null,
+                        null,
+                        null,
+                        null,
+                        null);
+            }
+
+            return cursor;
+        }
+    }
 }
+
