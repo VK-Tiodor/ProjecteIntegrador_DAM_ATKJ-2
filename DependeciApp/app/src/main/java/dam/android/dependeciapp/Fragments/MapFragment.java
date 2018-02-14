@@ -55,7 +55,9 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
         View rootView = inflater.inflate(R.layout.fragment_map, container, false);
         SupportMapFragment mapFragment = (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
-        Toast.makeText(getContext(), R.string.maps_this_may_take_a_few_seconds, Toast.LENGTH_LONG).show();
+        if(isFocusOnMapFragment()) {
+            Toast.makeText(getContext(), R.string.maps_this_may_take_a_few_seconds, Toast.LENGTH_LONG).show();
+        }
         return rootView;
     }
 
@@ -91,6 +93,10 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
         } else {
             super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         }
+    }
+
+    public boolean isFocusOnMapFragment(){
+        return (getActivity().getSupportFragmentManager().getPrimaryNavigationFragment() instanceof MapFragment);
     }
 
     private class MyLocationListener implements LocationListener {
@@ -142,23 +148,29 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
 
         @Override
         public void onProviderDisabled(String provider) {
-            Toast.makeText(getContext(), R.string.gps_disabled, Toast.LENGTH_LONG).show();
+            if(isFocusOnMapFragment()) {
+                Toast.makeText(getContext(), R.string.gps_disabled, Toast.LENGTH_LONG).show();
+            }
         }
 
         @Override
         public void onProviderEnabled(String provider) {
-            Toast.makeText(getContext(), R.string.gps_enabled, Toast.LENGTH_LONG).show();
+            if(isFocusOnMapFragment()) {
+                Toast.makeText(getContext(), R.string.gps_enabled, Toast.LENGTH_LONG).show();
+            }
         }
 
         @Override
         public void onStatusChanged(String provider, int status, Bundle extras) {
-            switch (status) {
-                case LocationProvider.OUT_OF_SERVICE:
-                    Toast.makeText(getContext(), R.string.maps_provider_out_of_service, Toast.LENGTH_LONG).show();
-                    break;
-                case LocationProvider.TEMPORARILY_UNAVAILABLE:
-                    Toast.makeText(getContext(), R.string.maps_provider_temporarily_unavailable, Toast.LENGTH_LONG).show();
-                    break;
+            if(isFocusOnMapFragment()){
+                switch (status) {
+                    case LocationProvider.OUT_OF_SERVICE:
+                        Toast.makeText(getContext(), R.string.maps_provider_out_of_service, Toast.LENGTH_LONG).show();
+                        break;
+                    case LocationProvider.TEMPORARILY_UNAVAILABLE:
+                        Toast.makeText(getContext(), R.string.maps_provider_temporarily_unavailable, Toast.LENGTH_LONG).show();
+                        break;
+                }
             }
         }
     }

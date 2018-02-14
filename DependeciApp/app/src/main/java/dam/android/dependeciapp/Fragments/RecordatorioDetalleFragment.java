@@ -70,7 +70,7 @@ public class RecordatorioDetalleFragment extends Fragment {
         View v = inflater.inflate(R.layout.fragment_recordatorio_detalle, container, false);
         titulo=v.findViewById(R.id.tvTitulo);
         contenido=v.findViewById(R.id.tvContenido);
-        cuando=v.findViewById(R.id.tvCuando);
+        cuando=v.findViewById(R.id.tvFecha);
         hora=v.findViewById(R.id.tvHora);
         btTerminado=(Button)v.findViewById(R.id.btTerminado);
         fragment=this;
