@@ -2,6 +2,7 @@ package dam.android.dependeciapp.Fragments;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.location.Address;
@@ -16,6 +17,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentActivity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -96,7 +98,15 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
     }
 
     public boolean isFocusOnMapFragment(){
-        return (getActivity().getSupportFragmentManager().getPrimaryNavigationFragment() instanceof MapFragment);
+        FragmentActivity fa = getActivity();
+        if(fa == null){
+            return false;
+        }
+        Fragment f = fa.getSupportFragmentManager().getPrimaryNavigationFragment();
+        if(f == null){
+            return false;
+        }
+        return (f instanceof MapFragment);
     }
 
     private class MyLocationListener implements LocationListener {

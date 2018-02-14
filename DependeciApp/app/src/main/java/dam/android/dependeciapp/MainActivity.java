@@ -1,5 +1,6 @@
 package dam.android.dependeciapp;
 
+import android.animation.Animator;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.AppBarLayout;
@@ -19,6 +20,10 @@ import android.support.v7.widget.Toolbar;
 
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.ViewAnimationUtils;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
+import android.view.animation.Interpolator;
 import android.widget.TextView;
 
 import java.util.List;
@@ -36,11 +41,11 @@ public class MainActivity extends AppCompatActivity
     private ViewPager mViewPager;
     private SectionsPagerAdapter mSectionsPagerAdapter;
     private FloatingActionButton fab;
-    private int fabSize;
     private Usuario user;
     private Conexion con;
     private Menu appBarMenu;
     private AppBarLayout appBarLayout;
+    private Toolbar toolbar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,11 +58,10 @@ public class MainActivity extends AppCompatActivity
 
     private void setUI() {
         appBarLayout = (AppBarLayout) findViewById(R.id.appbar);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         fab = (FloatingActionButton) findViewById(R.id.fab);
         //Guardamos el tamaño del Fab, para poder resituirlo a su tamaño original
-        fabSize = fab.getLayoutParams().width;
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -77,7 +81,7 @@ public class MainActivity extends AppCompatActivity
         TextView tvNombre = (TextView) navigationView.getHeaderView(0).findViewById(R.id.tvNombre);
         tvNombre.setText(user.getNombre() + " " + user.getApellidos());
         mViewPager = (ViewPager) findViewById(R.id.container);
-        TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
+        final TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
         mViewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout));
         tabLayout.addOnTabSelectedListener(new TabLayout.ViewPagerOnTabSelectedListener(mViewPager));
 
@@ -89,21 +93,16 @@ public class MainActivity extends AppCompatActivity
                 switch (posicion) {
                     case 0:
                         //Ponemos al FAB su tamaño original
-                        fab.getLayoutParams().height = fabSize;
-                        fab.getLayoutParams().width = fabSize;
                         break;
                     case 1:
                         //Ponemos al FAB su tamaño original
-                        fab.getLayoutParams().height = fabSize;
-                        fab.getLayoutParams().width = fabSize;
                         //Expandimos el appBarLayout, para poder cerrar RecordatorioDetalleFragment,
                         //en caso de que haya alguno abieto
                         appBarLayout.setExpanded(true);
                         break;
                     case 2:
                         //Hacemos el FAB mas grande
-                        fab.getLayoutParams().height = 1000;
-                        fab.getLayoutParams().width = 1000;
+                        fab.animate().scaleX(5).scaleY(5).translationX(-400).translationY(-450).setDuration(500);
                         //Expandimos el appBarLayout simplemente por estetica
                         appBarLayout.setExpanded(true);
                         cierraRecordatorioDetalle();
@@ -113,6 +112,9 @@ public class MainActivity extends AppCompatActivity
 
             @Override
             public void onTabUnselected(TabLayout.Tab tab) {
+                if(tab.getPosition() == 2){
+                    fab.animate().scaleX(1).scaleY(1).translationX(0).translationY(0).setDuration(500);
+                }
             }
 
             @Override
@@ -120,6 +122,7 @@ public class MainActivity extends AppCompatActivity
             }
         });
     }
+
     //Metodo para cerrar el RecordatorioDetalleFragment que pueda haber abierto
     private void cierraRecordatorioDetalle() {
         List<Fragment> listFragment = getSupportFragmentManager().getFragments();
