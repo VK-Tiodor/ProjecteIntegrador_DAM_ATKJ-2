@@ -23,8 +23,6 @@
         android:layout_gravity="bottom|end"
         android:layout_margin="@dimen/fab_margin"
         app:backgroundTint="@android:color/holo_red_dark"
-        app:layout_anchor="@+id/include"
-        app:layout_anchorGravity="right|bottom"
         app:srcCompat="@drawable/ic_fab_waring" />
 
 </android.support.design.widget.CoordinatorLayout>
