@@ -25,6 +25,6 @@
         app:backgroundTint="@android:color/holo_red_dark"
         app:layout_anchor="@+id/include"
         app:layout_anchorGravity="right|bottom"
-        app:srcCompat="@drawable/ic_fab_waring" />
+        app:srcCompat="@drawable/ic_fab_warning" />
 
 </android.support.design.widget.CoordinatorLayout>
