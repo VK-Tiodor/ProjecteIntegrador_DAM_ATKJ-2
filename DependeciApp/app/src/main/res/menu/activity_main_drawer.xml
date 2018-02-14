@@ -11,10 +11,6 @@
                     android:icon="@mipmap/ic_menu_user"
                     android:title="@string/your_data" />
                 <item
-                    android:id="@+id/nav_datosAsistente"
-                    android:icon="@mipmap/ic_menu_assistant"
-                    android:title="@string/assistant_data" />
-                <item
                     android:id="@+id/nav_cerrarSesion"
                     android:icon="?android:attr/actionModeCloseDrawable"
                     android:title="@string/cerrar_sesion" />

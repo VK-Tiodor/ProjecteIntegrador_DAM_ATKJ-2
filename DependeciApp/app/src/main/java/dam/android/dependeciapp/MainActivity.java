@@ -3,14 +3,12 @@ package dam.android.dependeciapp;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.AppBarLayout;
-import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
-import android.view.Gravity;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -58,6 +56,7 @@ public class MainActivity extends AppCompatActivity
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         fab = (FloatingActionButton) findViewById(R.id.fab);
+        //Guardamos el tamaño del Fab, para poder resituirlo a su tamaño original
         fabSize = fab.getLayoutParams().width;
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -89,17 +88,23 @@ public class MainActivity extends AppCompatActivity
                 int posicion = tab.getPosition();
                 switch (posicion) {
                     case 0:
+                        //Ponemos al FAB su tamaño original
                         fab.getLayoutParams().height = fabSize;
                         fab.getLayoutParams().width = fabSize;
                         break;
                     case 1:
+                        //Ponemos al FAB su tamaño original
                         fab.getLayoutParams().height = fabSize;
                         fab.getLayoutParams().width = fabSize;
+                        //Expandimos el appBarLayout, para poder cerrar RecordatorioDetalleFragment,
+                        //en caso de que haya alguno abieto
                         appBarLayout.setExpanded(true);
                         break;
                     case 2:
+                        //Hacemos el FAB mas grande
                         fab.getLayoutParams().height = 1000;
                         fab.getLayoutParams().width = 1000;
+                        //Expandimos el appBarLayout simplemente por estetica
                         appBarLayout.setExpanded(true);
                         cierraRecordatorioDetalle();
                         break;
@@ -115,7 +120,7 @@ public class MainActivity extends AppCompatActivity
             }
         });
     }
-
+    //Metodo para cerrar el RecordatorioDetalleFragment que pueda haber abierto
     private void cierraRecordatorioDetalle() {
         List<Fragment> listFragment = getSupportFragmentManager().getFragments();
         //Seleccionamos el fragment que sea RecordatorioDetalleFragment y lo eliminamos
@@ -139,11 +144,13 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.main, menu);
         appBarMenu = menu;
+        //Hacemos que no se vea, ya que su unica funcion es cerrar los RecordatorioDetalleFragment
+        //y mientras no haya ninguno abierto no tiene sentido que sea visible
         appBarMenu.findItem(R.id.action_close_fragment).setVisible(false);
         //Hacemos aqui el adaptador para que el menu no sea null a la hora de crear el SectionsPageAdapter
+        //ya que el setUI se inicia antes que este metodo
         mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
         mViewPager.setAdapter(mSectionsPagerAdapter);
         return true;
@@ -167,8 +174,6 @@ public class MainActivity extends AppCompatActivity
         int id = item.getItemId();
         switch (id) {
             case R.id.nav_datosPersonales:
-                break;
-            case R.id.nav_datosAsistente:
                 break;
             case R.id.nav_cerrarSesion:
                 cerrarSesion();
@@ -199,7 +204,6 @@ public class MainActivity extends AppCompatActivity
 
         @Override
         public Fragment getItem(int position) {
-
             switch (position) {
                 case 0:
                     //Le pasamos el menu para poder hacerlo visible al abrir el fragmento de Recordatorio Detalle

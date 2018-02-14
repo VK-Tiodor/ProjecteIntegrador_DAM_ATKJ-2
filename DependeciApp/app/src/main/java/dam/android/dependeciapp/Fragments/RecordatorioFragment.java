@@ -3,14 +3,12 @@ package dam.android.dependeciapp.Fragments;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
 import dam.android.dependeciapp.Controladores.RecordatorioAdapter;
 import dam.android.dependeciapp.Pojo.Recordatorio;
@@ -20,7 +18,6 @@ import dam.android.dependeciapp.Controladores.RecordatorioContent;
 
 public class RecordatorioFragment extends Fragment {
 
-    private static final String ARG_COLUMN_COUNT = "column-count";
     private OnListFragmentInteractionListener mListener;
     private Context context;
     private Menu appBarMenu;
@@ -33,19 +30,22 @@ public class RecordatorioFragment extends Fragment {
     }
 
 
-    public static RecordatorioFragment newInstance(Context con,Menu appBarMenu) {
+    public static RecordatorioFragment newInstance(Context con, Menu appBarMenu) {
         RecordatorioFragment fragment = new RecordatorioFragment();
         fragment.SetContext(con);
         fragment.setAppBarMenu(appBarMenu);
         return fragment;
     }
-    public void SetContext(Context con){
-        this.context=con;
+
+    public void SetContext(Context con) {
+        this.context = con;
     }
-    public void setAppBarMenu(Menu menu){
-        appBarMenu=menu;
+
+    public void setAppBarMenu(Menu menu) {
+        appBarMenu = menu;
 
     }
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -57,14 +57,12 @@ public class RecordatorioFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_recordatorio_list, container, false);
         //appBarMenu.findItem(R.id.action_close_fragment).setVisible(true);
 
-        // Set the adapter
         if (view instanceof RecyclerView) {
             Context context = view.getContext();
             RecyclerView recyclerView = (RecyclerView) view;
-            //Segun el numero de columnas se pone el linear o el grid
-                recyclerView.setLayoutManager(new LinearLayoutManager(context));
-
-            recyclerView.setAdapter(new RecordatorioAdapter(RecordatorioContent.ITEMS,context,appBarMenu));
+            //Le ponemos un gestor lineal
+            recyclerView.setLayoutManager(new LinearLayoutManager(context));
+            recyclerView.setAdapter(new RecordatorioAdapter(RecordatorioContent.ITEMS, context, appBarMenu));
         }
         return view;
     }

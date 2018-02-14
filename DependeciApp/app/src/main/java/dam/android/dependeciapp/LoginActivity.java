@@ -48,19 +48,19 @@ public class LoginActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         con = new Conexion();
+        //TODO Si no se pudiera establecer conexion usar la SQLite}
+
         Intent i = getIntent();
         boolean hasCerradoSesion = false;
         if (i != null)
             hasCerradoSesion = i.getBooleanExtra("CIERRA_SESION", false);
         if (hasCerradoSesion)
             borrarPreferencias();
-        boolean resultado = IniciaSesionAutomaticamente();
+        boolean seHaIniciado = IniciaSesionAutomaticamente();
 
-
-        //TODO Si no se pudiera establecer conexion usar la SQLite}
         //Si la sesion se inicia automaticamente no se cargan ni la UI ni las preferencais
         //para ahorrar recursos y tiempo
-        if (!resultado) {
+        if (!seHaIniciado) {
             setContentView(R.layout.activity_login);
             setUI();
             cargaPreferencias();

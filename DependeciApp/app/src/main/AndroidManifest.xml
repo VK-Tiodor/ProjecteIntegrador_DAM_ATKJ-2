@@ -18,11 +18,11 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme">
+        android:theme="@style/Principal">
         <activity
             android:name=".MainActivity"
             android:label="@string/app_name"
-            android:theme="@style/AppTheme.NoActionBar">
+            android:theme="@style/Principal.NoActionBar">
             <intent-filter>
                 <action android:name="dam.android.u3t1initialapp.STARTINGPOINT" />
 
@@ -60,7 +60,6 @@
             android:name="com.google.android.geo.API_KEY"
             android:value="@string/google_maps_key" />
 
-        <activity android:name=".GetLocation" />
     </application>
 
 </manifest>

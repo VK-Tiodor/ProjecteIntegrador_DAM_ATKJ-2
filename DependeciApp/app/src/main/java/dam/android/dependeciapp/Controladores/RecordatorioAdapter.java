@@ -11,7 +11,6 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import dam.android.dependeciapp.Fragments.RecordatorioDetalleFragment;
-import dam.android.dependeciapp.Fragments.RecordatorioFragment;
 import dam.android.dependeciapp.Pojo.Recordatorio;
 import dam.android.dependeciapp.R;
 
@@ -24,7 +23,6 @@ public class RecordatorioAdapter extends RecyclerView.Adapter<RecordatorioAdapte
     private Context context;
     private RecordatorioAdapter adapter;
     private Menu appBarMenu;
-
 
     public RecordatorioAdapter(List<Recordatorio> items, Context con, Menu menu) {
         recordatorioList = items;
@@ -62,7 +60,7 @@ public class RecordatorioAdapter extends RecyclerView.Adapter<RecordatorioAdapte
                     }
                     //Introducimos el Fragment Detalle en el FrameLayout correspondiente
                     ((FragmentActivity) context).getSupportFragmentManager().beginTransaction().replace(R.id.fragment_content, fragmentDetalle).addToBackStack(null).commit();
-                    //Al hacerlo, hacemos visible el menu
+                    //Al hacerlo, hacemos visible el menu, para poder cerar el Fragment
                     appBarMenu.findItem(R.id.action_close_fragment).setVisible(true);
                 } catch (Exception e) {
                     System.out.println(e.getMessage());
