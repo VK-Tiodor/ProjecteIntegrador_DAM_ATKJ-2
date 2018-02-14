@@ -123,12 +123,6 @@ public class MainActivity extends AppCompatActivity
         });
     }
 
-    @Override
-    protected void onStop() {
-        super.onStop();
-        finish();
-    }
-
     //Metodo para cerrar el RecordatorioDetalleFragment que pueda haber abierto
     private void cierraRecordatorioDetalle() {
         List<Fragment> listFragment = getSupportFragmentManager().getFragments();
