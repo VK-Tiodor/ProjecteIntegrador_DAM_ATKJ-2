@@ -35,15 +35,20 @@ public class DependenciaDBManager {
             }
         }
 
-        public void update(String id, String medicamento, String dosis, String hora) {
+        public void update(String id, String medicamento, String dosis, String fecha_hora) {
             SQLiteDatabase sqLiteDatabase = recordatoriosDBHelper.getWritableDatabase();
 
             if (sqLiteDatabase != null) {
-                sqLiteDatabase.execSQL("UPDATE " + DependenciaDBContract.RecordatoriosDBContract.TABLE_NAME + " SET "
-                        + DependenciaDBContract.RecordatoriosDBContract.MEDICAMENTO + " = '" + medicamento + "', "
-                        + DependenciaDBContract.RecordatoriosDBContract.DOSIS + " = '" + dosis + "', "
-                        + DependenciaDBContract.RecordatoriosDBContract.FECHA_HORA + " = '" + hora + "', "
-                        + " WHERE " + DependenciaDBContract.RecordatoriosDBContract._ID + " = " + id);
+                ContentValues contentValues = new ContentValues();
+                contentValues.put(DependenciaDBContract.RecordatoriosDBContract.MEDICAMENTO, medicamento);
+                contentValues.put(DependenciaDBContract.RecordatoriosDBContract.DOSIS, dosis);
+                contentValues.put(DependenciaDBContract.RecordatoriosDBContract.FECHA_HORA, fecha_hora);
+
+                String tableName = DependenciaDBContract.RecordatoriosDBContract.TABLE_NAME;
+                String whereClause = DependenciaDBContract.RecordatoriosDBContract._ID + " = ?";
+                String whereArgs[] = {id};
+
+                sqLiteDatabase.update(tableName, contentValues, whereClause, whereArgs);
 
                 sqLiteDatabase.close();
             }
@@ -53,8 +58,11 @@ public class DependenciaDBManager {
             SQLiteDatabase sqLiteDatabase = recordatoriosDBHelper.getWritableDatabase();
 
             if (sqLiteDatabase != null) {
-                sqLiteDatabase.execSQL("DELETE FROM " + DependenciaDBContract.RecordatoriosDBContract.TABLE_NAME + " WHERE "
-                        + DependenciaDBContract.RecordatoriosDBContract._ID + " = '" + id + "'");
+                String tableName = DependenciaDBContract.RecordatoriosDBContract.TABLE_NAME;
+                String whereClause = DependenciaDBContract.RecordatoriosDBContract._ID + " = ?";
+                String whereArgs[] = {id};
+
+                sqLiteDatabase.delete(tableName, whereClause, whereArgs);
 
                 sqLiteDatabase.close();
             }
@@ -112,11 +120,16 @@ public class DependenciaDBManager {
             SQLiteDatabase sqLiteDatabase = ubicacionesDBHelper.getWritableDatabase();
 
             if (sqLiteDatabase != null) {
-                sqLiteDatabase.execSQL("UPDATE " + DependenciaDBContract.UbicacionesDBContract.TABLE_NAME + " SET "
-                        + DependenciaDBContract.UbicacionesDBContract.LATITUD + " = '" + latitud + "', "
-                        + DependenciaDBContract.UbicacionesDBContract.LONGITUD + " = '" + longitud + "', "
-                        + DependenciaDBContract.UbicacionesDBContract.DIRECCION + " = '" + direccion + "', "
-                        + " WHERE " + DependenciaDBContract.UbicacionesDBContract._ID + " = " + id);
+                ContentValues contentValues = new ContentValues();
+                contentValues.put(DependenciaDBContract.UbicacionesDBContract.LATITUD, latitud);
+                contentValues.put(DependenciaDBContract.UbicacionesDBContract.LONGITUD, longitud);
+                contentValues.put(DependenciaDBContract.UbicacionesDBContract.DIRECCION, direccion);
+
+                String tableName = DependenciaDBContract.UbicacionesDBContract.TABLE_NAME;
+                String whereClause = DependenciaDBContract.UbicacionesDBContract._ID + " = ?";
+                String whereArgs[] = {id};
+
+                sqLiteDatabase.update(tableName, contentValues, whereClause, whereArgs);
 
                 sqLiteDatabase.close();
             }
@@ -126,8 +139,11 @@ public class DependenciaDBManager {
             SQLiteDatabase sqLiteDatabase = ubicacionesDBHelper.getWritableDatabase();
 
             if (sqLiteDatabase != null) {
-                sqLiteDatabase.execSQL("DELETE FROM " + DependenciaDBContract.UbicacionesDBContract.TABLE_NAME + " WHERE "
-                        + DependenciaDBContract.UbicacionesDBContract._ID + " = '" + id + "'");
+                String tableName = DependenciaDBContract.UbicacionesDBContract.TABLE_NAME;
+                String whereClause = DependenciaDBContract.UbicacionesDBContract._ID + " = ?";
+                String whereArgs[] = {id};
+
+                sqLiteDatabase.delete(tableName, whereClause, whereArgs);
 
                 sqLiteDatabase.close();
             }
@@ -189,15 +205,20 @@ public class DependenciaDBManager {
             SQLiteDatabase sqLiteDatabase = usuarioDBHelper.getWritableDatabase();
 
             if (sqLiteDatabase != null) {
-                sqLiteDatabase.execSQL("UPDATE " + DependenciaDBContract.UsuarioDBContract.TABLE_NAME + " SET "
-                        + DependenciaDBContract.UsuarioDBContract.DNI + " = '" + dni + "', "
-                        + DependenciaDBContract.UsuarioDBContract.NOMBRE + " = '" + nombre + "', "
-                        + DependenciaDBContract.UsuarioDBContract.APELLIDOS + " = '" + apellidos + "', "
-                        + DependenciaDBContract.UsuarioDBContract.FECHA_NACIMIENTO + " = '" + fecha_nacimiento + "', "
-                        + DependenciaDBContract.UsuarioDBContract.GENERO + " = '" + genero + "', "
-                        + DependenciaDBContract.UsuarioDBContract.TIPO_DEPENDIENTE + " = '" + tipo_dependiente + "', "
-                        + DependenciaDBContract.UsuarioDBContract.FECHA_ALTA + " = '" + fecha_alta + "', "
-                        + " WHERE " + DependenciaDBContract.UsuarioDBContract._ID + " = " + id);
+                ContentValues contentValues = new ContentValues();
+                contentValues.put(DependenciaDBContract.UsuarioDBContract.DNI, dni);
+                contentValues.put(DependenciaDBContract.UsuarioDBContract.NOMBRE, nombre);
+                contentValues.put(DependenciaDBContract.UsuarioDBContract.APELLIDOS, apellidos);
+                contentValues.put(DependenciaDBContract.UsuarioDBContract.FECHA_NACIMIENTO, fecha_nacimiento);
+                contentValues.put(DependenciaDBContract.UsuarioDBContract.GENERO, genero);
+                contentValues.put(DependenciaDBContract.UsuarioDBContract.TIPO_DEPENDIENTE, tipo_dependiente);
+                contentValues.put(DependenciaDBContract.UsuarioDBContract.FECHA_ALTA, fecha_alta);
+
+                String tableName = DependenciaDBContract.UsuarioDBContract.TABLE_NAME;
+                String whereClause = DependenciaDBContract.UsuarioDBContract._ID + " = ?";
+                String whereArgs[] = {id};
+
+                sqLiteDatabase.update(tableName, contentValues, whereClause, whereArgs);
 
                 sqLiteDatabase.close();
             }
@@ -207,8 +228,11 @@ public class DependenciaDBManager {
             SQLiteDatabase sqLiteDatabase = usuarioDBHelper.getWritableDatabase();
 
             if (sqLiteDatabase != null) {
-                sqLiteDatabase.execSQL("DELETE FROM " + DependenciaDBContract.UsuarioDBContract.TABLE_NAME + " WHERE "
-                        + DependenciaDBContract.UsuarioDBContract._ID + " = '" + id + "'");
+                String tableName = DependenciaDBContract.UsuarioDBContract.TABLE_NAME;
+                String whereClause = DependenciaDBContract.UsuarioDBContract._ID + " = ?";
+                String whereArgs[] = {id};
+
+                sqLiteDatabase.delete(tableName, whereClause, whereArgs);
 
                 sqLiteDatabase.close();
             }
