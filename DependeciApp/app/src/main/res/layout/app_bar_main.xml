@@ -5,6 +5,18 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="dam.android.dependeciapp.MainActivity">
+    <com.github.fafaldo.fabtoolbar.widget.FABToolbarLayout
+        android:id="@+id/fabtoolbar"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:showDuration="500"
+        app:hideDuration="300"
+        app:horizontalMargin="30dp"
+        app:verticalMargin="30dp"
+        app:fadeInFraction="0.2"
+        app:fabId="@+id/fab"
+        app:containerId="@+id/fabtoolbar_container"
+        app:fabToolbarId="@+id/fabtoolbar_toolbar">
 
     <android.support.design.widget.AppBarLayout
         android:id="@+id/appBarLayout"
@@ -17,15 +29,59 @@
     <include layout="@layout/content_main"
         android:id="@+id/include"/>
 
-    <android.support.design.widget.FloatingActionButton
-        android:id="@+id/fab"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="bottom|end"
-        android:layout_margin="@dimen/fab_margin"
-        app:backgroundTint="@android:color/holo_red_dark"
-        app:layout_anchor="@+id/include"
-        app:layout_anchorGravity="right|bottom"
-        app:srcCompat="@drawable/ic_fab_warning" />
+
+        <RelativeLayout
+            android:id="@id/fabtoolbar_container"
+            android:layout_width="match_parent"
+            android:layout_height="77dp"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentStart="true"
+            app:layout_anchor="@+id/include"
+            app:layout_anchorGravity="bottom|center"
+            tools:layout_editor_absoluteY="490dp">
+
+            <android.support.design.widget.FloatingActionButton
+                android:id="@+id/fab"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:layout_centerVertical="true"
+                android:layout_gravity="bottom|end"
+                android:layout_marginBottom="8dp"
+                android:layout_marginRight="8dp"
+                app:backgroundTint="@android:color/holo_red_dark"
+                app:layout_anchorGravity="right|bottom"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:srcCompat="@drawable/ic_fab_warning" />
+
+        </RelativeLayout>
+        <LinearLayout
+            android:id="@id/fabtoolbar_toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="70dp"
+            android:layout_alignParentBottom="true"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:id="@+id/terminado"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:scaleType="centerInside"
+                app:srcCompat="@drawable/ic_vector_check" />
+
+            <ImageView
+                android:id="@+id/cerrar"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:scaleType="centerInside"
+                app:srcCompat="@android:drawable/ic_menu_close_clear_cancel" />
+
+
+
+        </LinearLayout>
+    </com.github.fafaldo.fabtoolbar.widget.FABToolbarLayout>
 
 </android.support.design.widget.CoordinatorLayout>

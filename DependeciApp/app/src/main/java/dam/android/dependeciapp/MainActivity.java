@@ -24,7 +24,10 @@ import android.view.ViewAnimationUtils;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.view.animation.Interpolator;
+import android.widget.ImageView;
 import android.widget.TextView;
+
+import com.github.fafaldo.fabtoolbar.widget.FABToolbarLayout;
 
 import java.util.List;
 
@@ -43,9 +46,9 @@ public class MainActivity extends AppCompatActivity
     private FloatingActionButton fab;
     private Usuario user;
     private Conexion con;
-    private Menu appBarMenu;
     private AppBarLayout appBarLayout;
     private Toolbar toolbar;
+    private FABToolbarLayout fabToolbar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,6 +62,7 @@ public class MainActivity extends AppCompatActivity
     private void setUI() {
         appBarLayout = (AppBarLayout) findViewById(R.id.appbar);
         toolbar = (Toolbar) findViewById(R.id.toolbar);
+        fabToolbar = (FABToolbarLayout) findViewById(R.id.fabtoolbar);
         setSupportActionBar(toolbar);
         fab = (FloatingActionButton) findViewById(R.id.fab);
         //Guardamos el tamaño del Fab, para poder resituirlo a su tamaño original
@@ -71,6 +75,7 @@ public class MainActivity extends AppCompatActivity
                 }
             }
         });
+
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         final ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
@@ -84,7 +89,8 @@ public class MainActivity extends AppCompatActivity
         final TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
         mViewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout));
         tabLayout.addOnTabSelectedListener(new TabLayout.ViewPagerOnTabSelectedListener(mViewPager));
-
+        mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
+        mViewPager.setAdapter(mSectionsPagerAdapter);
         //Se ejecuta cada vez que cambiamos de tab
         tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
@@ -98,22 +104,28 @@ public class MainActivity extends AppCompatActivity
                         //Ponemos al FAB su tamaño original
                         //Expandimos el appBarLayout, para poder cerrar RecordatorioDetalleFragment,
                         //en caso de que haya alguno abieto
+                        cierraRecordatorioDetalle();
+
                         appBarLayout.setExpanded(true);
                         break;
                     case 2:
                         //Hacemos el FAB mas grande
-                        fab.animate().scaleX(5).scaleY(5).translationX(-400).translationY(-450).setDuration(500);
+                        cierraRecordatorioDetalle();
+
+                        fab.animate().scaleX(5).scaleY(5).translationX(-400).translationY(-450).setDuration(500).setStartDelay(500);
                         //Expandimos el appBarLayout simplemente por estetica
                         appBarLayout.setExpanded(true);
-                        cierraRecordatorioDetalle();
                         break;
                 }
             }
 
             @Override
             public void onTabUnselected(TabLayout.Tab tab) {
-                if(tab.getPosition() == 2){
+                if (tab.getPosition() == 2) {
                     fab.animate().scaleX(1).scaleY(1).translationX(0).translationY(0).setDuration(500);
+                } else if (tab.getPosition() == 0) {
+                   // fabToolbar.hide();
+
                 }
             }
 
@@ -130,7 +142,8 @@ public class MainActivity extends AppCompatActivity
         for (Fragment fragment : listFragment) {
             if (fragment instanceof RecordatorioDetalleFragment) {
                 getSupportFragmentManager().beginTransaction().remove(fragment).commit();
-                appBarMenu.findItem(R.id.action_close_fragment).setVisible(false);
+                fabToolbar.hide();
+
             }
         }
     }
@@ -141,21 +154,16 @@ public class MainActivity extends AppCompatActivity
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
         } else {
+            finish();
             super.onBackPressed();
         }
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.main, menu);
-        appBarMenu = menu;
-        //Hacemos que no se vea, ya que su unica funcion es cerrar los RecordatorioDetalleFragment
-        //y mientras no haya ninguno abierto no tiene sentido que sea visible
-        appBarMenu.findItem(R.id.action_close_fragment).setVisible(false);
-        //Hacemos aqui el adaptador para que el menu no sea null a la hora de crear el SectionsPageAdapter
-        //ya que el setUI se inicia antes que este metodo
-        mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
-        mViewPager.setAdapter(mSectionsPagerAdapter);
+        //  getMenuInflater().inflate(R.menu.main, menu);
+
+
         return true;
     }
 
@@ -210,7 +218,7 @@ public class MainActivity extends AppCompatActivity
             switch (position) {
                 case 0:
                     //Le pasamos el menu para poder hacerlo visible al abrir el fragmento de Recordatorio Detalle
-                    return RecordatorioFragment.newInstance(getApplicationContext(), appBarMenu);
+                    return RecordatorioFragment.newInstance(getApplicationContext());
                 case 1:
                     return new MapFragment();
                 case 2:

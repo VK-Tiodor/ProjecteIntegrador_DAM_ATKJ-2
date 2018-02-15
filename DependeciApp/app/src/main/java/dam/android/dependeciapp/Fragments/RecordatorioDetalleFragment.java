@@ -8,7 +8,10 @@ import android.view.Menu;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
+
+import com.github.fafaldo.fabtoolbar.widget.FABToolbarLayout;
 
 import dam.android.dependeciapp.Controladores.RecordatorioAdapter;
 import dam.android.dependeciapp.Pojo.Recordatorio;
@@ -29,10 +32,8 @@ public class RecordatorioDetalleFragment extends Fragment {
     private TextView hora;
     private Recordatorio recordatorio;
     private RecordatorioAdapter adapter;
-    private Button btTerminado;
     private Fragment fragment;
     private Context context;
-    private Menu appBarMenu;
 
 
 
@@ -42,18 +43,14 @@ public class RecordatorioDetalleFragment extends Fragment {
 
 
 
-    public static RecordatorioDetalleFragment newInstance(Recordatorio recordatorio, RecordatorioAdapter adapter, Menu menu) {
+    public static RecordatorioDetalleFragment newInstance(Recordatorio recordatorio, RecordatorioAdapter adapter) {
         RecordatorioDetalleFragment fragment = new RecordatorioDetalleFragment();
         fragment.setAdapter(adapter);
         fragment.setRecordatorio(recordatorio);
-        fragment.setAppBarMenu(menu);
         return fragment;
     }
     public void setAdapter(RecordatorioAdapter adapter){
         this.adapter=adapter;
-    }
-    public void setAppBarMenu(Menu appBarMenu) {
-        this.appBarMenu = appBarMenu;
     }
     public void setRecordatorio(Recordatorio recordatorio){
         this.recordatorio=recordatorio;
@@ -72,17 +69,31 @@ public class RecordatorioDetalleFragment extends Fragment {
         contenido=v.findViewById(R.id.tvContenido);
         cuando=v.findViewById(R.id.tvFecha);
         hora=v.findViewById(R.id.tvHora);
-        btTerminado=(Button)v.findViewById(R.id.btTerminado);
         fragment=this;
-        btTerminado.setOnClickListener(new View.OnClickListener() {
+        ImageView terminar=(ImageView)getActivity().findViewById(R.id.terminado);
+        terminar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 adapter.getRecordatorioList().remove(recordatorio);
                 adapter.notifyDataSetChanged();
                 getFragmentManager().beginTransaction().remove(fragment).commit();
-                appBarMenu.findItem(R.id.action_close_fragment).setVisible(false);
+                FABToolbarLayout fabToolbar=(FABToolbarLayout) getActivity().findViewById(R.id.fabtoolbar);
+                fabToolbar.hide();
+
             }
         });
+        ImageView cerrar=(ImageView)getActivity().findViewById(R.id.cerrar);
+        cerrar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                FABToolbarLayout fabToolbar=(FABToolbarLayout) getActivity().findViewById(R.id.fabtoolbar);
+                getFragmentManager().beginTransaction().remove(fragment).commit();
+                fabToolbar.hide();
+
+            }
+        });
+
+
         titulo.setText(recordatorio.getTitulo());
         contenido.setText(recordatorio.getContent());
         cuando.setText(recordatorio.getCuando());

@@ -10,7 +10,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.github.fafaldo.fabtoolbar.widget.FABToolbarLayout;
+
 import dam.android.dependeciapp.Fragments.RecordatorioDetalleFragment;
+import dam.android.dependeciapp.MainActivity;
 import dam.android.dependeciapp.Pojo.Recordatorio;
 import dam.android.dependeciapp.R;
 
@@ -22,12 +25,13 @@ public class RecordatorioAdapter extends RecyclerView.Adapter<RecordatorioAdapte
     private final List<Recordatorio> recordatorioList;
     private Context context;
     private RecordatorioAdapter adapter;
-    private Menu appBarMenu;
+    private FABToolbarLayout fabToolbar;
 
-    public RecordatorioAdapter(List<Recordatorio> items, Context con, Menu menu) {
+
+    public RecordatorioAdapter(List<Recordatorio> items, Context con, FABToolbarLayout fabToolbar) {
         recordatorioList = items;
         context = con;
-        appBarMenu = menu;
+        this.fabToolbar = fabToolbar;
     }
 
     @Override
@@ -45,23 +49,25 @@ public class RecordatorioAdapter extends RecyclerView.Adapter<RecordatorioAdapte
         holder.tvHora.setText(recordatorioList.get(position).hora);
         holder.tvCuando.setText(recordatorioList.get(position).cuando);
         adapter = this;
+
         holder.mView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 try {
                     //Creamos una nueva instancia del Fragment de Detalle
-                    RecordatorioDetalleFragment fragmentDetalle = RecordatorioDetalleFragment.newInstance(holder.mItem, adapter, appBarMenu);
+                    RecordatorioDetalleFragment fragmentDetalle = RecordatorioDetalleFragment.newInstance(holder.mItem, adapter);
                     //Obtenemos la lista de fragments activos
                     List<Fragment> listFragment = ((FragmentActivity) context).getSupportFragmentManager().getFragments();
                     //Seleccionamos el fragment que sea RecordatorioDetalleFragment y lo eliminamos
-                    for (Fragment fragment : listFragment) {
-                        if (fragment instanceof RecordatorioDetalleFragment)
-                            ((FragmentActivity) context).getSupportFragmentManager().beginTransaction().remove(fragment).commit();
-                    }
+                    cierraRecordatorioDetalle();
+
                     //Introducimos el Fragment Detalle en el FrameLayout correspondiente
                     ((FragmentActivity) context).getSupportFragmentManager().beginTransaction().replace(R.id.fragment_content, fragmentDetalle).addToBackStack(null).commit();
                     //Al hacerlo, hacemos visible el menu, para poder cerar el Fragment
-                    appBarMenu.findItem(R.id.action_close_fragment).setVisible(true);
+                    // private FABToolbarLayout fabToolbar;
+                    if (fabToolbar.isFab())
+                        fabToolbar.show();
+
                 } catch (Exception e) {
                     System.out.println(e.getMessage());
                 }
@@ -69,6 +75,16 @@ public class RecordatorioAdapter extends RecyclerView.Adapter<RecordatorioAdapte
         });
     }
 
+    private void cierraRecordatorioDetalle() {
+        List<Fragment> listFragment = ((FragmentActivity) context).getSupportFragmentManager().getFragments();
+        //Seleccionamos el fragment que sea RecordatorioDetalleFragment y lo eliminamos
+        for (Fragment fragment : listFragment) {
+            if (fragment instanceof RecordatorioDetalleFragment) {
+                ((FragmentActivity) context).getSupportFragmentManager().beginTransaction().remove(fragment).commit();
+
+            }
+        }
+    }
 
     @Override
     public int getItemCount() {
