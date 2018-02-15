@@ -1,4 +1,4 @@
-package dam.android.dependeciapp.SQLite;
+package dam.android.dependeciapp.Controladores.SQLite;
 
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;

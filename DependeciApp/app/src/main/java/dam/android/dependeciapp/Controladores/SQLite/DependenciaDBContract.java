@@ -1,4 +1,4 @@
-package dam.android.dependeciapp.SQLite;
+package dam.android.dependeciapp.Controladores.SQLite;
 
 /**
  * Created by Tiodor on 22/01/2018.

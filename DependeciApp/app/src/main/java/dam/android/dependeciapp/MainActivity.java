@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.TabItem;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -85,7 +86,7 @@ public class MainActivity extends AppCompatActivity
         navigationView.setNavigationItemSelectedListener(this);
         TextView tvNombre = (TextView) navigationView.getHeaderView(0).findViewById(R.id.tvNombre);
         tvNombre.setText(user.getNombre() + " " + user.getApellidos());
-        mViewPager = (ViewPager) findViewById(R.id.container);
+        mViewPager = (ViewPager) findViewById(R.id.tabsContainer);
         final TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
         mViewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout));
         tabLayout.addOnTabSelectedListener(new TabLayout.ViewPagerOnTabSelectedListener(mViewPager));
@@ -97,22 +98,18 @@ public class MainActivity extends AppCompatActivity
             public void onTabSelected(TabLayout.Tab tab) {
                 int posicion = tab.getPosition();
                 switch (posicion) {
-                    case 0:
-                        //Ponemos al FAB su tamaño original
-                        break;
                     case 1:
-                        //Ponemos al FAB su tamaño original
-                        //Expandimos el appBarLayout, para poder cerrar RecordatorioDetalleFragment,
-                        //en caso de que haya alguno abieto
                         cierraRecordatorioDetalle();
-
+                        fab.animate().scaleX(1).scaleY(1).translationX(0).translationY(0).setDuration(500);
                         appBarLayout.setExpanded(true);
                         break;
                     case 2:
                         //Hacemos el FAB mas grande
-                        cierraRecordatorioDetalle();
+                        View screenView = findViewById(R.id.drawer_layout);
+                        float centrex = screenView.getWidth() / 3;
+                        float centreY = screenView.getHeight() / 3;
 
-                        fab.animate().scaleX(5).scaleY(5).translationX(-400).translationY(-450).setDuration(500).setStartDelay(500);
+                        fab.animate().scaleX(4).scaleY(4).translationX(-centrex).translationY(-centreY).setDuration(500);
                         //Expandimos el appBarLayout simplemente por estetica
                         appBarLayout.setExpanded(true);
                         break;
@@ -121,17 +118,22 @@ public class MainActivity extends AppCompatActivity
 
             @Override
             public void onTabUnselected(TabLayout.Tab tab) {
-                if (tab.getPosition() == 2) {
-                    fab.animate().scaleX(1).scaleY(1).translationX(0).translationY(0).setDuration(500);
-                } else if (tab.getPosition() == 0) {
-                   // fabToolbar.hide();
-
+                int posicion = tab.getPosition();
+                switch (posicion){
+                    case 0:
+                        cierraRecordatorioDetalle();
+                        break;
+                    case 2:
+                        fab.animate().scaleX(1).scaleY(1).translationX(0).translationY(0).setDuration(500);
+                        break;
                 }
             }
 
             @Override
             public void onTabReselected(TabLayout.Tab tab) {
+
             }
+
         });
     }
 
@@ -143,7 +145,6 @@ public class MainActivity extends AppCompatActivity
             if (fragment instanceof RecordatorioDetalleFragment) {
                 getSupportFragmentManager().beginTransaction().remove(fragment).commit();
                 fabToolbar.hide();
-
             }
         }
     }
@@ -167,16 +168,6 @@ public class MainActivity extends AppCompatActivity
         return true;
     }
 
-    //Selected del menu del toolbar
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        int id = item.getItemId();
-        if (id == R.id.action_close_fragment) {
-            cierraRecordatorioDetalle();
-            return true;
-        }
-        return super.onOptionsItemSelected(item);
-    }
 
     //On selected del menu del Navigation View
     @SuppressWarnings("StatementWithEmptyBody")
