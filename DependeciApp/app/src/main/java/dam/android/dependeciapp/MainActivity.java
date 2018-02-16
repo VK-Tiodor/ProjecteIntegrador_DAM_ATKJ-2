@@ -3,6 +3,7 @@ package dam.android.dependeciapp;
 import android.animation.Animator;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.TabItem;
@@ -176,6 +177,9 @@ public class MainActivity extends AppCompatActivity
         int id = item.getItemId();
         switch (id) {
             case R.id.nav_datosPersonales:
+                Intent i = new Intent(this, UsuarioActivity.class);
+                i.putExtra("Usuario", user);
+                startActivity(i);
                 break;
             case R.id.nav_cerrarSesion:
                 cerrarSesion();

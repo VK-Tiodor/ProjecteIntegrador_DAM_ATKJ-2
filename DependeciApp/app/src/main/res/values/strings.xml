@@ -47,5 +47,15 @@
     <string name="title_item_detail">Item Detail</string>
     <string name="inicia_sesion_automaticamente">Inicia sesion automaticamente</string>
 
+    <!-- Strings related to "activity_usuario" Layout -->
+    <string name="tvUsuarioId">Identificador de Usuario: </string>
+    <string name="tvNombre">Nombre: </string>
+    <string name="tvApellidos">Apellidos: </string>
+    <string name="tvDni">DNI: </string>
+    <string name="tvFechaNacimiento">Fecha de nacimiento: </string>
+    <string name="tvGenero">Genero: </string>
+    <string name="tvFechaAlta">Fecha de alta: </string>
+    <string name="tvTipoDependiente">Tipo de dependiente: </string>
+    <string name="btnCerrar">Cerrar</string>
 
 </resources>
