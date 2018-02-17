@@ -7,9 +7,11 @@
     android:name="dam.android.dependeciapp.RecordatorioFragment"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:layout_marginLeft="16dp"
-    android:layout_marginRight="16dp"
+    android:layout_marginLeft="0dp"
+    android:layout_marginRight="0dp"
+    android:background="@android:color/holo_orange_light"
+    android:clipToPadding="false"
+    android:padding="8dp"
     app:layoutManager="LinearLayoutManager"
     tools:context="dam.android.dependeciapp.Fragments.RecordatorioFragment"
-    tools:listitem="@layout/recordatorio_item">
-</android.support.v7.widget.RecyclerView>
+    tools:listitem="@layout/recordatorio_item"></android.support.v7.widget.RecyclerView>

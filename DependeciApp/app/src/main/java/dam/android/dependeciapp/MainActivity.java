@@ -114,15 +114,14 @@ public class MainActivity extends AppCompatActivity
                 int posicion = tab.getPosition();
                 switch (posicion) {
                     case 1:
-                        // fab.animate().scaleX(1).scaleY(1).translationX(0).translationY(0).setDuration(500);
+                        fab.show();
                         break;
                     case 2:
                         //Hacemos el FAB mas grande
                         View screenView = findViewById(R.id.drawer_layout);
                         float centrex = screenView.getWidth() / 3;
                         float centreY = screenView.getHeight() / 3;
-                        fab.animate().scaleX(4).scaleY(4).translationX(-centrex).translationY(-centreY+50).setDuration(200);
-                       // fab.hide();
+                        fab.animate().scaleX(4).scaleY(4).translationX(-centrex).translationY(-centreY + 50).setDuration(200);
                         fabGigante.show();
                         break;
                 }
@@ -138,9 +137,9 @@ public class MainActivity extends AppCompatActivity
                         break;
                     case 2:
                         fabGigante.hide();
-
+                        fab.show();
                         fab.animate().scaleX(1).scaleY(1).translationX(0).translationY(0).setDuration(500);
-                      //  fab.show();
+
 
                         break;
                 }
@@ -163,6 +162,9 @@ public class MainActivity extends AppCompatActivity
             if (fragment instanceof RecordatorioDetalleFragment) {
                 getSupportFragmentManager().beginTransaction().remove(fragment).commit();
                 fabToolbar.hide();
+                fab.hide();
+               // fab.animate().scaleX(1).scaleY(1).translationX(0).translationY(0).setDuration(500);
+
 
             }
         }

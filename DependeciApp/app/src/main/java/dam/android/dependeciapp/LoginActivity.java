@@ -54,7 +54,6 @@ public class LoginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         if (Conexion.isNetDisponible(getApplicationContext()))
             con = new Conexion();
-        //TODO Si no se pudiera establecer conexion usar la SQLite}
 
         Intent i = getIntent();
         boolean hasCerradoSesion = false;
@@ -160,8 +159,6 @@ public class LoginActivity extends AppCompatActivity {
     }
 
 
-
-
     /**
      * Shows the progress UI and hides the login form.
      */
@@ -208,6 +205,7 @@ public class LoginActivity extends AppCompatActivity {
         editor.putString("pass", pass);
         editor.putBoolean("guardaUserPass", true);
         //Si es null significa que se ha iniciado sesion automaticamente, no ha pasado por SetUI
+
         if (cbGuardaUsuarioPass == null)
             editor.putBoolean("iniciaSesion", true);
         else {
@@ -299,18 +297,16 @@ public class LoginActivity extends AppCompatActivity {
 
             DependenciaDBManager.UsuarioDBManager db = new DependenciaDBManager.UsuarioDBManager(getApplicationContext());
             Cursor cursor = db.getRows();
-            if(cursor!=null){
+            if (cursor != null) {
                 cursor.moveToFirst();
-                String userSQL= cursor.getString(1);
-                String passSQL= cursor.getString(8);
-                if(user.equals(userSQL)&&pass.equals(passSQL)){
-                   this.user= new Usuario(cursor);
+                String userSQL = cursor.getString(1);
+                String passSQL = cursor.getString(8);
+                if (user.toUpperCase().equals(userSQL) && pass.equals(passSQL)) {
+                    this.user = new Usuario(cursor);
+                    // GuardaUsuarioPass(user, pass);
                     return true;
                 }
-
-
             }
-
             return false;
         }
 
@@ -319,16 +315,15 @@ public class LoginActivity extends AppCompatActivity {
             showProgress(false);
             //Si el logeo es correcto se crea el Intento del MainActivity y le pasamos el Usuario
             if (success) {
-
                 Intent i = new Intent(getApplicationContext(), MainActivity.class);
                 i.putExtra("user", user);
-                // i.putExtra("conexion",con);
-
                 startActivity(i);
                 finish();
             } else {
-                etPass.setError(getString(R.string.error_incorrect_password));
-                etPass.requestFocus();
+                if (etPass != null) {
+                    etPass.setError(getString(R.string.error_incorrect_password));
+                    etPass.requestFocus();
+                }
             }
         }
 

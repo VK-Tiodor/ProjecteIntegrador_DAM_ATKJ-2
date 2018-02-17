@@ -21,10 +21,7 @@ import dam.android.dependeciapp.R;
 
 @SuppressLint("ValidFragment")
 public class BotonFragment extends Fragment {
-    /**
-     * The fragment argument representing the section number for this
-     * fragment.
-     */
+
 
     @SuppressLint("ValidFragment")
     public BotonFragment() {

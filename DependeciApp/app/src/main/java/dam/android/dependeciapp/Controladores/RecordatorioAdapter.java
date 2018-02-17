@@ -45,7 +45,6 @@ public class RecordatorioAdapter extends RecyclerView.Adapter<RecordatorioAdapte
     public void onBindViewHolder(final ViewHolder holder, int position) {
         holder.mItem = recordatorioList.get(position);
         holder.tvTitulo.setText(recordatorioList.get(position).titulo);
-        holder.tvContenido.setText(recordatorioList.get(position).content);
         holder.tvHora.setText(recordatorioList.get(position).hora);
         holder.tvCuando.setText(recordatorioList.get(position).cuando);
         adapter = this;
@@ -99,7 +98,6 @@ public class RecordatorioAdapter extends RecyclerView.Adapter<RecordatorioAdapte
     public class ViewHolder extends RecyclerView.ViewHolder {
         public final View mView;
         public final TextView tvTitulo;
-        public final TextView tvContenido;
         public final TextView tvHora;
         public final TextView tvCuando;
         public Recordatorio mItem;
@@ -108,7 +106,6 @@ public class RecordatorioAdapter extends RecyclerView.Adapter<RecordatorioAdapte
             super(view);
             mView = view;
             tvTitulo = (TextView) view.findViewById(R.id.tvTitulo);
-            tvContenido = (TextView) view.findViewById(R.id.tvContenido);
             tvHora = (TextView) view.findViewById(R.id.tvHora);
             tvCuando = (TextView) view.findViewById(R.id.tvFecha);
         }

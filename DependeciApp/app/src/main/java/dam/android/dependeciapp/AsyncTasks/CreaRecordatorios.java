@@ -79,8 +79,6 @@ public class CreaRecordatorios extends AsyncTask<Conexion, Void, List<Recordator
                     recordatorioList.add(r);
                 }
             }
-
-
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -95,10 +93,8 @@ public class CreaRecordatorios extends AsyncTask<Conexion, Void, List<Recordator
                 } else {
                     return 0;
                 }
-
             }
         });
-
         return recordatorioList;
     }
     //Transforma el Double de la cantidad a texto
