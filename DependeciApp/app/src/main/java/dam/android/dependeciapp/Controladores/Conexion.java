@@ -1,5 +1,9 @@
 package dam.android.dependeciapp.Controladores;
 
+import android.content.Context;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
+
 import java.io.Serializable;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -13,7 +17,7 @@ import dam.android.dependeciapp.AsyncTasks.CreaConexion;
  * Created by adria on 06/02/2018.
  */
 
-public class Conexion implements Serializable{
+public class Conexion {
 
     private Connection con;
 
@@ -57,6 +61,20 @@ public class Conexion implements Serializable{
         }
     }
 
+    public ResultSet getRecordatorios(int id){
+
+        try {
+            String sql = "call get_medicinas(?)";
+            PreparedStatement login = con.prepareStatement(sql);
+            login.setInt(1, id);
+            ResultSet rs = login.executeQuery();
+            return rs;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
     public String toMD5(String md5) {
         try {
             java.security.MessageDigest md = java.security.MessageDigest.getInstance("MD5");
@@ -70,6 +88,12 @@ public class Conexion implements Serializable{
 
         }
         return null;
+    }
+   public static boolean isNetDisponible(Context context) {
+        ConnectivityManager connectivityManager = (ConnectivityManager)
+               context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo actNetInfo = connectivityManager.getActiveNetworkInfo();
+        return (actNetInfo != null && actNetInfo.isConnected());
     }
 
 }

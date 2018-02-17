@@ -1,6 +1,7 @@
 package dam.android.dependeciapp.Pojo;
 
 import java.io.Serializable;
+import java.util.Date;
 
 /**
  * Created by adria on 12/02/2018.
@@ -14,6 +15,15 @@ public class Recordatorio implements Serializable {
     public final String cuando;
     public final String hora;
     public final boolean terminado;
+    public  Date fecha=null;
+
+    public Date getFecha() {
+        return fecha;
+    }
+    public void setFecha(Date fecha){
+        this.fecha=fecha;
+
+    }
 
     public Recordatorio(int id, String titulo, String content, String cuando, String hora) {
         this.id = id;
@@ -23,6 +33,7 @@ public class Recordatorio implements Serializable {
         this.hora = hora;
         this.terminado = false;
     }
+
 
     public int getId() {
         return id;
@@ -52,4 +63,6 @@ public class Recordatorio implements Serializable {
     public String toString() {
         return content;
     }
+
+
 }

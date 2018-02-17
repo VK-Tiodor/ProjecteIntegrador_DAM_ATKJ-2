@@ -8,7 +8,7 @@
             <menu>
                 <item
                     android:id="@+id/nav_datosPersonales"
-                    android:icon="@drawable/ic_person_black_24dp"
+                    android:icon="@drawable/ic_usuario"
                     android:title="@string/your_data" />
                 <item
                     android:id="@+id/nav_cerrarSesion"

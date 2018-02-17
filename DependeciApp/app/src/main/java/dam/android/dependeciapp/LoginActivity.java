@@ -3,8 +3,12 @@ package dam.android.dependeciapp;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.database.Cursor;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.support.v7.app.AppCompatActivity;
 
 import android.os.AsyncTask;
@@ -22,6 +26,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 import dam.android.dependeciapp.Controladores.Conexion;
+import dam.android.dependeciapp.Controladores.SQLite.DependenciaDBManager;
 import dam.android.dependeciapp.Pojo.Usuario;
 
 /**
@@ -47,7 +52,8 @@ public class LoginActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        con = new Conexion();
+        if (Conexion.isNetDisponible(getApplicationContext()))
+            con = new Conexion();
         //TODO Si no se pudiera establecer conexion usar la SQLite}
 
         Intent i = getIntent();
@@ -66,6 +72,7 @@ public class LoginActivity extends AppCompatActivity {
             cargaPreferencias();
         }
     }
+
 
     private void setUI() {
         cbGuardaUsuarioPass = (CheckBox) findViewById(R.id.cbGuarda);
@@ -151,6 +158,9 @@ public class LoginActivity extends AppCompatActivity {
         }
         return true;
     }
+
+
+
 
     /**
      * Shows the progress UI and hides the login form.
@@ -247,6 +257,15 @@ public class LoginActivity extends AppCompatActivity {
         protected Boolean doInBackground(String... strings) {
             String usuario = strings[0];
             String pass = strings[1];
+            if (con != null) {
+                return iniciaSesionOnline(usuario, pass);
+
+            } else {
+                return iniciaSesionOffline(usuario, pass);
+            }
+        }
+
+        private boolean iniciaSesionOnline(String usuario, String pass) {
             ResultSet rs = con.IniciaSesion(usuario, pass);
             if (rs != null) {
                 try {
@@ -257,12 +276,16 @@ public class LoginActivity extends AppCompatActivity {
                         //Si se ha marcado el CheckBox de guardar usuari y contraseña, se guardan
                         if (cbGuardaUsuarioPass.isChecked())
                             GuardaUsuarioPass(usuario, pass);
-                        //Y si se ha marcado el inicia sesion tambien se guardan
+                            //Y si se ha marcado el inicia sesion tambien se guardan
                         else if (cbIniciaSesion.isChecked())
                             GuardaUsuarioPass(usuario, pass);
                     }
                     //A partir del result set se crea el Usuario, que sera enviado al MainActivity
                     this.user = new Usuario(rs);
+                    this.user.setPass(pass);
+                    DependenciaDBManager.UsuarioDBManager db = new DependenciaDBManager.UsuarioDBManager(getApplicationContext());
+                    db.delete(String.valueOf(user.getIdPersona()));
+                    db.insert(user.getIdPersona(), user.getDNI(), user.getNombre(), user.getApellidos(), user.getfNacimiento().toString(), user.getGenero(), user.getTipoDeDependiente(), user.getfAlta().toString(), user.getPass());
                 } catch (SQLException e) {
                     e.printStackTrace();
                 }
@@ -272,14 +295,35 @@ public class LoginActivity extends AppCompatActivity {
                 return false;
         }
 
+        private boolean iniciaSesionOffline(String user, String pass) {
+
+            DependenciaDBManager.UsuarioDBManager db = new DependenciaDBManager.UsuarioDBManager(getApplicationContext());
+            Cursor cursor = db.getRows();
+            if(cursor!=null){
+                cursor.moveToFirst();
+                String userSQL= cursor.getString(1);
+                String passSQL= cursor.getString(8);
+                if(user.equals(userSQL)&&pass.equals(passSQL)){
+                   this.user= new Usuario(cursor);
+                    return true;
+                }
+
+
+            }
+
+            return false;
+        }
+
         protected void onPostExecute(final Boolean success) {
             mAuthTask = null;
             showProgress(false);
             //Si el logeo es correcto se crea el Intento del MainActivity y le pasamos el Usuario
             if (success) {
+
                 Intent i = new Intent(getApplicationContext(), MainActivity.class);
-                 i.putExtra("user",user);
+                i.putExtra("user", user);
                 // i.putExtra("conexion",con);
+
                 startActivity(i);
                 finish();
             } else {

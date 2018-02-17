@@ -1,11 +1,16 @@
 package dam.android.dependeciapp.Pojo;
 
+import android.database.Cursor;
+
 import com.google.android.gms.maps.MapView;
 
 import java.io.Serializable;
 import java.sql.Date;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 
 /**
  * Created by adria on 09/02/2018.
@@ -21,9 +26,19 @@ public class Usuario implements Serializable {
     private String genero;
     private String tipoDeDependiente;
     private Date fAlta;
+    private String pass;
+
+    public String getPass() {
+        return pass;
+    }
+
+    public void setPass(String pass) {
+        this.pass = pass;
+    }
 
     public Usuario(ResultSet rs) throws SQLException {
         rs.first();
+        idPersona = rs.getInt("idPersona");
         DNI = rs.getString("DNI");
         nombre = rs.getString("Nombre");
         apellidos = rs.getString("Apellidos");
@@ -31,6 +46,25 @@ public class Usuario implements Serializable {
         genero = rs.getString("Genero");
         tipoDeDependiente = rs.getString("Tipo de Dependiente");
         fAlta = rs.getDate("FechaAlta");
+    }
+
+    public Usuario(Cursor cursor) {
+        try {
+            idPersona = cursor.getInt(0);
+            DNI = cursor.getString(1);
+            nombre = cursor.getString(2);
+            apellidos = cursor.getString(3);
+            DateFormat df = new SimpleDateFormat("yyyy-mm-dd");
+            java.util.Date dt = df.parse(cursor.getString(4));
+            fNacimiento = new Date(dt.getTime());
+            genero = cursor.getString(5);
+            tipoDeDependiente = cursor.getString(6);
+            dt = df.parse(cursor.getString(7));
+            fAlta= new Date(dt.getTime());
+            pass = cursor.getString(8);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
     }
 
 

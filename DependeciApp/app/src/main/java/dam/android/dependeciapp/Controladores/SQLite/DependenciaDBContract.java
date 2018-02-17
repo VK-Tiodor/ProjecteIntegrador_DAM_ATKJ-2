@@ -13,9 +13,13 @@ public final class DependenciaDBContract {
     public static class RecordatoriosDBContract {
 
         public static final String TABLE_NAME = "RECORDATORIOS";
-
+        //public final String titulo;
+       // public final String content;
+      //  public final String cuando;
+       // public final String hora;
+       // public final boolean terminado;
         public static final String _ID = "_id";
-        public static final String MEDICAMENTO = "medicamento";
+        public static final String MEDICAMENTO  = "medicamento";
         public static final String DOSIS = "dosis";
         public static final String FECHA_HORA = "fecha_hora";
 
@@ -63,6 +67,8 @@ public final class DependenciaDBContract {
         public static final String GENERO = "genero";
         public static final String TIPO_DEPENDIENTE = "tipo_dependiente";
         public static final String FECHA_ALTA = "fecha_alta";
+        public static final String PASS = "pass";
+
 
         public static final String CREATE_TABLE = "CREATE TABLE " + UsuarioDBContract.TABLE_NAME
                 + " ("
@@ -73,7 +79,8 @@ public final class DependenciaDBContract {
                 + UsuarioDBContract.FECHA_NACIMIENTO + " TEXT NOT NULL, "
                 + UsuarioDBContract.GENERO + " TEXT NOT NULL, "
                 + UsuarioDBContract.TIPO_DEPENDIENTE + " TEXT NOT NULL, "
-                + UsuarioDBContract.FECHA_ALTA + " TEXT NOT NULL "
+                + UsuarioDBContract.FECHA_ALTA + " TEXT NOT NULL, "
+                + UsuarioDBContract.PASS+" TEXT NOT NULL "
                 + ");";
 
         public static final String DELETE_TABLE = "DROP TABLE IF EXISTS " + UsuarioDBContract.TABLE_NAME;

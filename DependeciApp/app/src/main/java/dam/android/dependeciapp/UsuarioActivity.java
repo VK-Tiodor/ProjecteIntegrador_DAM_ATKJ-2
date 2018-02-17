@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
+import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
@@ -32,9 +33,10 @@ public class UsuarioActivity extends AppCompatActivity {
         setContentView(R.layout.activity_usuario);
 
         Bundle b = getIntent().getExtras();
-        user = (Usuario) b.get("Usuario");
+        user = (Usuario) b.getSerializable("Usuario");
 
         setUI();
+
     }
 
     private void setUI(){
@@ -52,7 +54,7 @@ public class UsuarioActivity extends AppCompatActivity {
     }
 
     private void cargarDatosUsuario(){
-        tvUsuarioIdResult.setText(user.getIdPersona());
+        tvUsuarioIdResult.setText(String.valueOf(user.getIdPersona()));
         tvNombreResult.setText(user.getNombre());
         tvApellidosResult.setText(user.getApellidos());
         tvDniResult.setText(user.getDNI());
@@ -62,8 +64,7 @@ public class UsuarioActivity extends AppCompatActivity {
         tvTipoDependienteResult.setText(user.getTipoDeDependiente());
     }
 
-    public void onClick(){
-        Intent i = new Intent(this, MainActivity.class);
-        startActivity(i);
+    public void onClick(View v){
+        finish();
     }
 }

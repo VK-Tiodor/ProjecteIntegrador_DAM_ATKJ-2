@@ -11,6 +11,5 @@
     android:layout_marginRight="16dp"
     app:layoutManager="LinearLayoutManager"
     tools:context="dam.android.dependeciapp.Fragments.RecordatorioFragment"
-    tools:listitem="@layout/recordatorio_item"
-
-    />
+    tools:listitem="@layout/recordatorio_item">
+</android.support.v7.widget.RecyclerView>

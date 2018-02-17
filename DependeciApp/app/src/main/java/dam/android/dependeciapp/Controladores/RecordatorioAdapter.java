@@ -50,6 +50,7 @@ public class RecordatorioAdapter extends RecyclerView.Adapter<RecordatorioAdapte
         holder.tvCuando.setText(recordatorioList.get(position).cuando);
         adapter = this;
 
+
         holder.mView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

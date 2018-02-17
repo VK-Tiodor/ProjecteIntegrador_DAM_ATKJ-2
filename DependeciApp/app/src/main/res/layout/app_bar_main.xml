@@ -5,6 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="dam.android.dependeciapp.MainActivity">
+
     <com.github.fafaldo.fabtoolbar.widget.FABToolbarLayout
         android:id="@+id/fabtoolbar"
         android:layout_width="match_parent"
@@ -46,13 +47,8 @@
                 android:layout_height="wrap_content"
                 android:layout_alignParentEnd="true"
                 android:layout_centerVertical="true"
-                android:layout_gravity="bottom|end"
-                android:layout_marginBottom="8dp"
-                android:layout_marginRight="8dp"
+                android:layout_marginEnd="21dp"
                 app:backgroundTint="@android:color/holo_red_dark"
-                app:layout_anchorGravity="right|bottom"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
                 app:srcCompat="@drawable/ic_fab_warning" />
 
         </RelativeLayout>
@@ -77,11 +73,23 @@
                 android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:scaleType="centerInside"
-                app:srcCompat="@android:drawable/ic_menu_close_clear_cancel" />
+                app:srcCompat="@drawable/ic_vector_close" />
 
 
 
         </LinearLayout>
+
+        <android.support.design.widget.FloatingActionButton
+            android:id="@+id/fab_gigante"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_above="@+id/fabtoolbar_toolbar"
+            android:layout_alignParentStart="true"
+            android:layout_margin="50dp"
+            app:backgroundTint="@android:color/holo_red_dark"
+            app:elevation="24dp"
+            app:srcCompat="@drawable/ic_fab_warning"
+            tools:layout_editor_absoluteX="50dp" />
     </com.github.fafaldo.fabtoolbar.widget.FABToolbarLayout>
 
 </android.support.design.widget.CoordinatorLayout>

@@ -13,6 +13,7 @@ import java.util.Properties;
  */
 
 public class CreaConexion extends AsyncTask<String,Void,Connection> {
+
     @Override
     protected Connection doInBackground(String... strings) {
         try {
@@ -37,4 +38,5 @@ public class CreaConexion extends AsyncTask<String,Void,Connection> {
         }
         return null;
     }
+
 }

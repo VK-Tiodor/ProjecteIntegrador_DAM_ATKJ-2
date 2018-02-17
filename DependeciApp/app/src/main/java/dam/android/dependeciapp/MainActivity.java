@@ -28,6 +28,7 @@ import android.view.animation.AnimationUtils;
 import android.view.animation.Interpolator;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.github.fafaldo.fabtoolbar.widget.FABToolbarLayout;
 
@@ -46,18 +47,18 @@ public class MainActivity extends AppCompatActivity
     private ViewPager mViewPager;
     private SectionsPagerAdapter mSectionsPagerAdapter;
     private FloatingActionButton fab;
+    private FloatingActionButton fabGigante;
     private Usuario user;
-    private Conexion con;
     private AppBarLayout appBarLayout;
     private Toolbar toolbar;
     private FABToolbarLayout fabToolbar;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         user = (Usuario) getIntent().getSerializableExtra("user");
-        //con = (Conexion) getIntent().getSerializableExtra("conexion");
         setUI();
     }
 
@@ -67,17 +68,30 @@ public class MainActivity extends AppCompatActivity
         fabToolbar = (FABToolbarLayout) findViewById(R.id.fabtoolbar);
         setSupportActionBar(toolbar);
         fab = (FloatingActionButton) findViewById(R.id.fab);
-        //Guardamos el tamaño del Fab, para poder resituirlo a su tamaño original
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (user != null) {
+                if (user != null && Conexion.isNetDisponible(getApplicationContext())) {
                     LanzaLlamada llamada = new LanzaLlamada(view, getApplicationContext());
                     llamada.execute(user.getIdPersona() + "");
+                } else {
+                    Toast.makeText(getApplicationContext(), R.string.no_conexion_aviso, Toast.LENGTH_SHORT).show();
                 }
             }
         });
-
+        fabGigante = (FloatingActionButton) findViewById(R.id.fab_gigante);
+        fabGigante.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (user != null && Conexion.isNetDisponible(getApplicationContext())) {
+                    LanzaLlamada llamada = new LanzaLlamada(view, getApplicationContext());
+                    llamada.execute(user.getIdPersona() + "");
+                } else {
+                    Toast.makeText(getApplicationContext(), R.string.no_conexion_aviso, Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+        fabGigante.hide();
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         final ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
@@ -100,19 +114,16 @@ public class MainActivity extends AppCompatActivity
                 int posicion = tab.getPosition();
                 switch (posicion) {
                     case 1:
-                        cierraRecordatorioDetalle();
-                        fab.animate().scaleX(1).scaleY(1).translationX(0).translationY(0).setDuration(500);
-                        appBarLayout.setExpanded(true);
+                        // fab.animate().scaleX(1).scaleY(1).translationX(0).translationY(0).setDuration(500);
                         break;
                     case 2:
                         //Hacemos el FAB mas grande
                         View screenView = findViewById(R.id.drawer_layout);
                         float centrex = screenView.getWidth() / 3;
                         float centreY = screenView.getHeight() / 3;
-
-                        fab.animate().scaleX(4).scaleY(4).translationX(-centrex).translationY(-centreY).setDuration(500);
-                        //Expandimos el appBarLayout simplemente por estetica
-                        appBarLayout.setExpanded(true);
+                        fab.animate().scaleX(4).scaleY(4).translationX(-centrex).translationY(-centreY+50).setDuration(200);
+                       // fab.hide();
+                        fabGigante.show();
                         break;
                 }
             }
@@ -120,12 +131,17 @@ public class MainActivity extends AppCompatActivity
             @Override
             public void onTabUnselected(TabLayout.Tab tab) {
                 int posicion = tab.getPosition();
-                switch (posicion){
+                switch (posicion) {
                     case 0:
                         cierraRecordatorioDetalle();
+                        appBarLayout.setExpanded(true);
                         break;
                     case 2:
+                        fabGigante.hide();
+
                         fab.animate().scaleX(1).scaleY(1).translationX(0).translationY(0).setDuration(500);
+                      //  fab.show();
+
                         break;
                 }
             }
@@ -136,6 +152,7 @@ public class MainActivity extends AppCompatActivity
             }
 
         });
+
     }
 
     //Metodo para cerrar el RecordatorioDetalleFragment que pueda haber abierto
@@ -146,6 +163,7 @@ public class MainActivity extends AppCompatActivity
             if (fragment instanceof RecordatorioDetalleFragment) {
                 getSupportFragmentManager().beginTransaction().remove(fragment).commit();
                 fabToolbar.hide();
+
             }
         }
     }
@@ -164,8 +182,6 @@ public class MainActivity extends AppCompatActivity
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         //  getMenuInflater().inflate(R.menu.main, menu);
-
-
         return true;
     }
 
