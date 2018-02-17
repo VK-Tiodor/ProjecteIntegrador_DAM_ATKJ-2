@@ -15,13 +15,16 @@ import java.util.List;
 
 import dam.android.dependeciapp.Controladores.Conexion;
 import dam.android.dependeciapp.Pojo.Recordatorio;
+import dam.android.dependeciapp.Pojo.Usuario;
 import dam.android.dependeciapp.R;
 
 /**
  * Created by adria on 16/02/2018.
  */
 
-public class CreaRecordatorios extends AsyncTask<Conexion, Void, List<Recordatorio>> {
+public class CreaRecordatorios extends AsyncTask<Integer, Void, List<Recordatorio>> {
+    //Constante que controla los dias de los que obtenemos los recordatorios
+    //72 significa que se sacaran los recordatorios desde hoy hasta dentro de 3 dias
     private static final int HORAS = 72;
     private Conexion con;
     private List<Recordatorio> recordatorioList;
@@ -35,8 +38,8 @@ public class CreaRecordatorios extends AsyncTask<Conexion, Void, List<Recordator
 
     @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
-    protected List<Recordatorio> doInBackground(Conexion... conexions) {
-        ResultSet rs = con.getRecordatorios(1);
+    protected List<Recordatorio> doInBackground(Integer... integers) {
+        ResultSet rs = con.getRecordatorios(integers[0]);
         try {
 
             while (rs.next()) {
@@ -44,6 +47,7 @@ public class CreaRecordatorios extends AsyncTask<Conexion, Void, List<Recordator
                 String nombreMedicina = rs.getString("Nombre");
                 int toma = rs.getInt("Toma");
                 double cantidad = rs.getDouble("Cantidad");
+
                 int tomasEn3Dias = HORAS / toma;
                 Calendar calendar = Calendar.getInstance();
                 calendar.setTime(fechaActual);
@@ -100,15 +104,15 @@ public class CreaRecordatorios extends AsyncTask<Conexion, Void, List<Recordator
     //Transforma el Double de la cantidad a texto
     private String cantidadATexto(double cantidad) {
         if (cantidad == 0.25) {
-            return " " + context.getString(R.string.cuarto) + " ";
+            return  context.getString(R.string.cuarto) + " ";
         }
         if (cantidad == 0.5) {
-            return " " + context.getString(R.string.media) + " ";
+            return  context.getString(R.string.media) + " ";
         }
         if (cantidad == 1.0)
-            return " " + context.getString(R.string.pastilla) + " ";
+            return  context.getString(R.string.pastilla) + " ";
 
-        return " " + (int) cantidad + context.getString(R.string.pastillas) + " ";
+        return (int) cantidad + context.getString(R.string.pastillas) + " ";
     }
 
     private String obtenDiaTexto(String day) {

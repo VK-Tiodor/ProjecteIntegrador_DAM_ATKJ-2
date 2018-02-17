@@ -231,7 +231,7 @@ public class MainActivity extends AppCompatActivity
             switch (position) {
                 case 0:
                     //Le pasamos el menu para poder hacerlo visible al abrir el fragmento de Recordatorio Detalle
-                    return RecordatorioFragment.newInstance(getApplicationContext());
+                    return RecordatorioFragment.newInstance(getApplicationContext(),user.getIdPersona());
                 case 1:
                     return new MapFragment();
                 case 2:
