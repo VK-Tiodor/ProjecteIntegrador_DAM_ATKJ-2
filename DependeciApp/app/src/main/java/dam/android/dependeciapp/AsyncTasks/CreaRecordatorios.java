@@ -9,6 +9,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
@@ -22,7 +23,7 @@ import dam.android.dependeciapp.R;
  * Created by adria on 16/02/2018.
  */
 
-public class CreaRecordatorios extends AsyncTask<Integer, Void, List<Recordatorio>> {
+public class CreaRecordatorios extends AsyncTask<Integer, Void, List<Recordatorio>> implements Comparator<Recordatorio> {
     //Constante que controla los dias de los que obtenemos los recordatorios
     //72 significa que se sacaran los recordatorios desde hoy hasta dentro de 3 dias
     private static final int HORAS = 72;
@@ -87,18 +88,9 @@ public class CreaRecordatorios extends AsyncTask<Integer, Void, List<Recordatori
             e.printStackTrace();
         }
         //ordenamos la lsita con un comparador de fechas
-        recordatorioList.sort(new Comparator<Recordatorio>() {
-            @Override
-            public int compare(Recordatorio o1, Recordatorio o2) {
-                if (o1.getFecha().before(o2.getFecha())) {
-                    return -1;
-                } else if (o1.getFecha().after(o2.getFecha())) {
-                    return 1;
-                } else {
-                    return 0;
-                }
-            }
-        });
+        //Lo hice con Collections en vez de con recordatorioList.sort(this);
+        //Porque esta ultima, no esta disponible en versiones menorea a la API 24
+        Collections.sort(recordatorioList,this);
         return recordatorioList;
     }
     //Transforma el Double de la cantidad a texto
@@ -149,4 +141,14 @@ public class CreaRecordatorios extends AsyncTask<Integer, Void, List<Recordatori
     }
 
 
+    @Override
+    public int compare(Recordatorio o1, Recordatorio o2) {
+        if (o1.getFecha().before(o2.getFecha())) {
+            return -1;
+        } else if (o1.getFecha().after(o2.getFecha())) {
+            return 1;
+        } else {
+            return 0;
+        }
+    }
 }

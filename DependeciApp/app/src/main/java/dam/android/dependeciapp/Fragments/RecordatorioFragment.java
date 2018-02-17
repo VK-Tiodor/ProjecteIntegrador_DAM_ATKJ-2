@@ -2,6 +2,7 @@ package dam.android.dependeciapp.Fragments;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.res.Configuration;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
@@ -30,47 +31,46 @@ import dam.android.dependeciapp.R;
 public class RecordatorioFragment extends Fragment {
 
     private OnListFragmentInteractionListener mListener;
-    private Context context;
     private List<Recordatorio> recordatorioList;
     private Conexion con;
     private RecyclerView recyclerView;
     private FABToolbarLayout fabToolbar;
     private int idUsuario;
 
-    /**
-     * Mandatory empty constructor for the fragment manager to instantiate the
-     * fragment (e.g. upon screen orientation changes).
-     */
-    public RecordatorioFragment(int id) {
-        idUsuario=id;
+
+    public RecordatorioFragment() {
+
     }
 
 
-    public static RecordatorioFragment newInstance(Context con,int id) {
-        RecordatorioFragment fragment = new RecordatorioFragment(id);
-        fragment.SetContext(con);
-
+    public static RecordatorioFragment newInstance( int id) {
+        RecordatorioFragment fragment = new RecordatorioFragment();
+        fragment.SetIdUsuario(id);
 
         return fragment;
     }
 
-
-    public void SetContext(Context con) {
-        this.context = con;
+    public void SetIdUsuario(int id) {
+        idUsuario = id;
     }
+
+
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        if(savedInstanceState!=null)
+            idUsuario=savedInstanceState.getInt("userId");
         obtenListaSiPuedes();
 
     }
-    private void obtenListaSiPuedes(){
+
+    private void obtenListaSiPuedes() {
         recordatorioList = new ArrayList<>();
         if (Conexion.isNetDisponible(getContext())) {
             con = new Conexion();
             if (con != null) {
-                CreaRecordatorios cr = new CreaRecordatorios(con, recordatorioList,context);
+                CreaRecordatorios cr = new CreaRecordatorios(con, recordatorioList, getContext());
                 cr.execute(idUsuario);
             }
         }
@@ -116,4 +116,10 @@ public class RecordatorioFragment extends Fragment {
     }
 
 
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putInt("userId",idUsuario);
+    }
 }

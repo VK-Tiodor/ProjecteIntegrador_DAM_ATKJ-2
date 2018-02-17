@@ -58,7 +58,9 @@ public class MainActivity extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        user = (Usuario) getIntent().getSerializableExtra("user");
+        Intent i = getIntent();
+        if(i!=null)
+        user = (Usuario) i.getSerializableExtra("user");
         setUI();
     }
 
@@ -215,6 +217,17 @@ public class MainActivity extends AppCompatActivity
         startActivity(i);
         finish();
     }
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putSerializable("user",user);
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+        user = (Usuario) savedInstanceState.getSerializable("user");
+    }
 
     /**
      * A {@link FragmentPagerAdapter} that returns a fragment corresponding to
@@ -231,7 +244,7 @@ public class MainActivity extends AppCompatActivity
             switch (position) {
                 case 0:
                     //Le pasamos el menu para poder hacerlo visible al abrir el fragmento de Recordatorio Detalle
-                    return RecordatorioFragment.newInstance(getApplicationContext(),user.getIdPersona());
+                    return RecordatorioFragment.newInstance(user.getIdPersona());
                 case 1:
                     return new MapFragment();
                 case 2:
