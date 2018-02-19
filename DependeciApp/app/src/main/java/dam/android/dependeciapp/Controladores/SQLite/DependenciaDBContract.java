@@ -22,9 +22,9 @@ public final class DependenciaDBContract {
         public static final String TITULO = "titulo";
         public static final String CONTENIDO = "contenido";
         public static final String FECHA = "fecha";
-        public static final String HORA = "fecha";
+        public static final String HORA = "hora";
 
-        public static final String CREATE_TABLE = "CREATE TABLE " + RecordatoriosDBContract.TABLE_NAME
+        public static final String CREATE_TABLE = "CREATE TABLE IF NOT EXISTS " + RecordatoriosDBContract.TABLE_NAME
                 + " ("
                 + RecordatoriosDBContract._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
                 + RecordatoriosDBContract.TITULO + " TEXT NOT NULL, "

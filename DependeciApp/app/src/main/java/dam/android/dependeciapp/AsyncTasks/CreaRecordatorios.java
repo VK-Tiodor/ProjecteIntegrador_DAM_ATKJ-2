@@ -15,6 +15,7 @@ import java.util.Date;
 import java.util.List;
 
 import dam.android.dependeciapp.Controladores.Conexion;
+import dam.android.dependeciapp.Controladores.SQLite.DependenciaDBManager;
 import dam.android.dependeciapp.Pojo.Recordatorio;
 import dam.android.dependeciapp.Pojo.Usuario;
 import dam.android.dependeciapp.R;
@@ -23,7 +24,7 @@ import dam.android.dependeciapp.R;
  * Created by adria on 16/02/2018.
  */
 
-public class CreaRecordatorios extends AsyncTask<Integer, Void, List<Recordatorio>> implements Comparator<Recordatorio> {
+public class CreaRecordatorios extends AsyncTask<Integer, Void, List<Recordatorio>> {
     //Constante que controla los dias de los que obtenemos los recordatorios
     //72 significa que se sacaran los recordatorios desde hoy hasta dentro de 3 dias
     private static final int HORAS = 72;
@@ -52,7 +53,7 @@ public class CreaRecordatorios extends AsyncTask<Integer, Void, List<Recordatori
                 int tomasEn3Dias = HORAS / toma;
                 Calendar calendar = Calendar.getInstance();
                 calendar.setTime(fechaActual);
-
+                DependenciaDBManager.RecordatoriosDBManager db = new DependenciaDBManager.RecordatoriosDBManager(context);
                 for (int i = 0; i < tomasEn3Dias; i++) {
                     String titulo = context.getString(R.string.tomar) + " " + nombreMedicina;
                     String contenido = context.getString(R.string.tomar) + " " + Recordatorio.cantidadATexto(context,cantidad) + context.getString(R.string.de) + " " + nombreMedicina;
@@ -77,31 +78,22 @@ public class CreaRecordatorios extends AsyncTask<Integer, Void, List<Recordatori
                     //Establecemos la hora con los datos del array
                     String hora = horaArray[0] + ":" + horaArray[1];
                     //creamos el recordatorio
+                    //TODO HACER AQUI EL REINICIO DE CUENTA
                     Recordatorio r = new Recordatorio(0, titulo, contenido, cuando, hora);
 
                     //Establecemos una fecha para poder compararlos luego para ordenar la lista
                     r.setFecha(calendar.getTime());
+
+                   db.insert(r.titulo,r.content,fechaHora,r.hora);
                     recordatorioList.add(r);
                 }
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        //ordenamos la lsita con un comparador de fechas
-        //Lo hice con Collections en vez de con recordatorioList.sort(this);
-        //Porque esta ultima, no esta disponible en versiones menorea a la API 24
-        Collections.sort(recordatorioList,this);
+
         return recordatorioList;
     }
 
-    @Override
-    public int compare(Recordatorio o1, Recordatorio o2) {
-        if (o1.getFecha().before(o2.getFecha())) {
-            return -1;
-        } else if (o1.getFecha().after(o2.getFecha())) {
-            return 1;
-        } else {
-            return 0;
-        }
-    }
+
 }

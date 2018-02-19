@@ -17,6 +17,8 @@ import dam.android.dependeciapp.MainActivity;
 import dam.android.dependeciapp.Pojo.Recordatorio;
 import dam.android.dependeciapp.R;
 
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 
@@ -46,9 +48,18 @@ public class RecordatorioAdapter extends RecyclerView.Adapter<RecordatorioAdapte
         holder.mItem = recordatorioList.get(position);
         holder.tvTitulo.setText(recordatorioList.get(position).titulo);
         holder.tvHora.setText(recordatorioList.get(position).hora);
-        holder.tvCuando.setText(recordatorioList.get(position).cuando);
-        adapter = this;
+      //  holder.tvCuando.setText(recordatorioList.get(position).cuando);
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(recordatorioList.get(position).fecha);
+        String fechaHora = calendar.getTime().toString();
+        String[] fechaHoraArray = fechaHora.split(" ");
 
+        String cuando = Recordatorio.obtenHoyoMañana(context,calendar.getTime());
+        //Si no fuera ni hoy ni mañana, se pone el nombre del dia de la semana
+        if(cuando==null)
+            cuando= Recordatorio.obtenDiaTexto(context,fechaHoraArray[0]);
+        holder.tvCuando.setText(cuando);
+        adapter = this;
 
         holder.mView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -57,7 +68,6 @@ public class RecordatorioAdapter extends RecyclerView.Adapter<RecordatorioAdapte
                     //Creamos una nueva instancia del Fragment de Detalle
                     RecordatorioDetalleFragment fragmentDetalle = RecordatorioDetalleFragment.newInstance(holder.mItem, adapter);
                     //Obtenemos la lista de fragments activos
-                    List<Fragment> listFragment = ((FragmentActivity) context).getSupportFragmentManager().getFragments();
                     //Seleccionamos el fragment que sea RecordatorioDetalleFragment y lo eliminamos
                     cierraRecordatorioDetalle();
 

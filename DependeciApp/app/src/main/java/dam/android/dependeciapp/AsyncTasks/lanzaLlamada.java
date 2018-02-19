@@ -60,7 +60,16 @@ public class LanzaLlamada extends AsyncTask<String, Void, Boolean> {
 
                 // Se envia al servidor el id del usuario
                 if (message.equals(this.cadenaComprobacionAlertaServidor)) {
+                    //Escirbimos la id de usuario
                     bw.write(strings[0]);
+                    bw.newLine();
+                    bw.flush();
+                    //Escribimos la latidud
+                    bw.write(strings[1]);
+                    bw.newLine();
+                    bw.flush();
+                    //Escribimos la longitud
+                    bw.write(strings[2]);
                     bw.newLine();
                     bw.flush();
                     result=true;

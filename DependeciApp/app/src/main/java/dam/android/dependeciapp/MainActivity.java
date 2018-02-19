@@ -1,6 +1,11 @@
 package dam.android.dependeciapp;
 
+import android.annotation.SuppressLint;
+import android.content.Context;
 import android.content.Intent;
+import android.location.Criteria;
+import android.location.Location;
+import android.location.LocationManager;
 import android.os.Bundle;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.FloatingActionButton;
@@ -23,6 +28,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.github.fafaldo.fabtoolbar.widget.FABToolbarLayout;
+import com.google.android.gms.maps.model.LatLng;
 
 import java.util.List;
 
@@ -76,11 +82,17 @@ public class MainActivity extends AppCompatActivity
         });
         fabGigante = (FloatingActionButton) findViewById(R.id.fab_gigante);
         fabGigante.setOnClickListener(new View.OnClickListener() {
+
             @Override
             public void onClick(View view) {
                 if (user != null && Conexion.isNetDisponible(getApplicationContext())) {
+                  //  LocationManager locationManager = (LocationManager)getSystemService(Context.LOCATION_SERVICE);
+                   // Criteria criteria = new Criteria();
+                  //  @SuppressLint("MissingPermission") Location lastKnownLocation = locationManager.getLastKnownLocation(locationManager.getBestProvider(criteria, false));
+                    double lat = 38.346041;
+                    double lon = -0.484756;
                     LanzaLlamada llamada = new LanzaLlamada(view, getApplicationContext());
-                    llamada.execute(user.getIdPersona() + "");
+                    llamada.execute(user.getIdPersona() + "",lat+"",lon+"");
                 } else {
                     Toast.makeText(getApplicationContext(), R.string.no_conexion_aviso, Toast.LENGTH_SHORT).show();
                 }

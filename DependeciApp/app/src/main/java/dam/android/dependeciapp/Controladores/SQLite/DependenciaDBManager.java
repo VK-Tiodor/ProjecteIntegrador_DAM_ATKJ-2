@@ -3,7 +3,9 @@ package dam.android.dependeciapp.Controladores.SQLite;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
+import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteException;
 
 /**
  * Created by Tiodor on 22/01/2018.
@@ -11,7 +13,7 @@ import android.database.sqlite.SQLiteDatabase;
 
 public class DependenciaDBManager {
 
-    public class RecordatoriosDBManager {
+    public static class RecordatoriosDBManager {
 
         private DependenciaDBHelper.RecordatoriosDBHelper recordatoriosDBHelper;
 
@@ -69,29 +71,37 @@ public class DependenciaDBManager {
                 sqLiteDatabase.close();
             }
         }
+        public void createTableIfNotExist(){
+            SQLiteDatabase sqLiteDatabase = recordatoriosDBHelper.getWritableDatabase();
+            sqLiteDatabase.execSQL(DependenciaDBContract.RecordatoriosDBContract.CREATE_TABLE);
+            sqLiteDatabase.close();
+
+        }
 
         public Cursor getRows() {
             Cursor cursor = null;
+            try {
+                SQLiteDatabase sqLiteDatabase = recordatoriosDBHelper.getReadableDatabase();
 
-            SQLiteDatabase sqLiteDatabase = recordatoriosDBHelper.getReadableDatabase();
+                if (sqLiteDatabase != null) {
+                    String[] projection = new String[]{DependenciaDBContract.RecordatoriosDBContract._ID,
+                            DependenciaDBContract.RecordatoriosDBContract.TITULO,
+                            DependenciaDBContract.RecordatoriosDBContract.CONTENIDO,
+                            DependenciaDBContract.RecordatoriosDBContract.FECHA,
+                            DependenciaDBContract.RecordatoriosDBContract.HORA};
 
-            if (sqLiteDatabase != null) {
-                String[] projection = new String[]{DependenciaDBContract.RecordatoriosDBContract._ID,
-                        DependenciaDBContract.RecordatoriosDBContract.TITULO,
-                        DependenciaDBContract.RecordatoriosDBContract.CONTENIDO,
-                        DependenciaDBContract.RecordatoriosDBContract.FECHA,
-                        DependenciaDBContract.RecordatoriosDBContract.HORA};
-
-                cursor = sqLiteDatabase.query(DependenciaDBContract.RecordatoriosDBContract.TABLE_NAME,
-                        projection,
-                        null,
-                        null,
-                        null,
-                        null,
-                        null);
+                    cursor = sqLiteDatabase.query(DependenciaDBContract.RecordatoriosDBContract.TABLE_NAME,
+                            projection,
+                            null,
+                            null,
+                            null,
+                            null,
+                            null);
+                }
+                return cursor;
+            } catch (SQLException ex) {
+            return null;
             }
-
-            return cursor;
         }
     }
 
@@ -240,7 +250,8 @@ public class DependenciaDBManager {
                 sqLiteDatabase.close();
             }
         }
-        public void emptyTable(){
+
+        public void emptyTable() {
             SQLiteDatabase sqLiteDatabase = usuarioDBHelper.getWritableDatabase();
             sqLiteDatabase.execSQL(DependenciaDBContract.UsuarioDBContract.EMPTY_TABLE);
             sqLiteDatabase.close();

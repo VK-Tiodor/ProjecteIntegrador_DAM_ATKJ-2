@@ -112,10 +112,12 @@ public class LoginActivity extends AppCompatActivity {
         }
         if (TextUtils.isEmpty(DNI)) {
             cancel = true;
+            focusView=etDNI;
             Toast.makeText(this, R.string.error_field_required, Toast.LENGTH_LONG).show();
 
-        } else if (!dniValido(DNI)) {
+        } else if (!dniValido(DNI.trim())) {
             Toast.makeText(this, R.string.error_invalid_DNI, Toast.LENGTH_LONG).show();
+            focusView=etDNI;
             cancel = true;
         }
         if (cancel) {
@@ -127,7 +129,7 @@ public class LoginActivity extends AppCompatActivity {
             // perform the user login attempt.
             showProgress(true);
             mAuthTask = new UserLoginTask();
-            mAuthTask.execute(DNI, password);
+            mAuthTask.execute(DNI.trim(), password);
         }
     }
 
@@ -258,7 +260,7 @@ public class LoginActivity extends AppCompatActivity {
         protected Boolean doInBackground(String... strings) {
             String usuario = strings[0];
             String pass = strings[1];
-            showProgress(true);
+           // showProgress(true);
             if (con != null) {
                 return iniciaSesionOnline(usuario, pass);
 

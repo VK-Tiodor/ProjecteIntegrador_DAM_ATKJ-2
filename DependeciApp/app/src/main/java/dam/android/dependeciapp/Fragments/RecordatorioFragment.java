@@ -3,6 +3,7 @@ package dam.android.dependeciapp.Fragments;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.res.Configuration;
+import android.database.Cursor;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
@@ -19,16 +20,20 @@ import android.view.animation.OvershootInterpolator;
 import com.github.fafaldo.fabtoolbar.widget.FABToolbarLayout;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Date;
 import java.util.List;
 
 import dam.android.dependeciapp.AsyncTasks.CreaRecordatorios;
 import dam.android.dependeciapp.Controladores.Conexion;
 import dam.android.dependeciapp.Controladores.RecordatorioAdapter;
+import dam.android.dependeciapp.Controladores.SQLite.DependenciaDBManager;
 import dam.android.dependeciapp.Pojo.Recordatorio;
 import dam.android.dependeciapp.R;
 
 @SuppressLint("ValidFragment")
-public class RecordatorioFragment extends Fragment {
+public class RecordatorioFragment extends Fragment  implements Comparator<Recordatorio> {
 
     private OnListFragmentInteractionListener mListener;
     private List<Recordatorio> recordatorioList;
@@ -67,6 +72,26 @@ public class RecordatorioFragment extends Fragment {
 
     private void obtenListaSiPuedes() {
         recordatorioList = new ArrayList<>();
+        DependenciaDBManager.RecordatoriosDBManager db = new DependenciaDBManager.RecordatoriosDBManager(getContext());
+        db.createTableIfNotExist();
+        Cursor cursor = db.getRows();
+        if(cursor!=null){
+            int cuenta = cursor.getCount();
+            if(cuenta>0){
+                cursor.moveToFirst();
+                do{
+                    Date fecha=new Date(cursor.getString(3));
+                    Recordatorio r = new Recordatorio(cursor.getInt(0),cursor.getString(1),cursor.getString(2),"",cursor.getString(4));
+                    r.setFecha(fecha);
+                    recordatorioList.add(r);
+                }while (cursor.moveToNext());
+
+            }else
+                obtenListaOnline();
+        }else
+        obtenListaOnline();
+    }
+    private void obtenListaOnline(){
         if (Conexion.isNetDisponible(getContext())) {
             con = new Conexion();
             if (con != null) {
@@ -88,7 +113,10 @@ public class RecordatorioFragment extends Fragment {
             recyclerView = (RecyclerView) view;
             //Le ponemos un gestor lineal
             recyclerView.setLayoutManager(new LinearLayoutManager(context));
-
+            //ordenamos la lsita con un comparador de fechas
+            //Lo hice con Collections en vez de con recordatorioList.sort(this);
+            //Porque esta ultima, no esta disponible en versiones menorea a la API 24
+            Collections.sort(recordatorioList,this);
             recyclerView.setAdapter(new RecordatorioAdapter(recordatorioList, context, fabToolbar));
             recyclerView.getAdapter().notifyDataSetChanged();
         }
@@ -121,5 +149,15 @@ public class RecordatorioFragment extends Fragment {
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putInt("userId",idUsuario);
+    }
+    @Override
+    public int compare(Recordatorio o1, Recordatorio o2) {
+        if (o1.getFecha().before(o2.getFecha())) {
+            return -1;
+        } else if (o1.getFecha().after(o2.getFecha())) {
+            return 1;
+        } else {
+            return 0;
+        }
     }
 }

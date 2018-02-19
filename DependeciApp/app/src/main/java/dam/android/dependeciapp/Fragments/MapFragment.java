@@ -131,7 +131,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
 
         @Override
         public void onLocationChanged(Location loc) {
-            if (myLocation == null || myLocation.distanceTo(loc) >= 25) {
+            if (myLocation == null || myLocation.distanceTo(loc) >= 1) {
                 myLocation = loc;
                 LatLng myLocationLatLng = new LatLng(myLocation.getLatitude(), myLocation.getLongitude());
                 setMarkerOnLatLng(myLocationLatLng);

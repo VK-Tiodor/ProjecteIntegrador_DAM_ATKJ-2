@@ -14,6 +14,7 @@ import android.widget.TextView;
 import com.github.fafaldo.fabtoolbar.widget.FABToolbarLayout;
 
 import dam.android.dependeciapp.Controladores.RecordatorioAdapter;
+import dam.android.dependeciapp.Controladores.SQLite.DependenciaDBManager;
 import dam.android.dependeciapp.Pojo.Recordatorio;
 import dam.android.dependeciapp.R;
 
@@ -76,6 +77,9 @@ public class RecordatorioDetalleFragment extends Fragment {
             public void onClick(View v) {
                 adapter.getRecordatorioList().remove(recordatorio);
                 adapter.notifyDataSetChanged();
+                DependenciaDBManager.RecordatoriosDBManager db = new DependenciaDBManager.RecordatoriosDBManager(getContext());
+                db.delete(String.valueOf(recordatorio.id));
+
                 getFragmentManager().beginTransaction().remove(fragment).commit();
                 FABToolbarLayout fabToolbar=(FABToolbarLayout) getActivity().findViewById(R.id.fabtoolbar);
                 fabToolbar.hide();
