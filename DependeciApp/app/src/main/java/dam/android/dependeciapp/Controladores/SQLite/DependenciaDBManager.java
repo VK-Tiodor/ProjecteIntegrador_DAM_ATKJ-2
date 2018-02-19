@@ -237,6 +237,11 @@ public class DependenciaDBManager {
                 sqLiteDatabase.close();
             }
         }
+        public void emptyTalbe(){
+            SQLiteDatabase sqLiteDatabase = usuarioDBHelper.getWritableDatabase();
+            sqLiteDatabase.execSQL(DependenciaDBContract.UsuarioDBContract.EMPTY_TABLE);
+            sqLiteDatabase.close();
+        }
 
         public Cursor getRows() {
             Cursor cursor = null;

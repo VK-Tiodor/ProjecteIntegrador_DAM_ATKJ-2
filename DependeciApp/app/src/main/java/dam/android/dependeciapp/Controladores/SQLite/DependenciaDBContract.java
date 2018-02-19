@@ -84,5 +84,6 @@ public final class DependenciaDBContract {
                 + ");";
 
         public static final String DELETE_TABLE = "DROP TABLE IF EXISTS " + UsuarioDBContract.TABLE_NAME;
+        public static final String EMPTY_TABLE ="DELETE FROM "+TABLE_NAME;
     }
 }

@@ -36,6 +36,7 @@ import java.util.List;
 
 import dam.android.dependeciapp.AsyncTasks.LanzaLlamada;
 import dam.android.dependeciapp.Controladores.Conexion;
+import dam.android.dependeciapp.Controladores.SQLite.DependenciaDBManager;
 import dam.android.dependeciapp.Fragments.BotonFragment;
 import dam.android.dependeciapp.Fragments.MapFragment;
 import dam.android.dependeciapp.Fragments.RecordatorioDetalleFragment;
@@ -215,6 +216,8 @@ public class MainActivity extends AppCompatActivity
         Intent i = new Intent(getApplicationContext(), LoginActivity.class);
         i.putExtra("CIERRA_SESION", true);
         startActivity(i);
+        DependenciaDBManager.UsuarioDBManager db = new DependenciaDBManager.UsuarioDBManager(getApplicationContext());
+        db.emptyTalbe();
         finish();
     }
     @Override
