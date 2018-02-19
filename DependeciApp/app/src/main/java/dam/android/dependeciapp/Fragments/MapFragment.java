@@ -47,6 +47,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
     private final String[] PERMISSIONS_MAPS = {Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION};
     private GoogleMap mMap;
     private SupportMapFragment mapFragment;
+    private MyLocationListener myLocationListener;
 
     public static MapFragment newInstance() {
         return new MapFragment();
@@ -69,8 +70,8 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
         LocationManager locationManager = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
         Criteria criteria = new Criteria();
         Location lastKnownLocation = locationManager.getLastKnownLocation(locationManager.getBestProvider(criteria, false));
-        MyLocationListener myLocationListener = new MyLocationListener(lastKnownLocation);
-        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, myLocationListener);
+        myLocationListener = new MyLocationListener(lastKnownLocation);
+        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 15000, 25, myLocationListener);
     }
 
     @Override
@@ -111,6 +112,10 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
         return (f instanceof MapFragment);
     }
 
+    public Location getMyListenerLocation(){
+        return myLocationListener.getMyLocation();
+    }
+
     private class MyLocationListener implements LocationListener {
 
         private static final float ZOOM_CITY_LEVEL = 10;
@@ -131,11 +136,17 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
 
         @Override
         public void onLocationChanged(Location loc) {
+<<<<<<< HEAD
             if (myLocation == null || myLocation.distanceTo(loc) >= 1) {
                 myLocation = loc;
                 LatLng myLocationLatLng = new LatLng(myLocation.getLatitude(), myLocation.getLongitude());
                 setMarkerOnLatLng(myLocationLatLng);
             }
+=======
+            myLocation = loc;
+            LatLng myLocationLatLng = new LatLng(myLocation.getLatitude(), myLocation.getLongitude());
+            setMarkerOnLatLng(myLocationLatLng);
+>>>>>>> 044561ce5b8424e72a4142b462db69e9bb6b73cb
         }
 
         public void setMarkerOnLatLng(LatLng locationLatLng) {
@@ -145,7 +156,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
                     List<Address> list = geocoder.getFromLocation(locationLatLng.latitude, locationLatLng.longitude, 1);
                     if (!list.isEmpty()) {
                         Address address = list.get(0);
-                        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(locationLatLng, ZOOM_STREET_LEVEL));
+                        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(locationLatLng, ZOOM_STREET_LEVEL));
                         if (myMarker != null) {
                             myMarker.remove();
                         }
@@ -184,6 +195,14 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
                         break;
                 }
             }
+        }
+
+        public Location getMyLocation() {
+            return myLocation;
+        }
+
+        public void setMyLocation(Location myLocation) {
+            this.myLocation = myLocation;
         }
     }
 }

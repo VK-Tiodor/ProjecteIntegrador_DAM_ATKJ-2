@@ -260,7 +260,7 @@ public class LoginActivity extends AppCompatActivity {
         protected Boolean doInBackground(String... strings) {
             String usuario = strings[0];
             String pass = strings[1];
-           // showProgress(true);
+
             if (con != null) {
                 return iniciaSesionOnline(usuario, pass);
 
