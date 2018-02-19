@@ -11,7 +11,7 @@ import android.database.sqlite.SQLiteDatabase;
 
 public class DependenciaDBManager {
 
-    public class RecordatoriosDBManager {
+    public static class RecordatoriosDBManager {
 
         private DependenciaDBHelper.RecordatoriosDBHelper recordatoriosDBHelper;
 
@@ -95,7 +95,7 @@ public class DependenciaDBManager {
         }
     }
 
-    public class UbicacionesDBManager {
+    public static class UbicacionesDBManager {
 
         private DependenciaDBHelper.UbicacionesDBHelper ubicacionesDBHelper;
 
