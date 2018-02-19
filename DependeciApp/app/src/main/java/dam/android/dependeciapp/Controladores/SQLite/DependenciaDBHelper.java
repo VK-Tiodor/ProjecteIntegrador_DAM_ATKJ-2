@@ -91,7 +91,6 @@ public class DependenciaDBHelper {
         @Override
         public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
             db.execSQL(DependenciaDBContract.UsuarioDBContract.DELETE_TABLE);
-
             onCreate(db);
         }
 

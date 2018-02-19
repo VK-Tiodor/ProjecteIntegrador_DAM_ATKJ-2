@@ -2,17 +2,12 @@ package dam.android.dependeciapp.Fragments;
 
 import android.annotation.SuppressLint;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import dam.android.dependeciapp.AsyncTasks.LanzaLlamada;
-import dam.android.dependeciapp.Controladores.Conexion;
-import dam.android.dependeciapp.Pojo.Usuario;
 import dam.android.dependeciapp.R;
 
 /**

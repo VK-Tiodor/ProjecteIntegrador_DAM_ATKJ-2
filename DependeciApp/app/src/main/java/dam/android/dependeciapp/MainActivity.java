@@ -1,11 +1,6 @@
 package dam.android.dependeciapp;
 
-import android.annotation.SuppressLint;
-import android.content.Context;
 import android.content.Intent;
-import android.location.Criteria;
-import android.location.Location;
-import android.location.LocationManager;
 import android.os.Bundle;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.FloatingActionButton;
@@ -28,7 +23,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.github.fafaldo.fabtoolbar.widget.FABToolbarLayout;
-import com.google.android.gms.maps.model.LatLng;
 
 import java.util.List;
 

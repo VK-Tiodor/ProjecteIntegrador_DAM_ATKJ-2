@@ -5,7 +5,6 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
-import android.database.sqlite.SQLiteException;
 
 /**
  * Created by Tiodor on 22/01/2018.
@@ -74,6 +73,12 @@ public class DependenciaDBManager {
         public void createTableIfNotExist(){
             SQLiteDatabase sqLiteDatabase = recordatoriosDBHelper.getWritableDatabase();
             sqLiteDatabase.execSQL(DependenciaDBContract.RecordatoriosDBContract.CREATE_TABLE);
+            sqLiteDatabase.close();
+
+        }
+        public void restartAutonum(){
+            SQLiteDatabase sqLiteDatabase = recordatoriosDBHelper.getWritableDatabase();
+            sqLiteDatabase.execSQL(DependenciaDBContract.RecordatoriosDBContract.RESTART_AUTONUM);
             sqLiteDatabase.close();
 
         }
@@ -216,7 +221,6 @@ public class DependenciaDBManager {
 
         public void update(int id, String dni, String nombre, String apellidos, String fecha_nacimiento, String genero, String tipo_dependiente, String fecha_alta) {
             SQLiteDatabase sqLiteDatabase = usuarioDBHelper.getWritableDatabase();
-
             if (sqLiteDatabase != null) {
                 ContentValues contentValues = new ContentValues();
                 contentValues.put(DependenciaDBContract.UsuarioDBContract.DNI, dni);

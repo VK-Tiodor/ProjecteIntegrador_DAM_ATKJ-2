@@ -2,20 +2,15 @@ package dam.android.dependeciapp.Fragments;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
-import android.content.res.Configuration;
 import android.database.Cursor;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v4.widget.SwipeRefreshLayout;
-import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.OvershootInterpolator;
+import android.widget.Toast;
 
 import com.github.fafaldo.fabtoolbar.widget.FABToolbarLayout;
 
@@ -33,25 +28,20 @@ import dam.android.dependeciapp.Pojo.Recordatorio;
 import dam.android.dependeciapp.R;
 
 @SuppressLint("ValidFragment")
-public class RecordatorioFragment extends Fragment  implements Comparator<Recordatorio> {
+public class RecordatorioFragment extends Fragment implements Comparator<Recordatorio> {
 
     private OnListFragmentInteractionListener mListener;
     private List<Recordatorio> recordatorioList;
-    private Conexion con;
     private RecyclerView recyclerView;
     private FABToolbarLayout fabToolbar;
     private int idUsuario;
 
-
     public RecordatorioFragment() {
-
     }
 
-
-    public static RecordatorioFragment newInstance( int id) {
+    public static RecordatorioFragment newInstance(int id) {
         RecordatorioFragment fragment = new RecordatorioFragment();
         fragment.SetIdUsuario(id);
-
         return fragment;
     }
 
@@ -59,45 +49,47 @@ public class RecordatorioFragment extends Fragment  implements Comparator<Record
         idUsuario = id;
     }
 
-
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if(savedInstanceState!=null)
-            idUsuario=savedInstanceState.getInt("userId");
-        obtenListaSiPuedes();
-
+        if (savedInstanceState != null)
+            idUsuario = savedInstanceState.getInt("userId");
+        obtenListaRecordatorios();
     }
 
-    private void obtenListaSiPuedes() {
+    private void obtenListaRecordatorios() {
         recordatorioList = new ArrayList<>();
         DependenciaDBManager.RecordatoriosDBManager db = new DependenciaDBManager.RecordatoriosDBManager(getContext());
         db.createTableIfNotExist();
         Cursor cursor = db.getRows();
-        if(cursor!=null){
-            int cuenta = cursor.getCount();
-            if(cuenta>0){
-                cursor.moveToFirst();
-                do{
-                    Date fecha=new Date(cursor.getString(3));
-                    Recordatorio r = new Recordatorio(cursor.getInt(0),cursor.getString(1),cursor.getString(2),"",cursor.getString(4));
-                    r.setFecha(fecha);
-                    recordatorioList.add(r);
-                }while (cursor.moveToNext());
-
-            }else
-                obtenListaOnline();
-        }else
-        obtenListaOnline();
+        if (cursor != null) {
+            obtenListaLocal(cursor);
+        } else
+            obtenListaOnline();
     }
-    private void obtenListaOnline(){
+
+    private void obtenListaLocal(Cursor cursor) {
+        int cuenta = cursor.getCount();
+        if (cuenta > 0) {
+            cursor.moveToFirst();
+            do {
+                Date fecha = new Date(cursor.getString(3));
+                Recordatorio r = new Recordatorio(cursor.getInt(0), cursor.getString(1), cursor.getString(2), cursor.getString(4),fecha);
+                recordatorioList.add(r);
+            } while (cursor.moveToNext());
+            Collections.sort(recordatorioList, this);
+        } else
+            obtenListaOnline();
+    }
+
+    private void obtenListaOnline() {
         if (Conexion.isNetDisponible(getContext())) {
-            con = new Conexion();
-            if (con != null) {
-                CreaRecordatorios cr = new CreaRecordatorios(con, recordatorioList, getContext());
-                cr.execute(idUsuario);
-            }
+            Conexion con = new Conexion();
+            CreaRecordatorios cr = new CreaRecordatorios(recordatorioList, getContext(),con);
+            cr.execute(idUsuario);
+            cr=null;
+        }else{
+            Toast.makeText(getContext(), R.string.no_carga_recordatorios, Toast.LENGTH_LONG).show();
         }
     }
 
@@ -116,8 +108,7 @@ public class RecordatorioFragment extends Fragment  implements Comparator<Record
             //ordenamos la lsita con un comparador de fechas
             //Lo hice con Collections en vez de con recordatorioList.sort(this);
             //Porque esta ultima, no esta disponible en versiones menorea a la API 24
-            Collections.sort(recordatorioList,this);
-            recyclerView.setAdapter(new RecordatorioAdapter(recordatorioList, context, fabToolbar));
+            recyclerView.setAdapter(new RecordatorioAdapter(recordatorioList, context, fabToolbar, idUsuario));
             recyclerView.getAdapter().notifyDataSetChanged();
         }
         return view;
@@ -144,12 +135,12 @@ public class RecordatorioFragment extends Fragment  implements Comparator<Record
     }
 
 
-
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putInt("userId",idUsuario);
+        outState.putInt("userId", idUsuario);
     }
+
     @Override
     public int compare(Recordatorio o1, Recordatorio o2) {
         if (o1.getFecha().before(o2.getFecha())) {

@@ -13,11 +13,6 @@ public final class DependenciaDBContract {
     public static class RecordatoriosDBContract {
 
         public static final String TABLE_NAME = "RECORDATORIOS";
-        //public final String titulo;
-       // public final String content;
-      //  public final String cuando;
-       // public final String hora;
-       // public final boolean terminado;
         public static final String _ID = "_id";
         public static final String TITULO = "titulo";
         public static final String CONTENIDO = "contenido";
@@ -34,6 +29,8 @@ public final class DependenciaDBContract {
                 + ");";
 
         public static final String DELETE_TABLE = "DROP TABLE IF EXISTS " + RecordatoriosDBContract.TABLE_NAME;
+        public static final String RESTART_AUTONUM="DELETE FROM SQLITE_SEQUENCE WHERE NAME = '"+RecordatoriosDBContract.TABLE_NAME+"'";
+
     }
 
     public static class UbicacionesDBContract {
@@ -55,6 +52,8 @@ public final class DependenciaDBContract {
                 + ");";
 
         public static final String DELETE_TABLE = "DROP TABLE IF EXISTS " + UbicacionesDBContract.TABLE_NAME;
+
+
     }
 
     public static class UsuarioDBContract {

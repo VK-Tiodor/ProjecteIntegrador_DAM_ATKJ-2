@@ -5,7 +5,6 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
-import android.view.Menu;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
@@ -13,12 +12,9 @@ import android.widget.TextView;
 import com.github.fafaldo.fabtoolbar.widget.FABToolbarLayout;
 
 import dam.android.dependeciapp.Fragments.RecordatorioDetalleFragment;
-import dam.android.dependeciapp.MainActivity;
 import dam.android.dependeciapp.Pojo.Recordatorio;
 import dam.android.dependeciapp.R;
 
-import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 
 
@@ -28,11 +24,13 @@ public class RecordatorioAdapter extends RecyclerView.Adapter<RecordatorioAdapte
     private Context context;
     private RecordatorioAdapter adapter;
     private FABToolbarLayout fabToolbar;
+    private int idUsuario;
 
 
-    public RecordatorioAdapter(List<Recordatorio> items, Context con, FABToolbarLayout fabToolbar) {
+    public RecordatorioAdapter(List<Recordatorio> items, Context cont, FABToolbarLayout fabToolbar,int id) {
         recordatorioList = items;
-        context = con;
+        context = cont;
+        idUsuario=id;
         this.fabToolbar = fabToolbar;
     }
 
@@ -48,16 +46,8 @@ public class RecordatorioAdapter extends RecyclerView.Adapter<RecordatorioAdapte
         holder.mItem = recordatorioList.get(position);
         holder.tvTitulo.setText(recordatorioList.get(position).titulo);
         holder.tvHora.setText(recordatorioList.get(position).hora);
-      //  holder.tvCuando.setText(recordatorioList.get(position).cuando);
-        Calendar calendar = Calendar.getInstance();
-        calendar.setTime(recordatorioList.get(position).fecha);
-        String fechaHora = calendar.getTime().toString();
-        String[] fechaHoraArray = fechaHora.split(" ");
+        String cuando = Recordatorio.obtrenCuando(context,recordatorioList.get(position));
 
-        String cuando = Recordatorio.obtenHoyoMañana(context,calendar.getTime());
-        //Si no fuera ni hoy ni mañana, se pone el nombre del dia de la semana
-        if(cuando==null)
-            cuando= Recordatorio.obtenDiaTexto(context,fechaHoraArray[0]);
         holder.tvCuando.setText(cuando);
         adapter = this;
 
@@ -66,7 +56,7 @@ public class RecordatorioAdapter extends RecyclerView.Adapter<RecordatorioAdapte
             public void onClick(View v) {
                 try {
                     //Creamos una nueva instancia del Fragment de Detalle
-                    RecordatorioDetalleFragment fragmentDetalle = RecordatorioDetalleFragment.newInstance(holder.mItem, adapter);
+                    RecordatorioDetalleFragment fragmentDetalle = RecordatorioDetalleFragment.newInstance(holder.mItem, adapter,idUsuario);
                     //Obtenemos la lista de fragments activos
                     //Seleccionamos el fragment que sea RecordatorioDetalleFragment y lo eliminamos
                     cierraRecordatorioDetalle();
@@ -91,7 +81,6 @@ public class RecordatorioAdapter extends RecyclerView.Adapter<RecordatorioAdapte
         for (Fragment fragment : listFragment) {
             if (fragment instanceof RecordatorioDetalleFragment) {
                 ((FragmentActivity) context).getSupportFragmentManager().beginTransaction().remove(fragment).commit();
-
             }
         }
     }
