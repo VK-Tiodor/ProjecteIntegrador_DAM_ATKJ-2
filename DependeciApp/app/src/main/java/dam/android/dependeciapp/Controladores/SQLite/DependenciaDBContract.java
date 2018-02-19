@@ -19,16 +19,18 @@ public final class DependenciaDBContract {
        // public final String hora;
        // public final boolean terminado;
         public static final String _ID = "_id";
-        public static final String MEDICAMENTO  = "medicamento";
-        public static final String DOSIS = "dosis";
-        public static final String FECHA_HORA = "fecha_hora";
+        public static final String TITULO = "titulo";
+        public static final String CONTENIDO = "contenido";
+        public static final String FECHA = "fecha";
+        public static final String HORA = "fecha";
 
         public static final String CREATE_TABLE = "CREATE TABLE " + RecordatoriosDBContract.TABLE_NAME
                 + " ("
                 + RecordatoriosDBContract._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
-                + RecordatoriosDBContract.MEDICAMENTO + " TEXT NOT NULL, "
-                + RecordatoriosDBContract.DOSIS + " REAL NOT NULL, "
-                + RecordatoriosDBContract.FECHA_HORA + " TEXT NOT NULL "
+                + RecordatoriosDBContract.TITULO + " TEXT NOT NULL, "
+                + RecordatoriosDBContract.CONTENIDO + " REAL NOT NULL, "
+                + RecordatoriosDBContract.FECHA + " TEXT NOT NULL, "
+                + RecordatoriosDBContract.HORA + " TEXT NOT NULL "
                 + ");";
 
         public static final String DELETE_TABLE = "DROP TABLE IF EXISTS " + RecordatoriosDBContract.TABLE_NAME;

@@ -19,15 +19,16 @@ public class DependenciaDBManager {
             recordatoriosDBHelper = DependenciaDBHelper.RecordatoriosDBHelper.getInstance(context);
         }
 
-        public void insert(String medicamento, String dosis, String hora) {
+        public void insert(String titulo, String contenido, String fecha, String hora) {
             SQLiteDatabase sqLiteDatabase = recordatoriosDBHelper.getWritableDatabase();
 
             if (sqLiteDatabase != null) {
                 ContentValues contentValues = new ContentValues();
 
-                contentValues.put(DependenciaDBContract.RecordatoriosDBContract.MEDICAMENTO, medicamento);
-                contentValues.put(DependenciaDBContract.RecordatoriosDBContract.DOSIS, dosis);
-                contentValues.put(DependenciaDBContract.RecordatoriosDBContract.FECHA_HORA, hora);
+                contentValues.put(DependenciaDBContract.RecordatoriosDBContract.TITULO, titulo);
+                contentValues.put(DependenciaDBContract.RecordatoriosDBContract.CONTENIDO, contenido);
+                contentValues.put(DependenciaDBContract.RecordatoriosDBContract.FECHA, fecha);
+                contentValues.put(DependenciaDBContract.RecordatoriosDBContract.HORA, hora);
 
                 sqLiteDatabase.insert(DependenciaDBContract.RecordatoriosDBContract.TABLE_NAME, null, contentValues);
 
@@ -35,14 +36,15 @@ public class DependenciaDBManager {
             }
         }
 
-        public void update(String id, String medicamento, String dosis, String fecha_hora) {
+        public void update(String id, String titulo, String contenido, String fecha, String hora) {
             SQLiteDatabase sqLiteDatabase = recordatoriosDBHelper.getWritableDatabase();
 
             if (sqLiteDatabase != null) {
                 ContentValues contentValues = new ContentValues();
-                contentValues.put(DependenciaDBContract.RecordatoriosDBContract.MEDICAMENTO, medicamento);
-                contentValues.put(DependenciaDBContract.RecordatoriosDBContract.DOSIS, dosis);
-                contentValues.put(DependenciaDBContract.RecordatoriosDBContract.FECHA_HORA, fecha_hora);
+                contentValues.put(DependenciaDBContract.RecordatoriosDBContract.TITULO, titulo);
+                contentValues.put(DependenciaDBContract.RecordatoriosDBContract.CONTENIDO, contenido);
+                contentValues.put(DependenciaDBContract.RecordatoriosDBContract.FECHA, fecha);
+                contentValues.put(DependenciaDBContract.RecordatoriosDBContract.HORA, hora);
 
                 String tableName = DependenciaDBContract.RecordatoriosDBContract.TABLE_NAME;
                 String whereClause = DependenciaDBContract.RecordatoriosDBContract._ID + " = ?";
@@ -75,9 +77,10 @@ public class DependenciaDBManager {
 
             if (sqLiteDatabase != null) {
                 String[] projection = new String[]{DependenciaDBContract.RecordatoriosDBContract._ID,
-                        DependenciaDBContract.RecordatoriosDBContract.MEDICAMENTO,
-                        DependenciaDBContract.RecordatoriosDBContract.DOSIS,
-                        DependenciaDBContract.RecordatoriosDBContract.FECHA_HORA};
+                        DependenciaDBContract.RecordatoriosDBContract.TITULO,
+                        DependenciaDBContract.RecordatoriosDBContract.CONTENIDO,
+                        DependenciaDBContract.RecordatoriosDBContract.FECHA,
+                        DependenciaDBContract.RecordatoriosDBContract.HORA};
 
                 cursor = sqLiteDatabase.query(DependenciaDBContract.RecordatoriosDBContract.TABLE_NAME,
                         projection,
