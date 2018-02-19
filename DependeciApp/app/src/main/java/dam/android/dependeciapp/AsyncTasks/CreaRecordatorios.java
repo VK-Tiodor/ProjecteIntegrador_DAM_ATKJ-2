@@ -55,7 +55,7 @@ public class CreaRecordatorios extends AsyncTask<Integer, Void, List<Recordatori
 
                 for (int i = 0; i < tomasEn3Dias; i++) {
                     String titulo = context.getString(R.string.tomar) + " " + nombreMedicina;
-                    String contenido = context.getString(R.string.tomar) + " " + cantidadATexto(cantidad) + context.getString(R.string.de) + " " + nombreMedicina;
+                    String contenido = context.getString(R.string.tomar) + " " + Recordatorio.cantidadATexto(context,cantidad) + context.getString(R.string.de) + " " + nombreMedicina;
 
                     //A la fecha actual le añadimos las horas de la toma
                     calendar.add(Calendar.HOUR, toma);
@@ -69,11 +69,11 @@ public class CreaRecordatorios extends AsyncTask<Integer, Void, List<Recordatori
                     String[] horaArray = fechaHoraArray[3].split(":");
 
                     //A partir de la fecha de la toma, obtenemos si es Hoy o Mañana
-                    String cuando = obtenHoyoMañana(fechaDeLaToma);
+                    String cuando = Recordatorio.obtenHoyoMañana(context,fechaDeLaToma);
 
                     //Si no fuera ni hoy ni mañana, se pone el nombre del dia de la semana
                     if(cuando==null)
-                           cuando= obtenDiaTexto(fechaHoraArray[0]);
+                           cuando= Recordatorio.obtenDiaTexto(context,fechaHoraArray[0]);
                     //Establecemos la hora con los datos del array
                     String hora = horaArray[0] + ":" + horaArray[1];
                     //creamos el recordatorio
@@ -93,53 +93,6 @@ public class CreaRecordatorios extends AsyncTask<Integer, Void, List<Recordatori
         Collections.sort(recordatorioList,this);
         return recordatorioList;
     }
-    //Transforma el Double de la cantidad a texto
-    private String cantidadATexto(double cantidad) {
-        if (cantidad == 0.25) {
-            return  context.getString(R.string.cuarto) + " ";
-        }
-        if (cantidad == 0.5) {
-            return  context.getString(R.string.media) + " ";
-        }
-        if (cantidad == 1.0)
-            return  context.getString(R.string.pastilla) + " ";
-
-        return (int) cantidad + context.getString(R.string.pastillas) + " ";
-    }
-
-    private String obtenDiaTexto(String day) {
-        String[] dias = context.getResources().getStringArray(R.array.dias);
-        switch (day) {
-            case "Mon": return dias[0];
-            case "Tue":return dias[1];
-            case "Wed":return dias[2];
-            case "Thu":return dias[3];
-            case "Fry" :return dias[4];
-            case "Sat" :return dias[5];
-            case "Sun" :return dias[6];
-        }
-        return day;
-    }
-    //Introduces una fecha y te devuelve si es hoy o mañana. Si no lo es devuelve Null
-    private String obtenHoyoMañana( Date toma){
-        Date actual = new Date();
-        String[] dias = context.getResources().getStringArray(R.array.dias);
-
-        SimpleDateFormat dt = new SimpleDateFormat("dd-mm-yyy");
-        String actualString = dt.format(actual);
-        String tomaString = dt.format(toma);
-        if (actualString.equalsIgnoreCase(tomaString))
-            return dias[7];
-        Calendar calendar = Calendar.getInstance();
-        calendar.setTime(actual);
-        calendar.add(Calendar.DAY_OF_YEAR,1);
-        actual = calendar.getTime();
-        actualString = dt.format(actual);
-        if (actualString.equalsIgnoreCase(tomaString))
-            return  dias[8];
-        return null;
-    }
-
 
     @Override
     public int compare(Recordatorio o1, Recordatorio o2) {
