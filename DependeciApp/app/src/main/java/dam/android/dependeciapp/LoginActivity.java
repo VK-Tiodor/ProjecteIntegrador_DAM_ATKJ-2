@@ -52,6 +52,10 @@ public class LoginActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_login);
+        mProgressView = findViewById(R.id.login_progress);
+        mLoginFormView = findViewById(R.id.login_form);
+
         if (Conexion.isNetDisponible(getApplicationContext()))
             con = new Conexion();
 
@@ -66,7 +70,7 @@ public class LoginActivity extends AppCompatActivity {
         //Si la sesion se inicia automaticamente no se cargan ni la UI ni las preferencais
         //para ahorrar recursos y tiempo
         if (!seHaIniciado) {
-            setContentView(R.layout.activity_login);
+           // setContentView(R.layout.activity_login);
             setUI();
             cargaPreferencias();
         }
@@ -85,8 +89,7 @@ public class LoginActivity extends AppCompatActivity {
                 intentaLogear();
             }
         });
-        mProgressView = findViewById(R.id.login_progress);
-        mLoginFormView = findViewById(R.id.login_form);
+
     }
 
     private void intentaLogear() {
@@ -255,6 +258,7 @@ public class LoginActivity extends AppCompatActivity {
         protected Boolean doInBackground(String... strings) {
             String usuario = strings[0];
             String pass = strings[1];
+            showProgress(true);
             if (con != null) {
                 return iniciaSesionOnline(usuario, pass);
 
