@@ -105,7 +105,7 @@ public class DependenciaDBManager {
         }
     }
 
-    public class UbicacionesDBManager {
+    public static class UbicacionesDBManager {
 
         private DependenciaDBHelper.UbicacionesDBHelper ubicacionesDBHelper;
 
