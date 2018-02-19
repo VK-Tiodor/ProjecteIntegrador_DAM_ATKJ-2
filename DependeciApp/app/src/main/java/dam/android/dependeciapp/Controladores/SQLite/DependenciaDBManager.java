@@ -240,7 +240,7 @@ public class DependenciaDBManager {
                 sqLiteDatabase.close();
             }
         }
-        public void emptyTalbe(){
+        public void emptyTable(){
             SQLiteDatabase sqLiteDatabase = usuarioDBHelper.getWritableDatabase();
             sqLiteDatabase.execSQL(DependenciaDBContract.UsuarioDBContract.EMPTY_TABLE);
             sqLiteDatabase.close();
