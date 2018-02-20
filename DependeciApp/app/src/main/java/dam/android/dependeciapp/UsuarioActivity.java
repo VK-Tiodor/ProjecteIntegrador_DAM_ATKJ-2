@@ -1,6 +1,5 @@
 package dam.android.dependeciapp;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
@@ -31,12 +30,9 @@ public class UsuarioActivity extends AppCompatActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_usuario);
-
         Bundle b = getIntent().getExtras();
         user = (Usuario) b.getSerializable("Usuario");
-
         setUI();
-
     }
 
     private void setUI(){

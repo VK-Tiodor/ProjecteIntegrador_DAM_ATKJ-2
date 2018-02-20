@@ -3,12 +3,9 @@ package dam.android.dependeciapp;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
-import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.support.v7.app.AppCompatActivity;
 
 import android.os.AsyncTask;
@@ -324,6 +321,7 @@ public class LoginActivity extends AppCompatActivity {
                 Intent i = new Intent(getApplicationContext(), MainActivity.class);
                 i.putExtra("user", user);
                 startActivity(i);
+                con=null;
                 finish();
             } else {
                 if (etPass != null) {

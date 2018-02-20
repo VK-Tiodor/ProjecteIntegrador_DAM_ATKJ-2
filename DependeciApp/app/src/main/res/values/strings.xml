@@ -65,5 +65,6 @@
     <string name="media"> media pastilla </string>
     <string name="pastilla"> una pastilla </string>
     <string name="pastillas"> pastillas </string>
+    <string name="no_carga_recordatorios">No se han podido cargar los recordatorios, intentelo con conexion</string>
 
 </resources>
