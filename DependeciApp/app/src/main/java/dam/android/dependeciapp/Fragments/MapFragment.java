@@ -35,6 +35,8 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Locale;
 
+import dam.android.dependeciapp.AsyncTasks.GuardarUbicacionSQLite;
+import dam.android.dependeciapp.Controladores.SQLite.DependenciaDBManager;
 import dam.android.dependeciapp.R;
 
 /**
@@ -71,7 +73,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
         Criteria criteria = new Criteria();
         Location lastKnownLocation = locationManager.getLastKnownLocation(locationManager.getBestProvider(criteria, false));
         myLocationListener = new MyLocationListener(lastKnownLocation);
-        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 15000, 25, myLocationListener);
+        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 10, myLocationListener);
     }
 
     @Override
@@ -112,7 +114,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
         return (f instanceof MapFragment);
     }
 
-    public Location getMyListenerLocation(){
+    public LatLng getMyListenerLocation(){
         return myLocationListener.getMyLocation();
     }
 
@@ -122,23 +124,24 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
         private static final float ZOOM_STREET_LEVEL = 15;
         private static final float ZOOM_BUILDING_LEVEL = 20;
 
-        private Location myLocation;
+        private LatLng myLocation;
         private Marker myMarker;
+        private GuardarUbicacionSQLite guardarUbicacion;
 
         @SuppressLint("MissingPermission")
-        public MyLocationListener(Location lastKnownlocation) {
+        public MyLocationListener(LatLng lastKnownlocation) {
+            guardarUbicacion = new GuardarUbicacionSQLite();
+
             if (lastKnownlocation != null) {
                 myLocation = lastKnownlocation;
-                LatLng myLocationLatLng = new LatLng(myLocation.getLatitude(), myLocation.getLongitude());
-                setMarkerOnLatLng(myLocationLatLng);
+                setMarkerOnLatLng(myLocation);
             }
         }
 
         @Override
         public void onLocationChanged(Location loc) {
-            myLocation = loc;
-            LatLng myLocationLatLng = new LatLng(myLocation.getLatitude(), myLocation.getLongitude());
-            setMarkerOnLatLng(myLocationLatLng);
+            myLocation = new LatLng(loc.getLatitude(), loc.getLongitude());
+            setMarkerOnLatLng(myLocation);
         }
 
         public void setMarkerOnLatLng(LatLng locationLatLng) {
@@ -148,12 +151,15 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
                     List<Address> list = geocoder.getFromLocation(locationLatLng.latitude, locationLatLng.longitude, 1);
                     if (!list.isEmpty()) {
                         Address address = list.get(0);
+                        String addressLine = address.getAddressLine(0);
                         mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(locationLatLng, ZOOM_STREET_LEVEL));
                         if (myMarker != null) {
                             myMarker.remove();
                         }
-                        myMarker = mMap.addMarker(new MarkerOptions().position(locationLatLng).title(getString(R.string.maps_marker_you_are_here)).snippet(address.getAddressLine(0)));
+                        myMarker = mMap.addMarker(new MarkerOptions().position(locationLatLng).title(getString(R.string.maps_marker_you_are_here)).snippet(addressLine));
                         myMarker.showInfoWindow();
+
+                        guardarUbicacion.execute(getContext(), locationLatLng, addressLine);
                     }
                 } catch (IOException e) {
                     e.printStackTrace();
@@ -189,12 +195,5 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
             }
         }
 
-        public Location getMyLocation() {
-            return myLocation;
-        }
-
-        public void setMyLocation(Location myLocation) {
-            this.myLocation = myLocation;
-        }
     }
 }

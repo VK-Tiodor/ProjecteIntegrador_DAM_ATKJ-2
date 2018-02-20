@@ -113,7 +113,7 @@ public class DependenciaDBManager {
             ubicacionesDBHelper = DependenciaDBHelper.UbicacionesDBHelper.getInstance(context);
         }
 
-        public void insert(String latitud, String longitud, String direccion) {
+        public void insert(double latitud, double longitud, String direccion) {
             SQLiteDatabase sqLiteDatabase = ubicacionesDBHelper.getWritableDatabase();
 
             if (sqLiteDatabase != null) {
@@ -129,7 +129,7 @@ public class DependenciaDBManager {
             }
         }
 
-        public void update(String id, String latitud, String longitud, String direccion) {
+        public void update(int id, double latitud, double longitud, String direccion) {
             SQLiteDatabase sqLiteDatabase = ubicacionesDBHelper.getWritableDatabase();
 
             if (sqLiteDatabase != null) {
@@ -140,7 +140,7 @@ public class DependenciaDBManager {
 
                 String tableName = DependenciaDBContract.UbicacionesDBContract.TABLE_NAME;
                 String whereClause = DependenciaDBContract.UbicacionesDBContract._ID + " = ?";
-                String whereArgs[] = {id};
+                String whereArgs[] = {String.valueOf(id)};
 
                 sqLiteDatabase.update(tableName, contentValues, whereClause, whereArgs);
 
