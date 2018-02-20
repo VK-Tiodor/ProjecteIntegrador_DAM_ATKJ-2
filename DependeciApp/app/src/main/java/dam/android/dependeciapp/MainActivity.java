@@ -26,6 +26,7 @@ import android.widget.Toast;
 import com.github.fafaldo.fabtoolbar.widget.FABToolbarLayout;
 import com.google.android.gms.maps.model.LatLng;
 
+import java.sql.SQLException;
 import java.util.List;
 
 import dam.android.dependeciapp.AsyncTasks.LanzaLlamada;
@@ -48,6 +49,7 @@ public class MainActivity extends AppCompatActivity
     private Toolbar toolbar;
     private FABToolbarLayout fabToolbar;
     private MapFragment mapFragment;
+    private RecordatorioFragment recordatorioFragment;
 
 
     @Override
@@ -190,6 +192,13 @@ public class MainActivity extends AppCompatActivity
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
         } else {
+            try {
+                //Cerramos la conexion
+                recordatorioFragment.getConexion().getCon().close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+            //Y finalizamos la activity
             finish();
             super.onBackPressed();
         }
@@ -264,7 +273,8 @@ public class MainActivity extends AppCompatActivity
             switch (position) {
                 case 0:
                     //Le pasamos el menu para poder hacerlo visible al abrir el fragmento de Recordatorio Detalle
-                    return RecordatorioFragment.newInstance(user.getIdPersona());
+                    recordatorioFragment=RecordatorioFragment.newInstance(user.getIdPersona());
+                    return recordatorioFragment;
                 case 1:
                     mapFragment = new MapFragment();
                     return mapFragment;

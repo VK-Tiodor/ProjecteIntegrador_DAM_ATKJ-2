@@ -40,6 +40,10 @@ public class RecordatorioFragment extends Fragment implements Comparator<Recorda
     public RecordatorioFragment() {
     }
 
+    public Conexion getConexion() {
+        return conexion;
+    }
+
     public static RecordatorioFragment newInstance(int id) {
         RecordatorioFragment fragment = new RecordatorioFragment();
         fragment.SetIdUsuario(id);
