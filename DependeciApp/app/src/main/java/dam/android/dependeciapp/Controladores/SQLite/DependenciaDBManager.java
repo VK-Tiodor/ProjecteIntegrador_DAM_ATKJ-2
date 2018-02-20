@@ -189,6 +189,13 @@ public class DependenciaDBManager {
 
             return cursor;
         }
+
+        public void createTableIfNotExist(){
+            SQLiteDatabase sqLiteDatabase = ubicacionesDBHelper.getWritableDatabase();
+            sqLiteDatabase.execSQL(DependenciaDBContract.UbicacionesDBContract.CREATE_TABLE);
+            sqLiteDatabase.close();
+
+        }
     }
 
     public static class UsuarioDBManager {

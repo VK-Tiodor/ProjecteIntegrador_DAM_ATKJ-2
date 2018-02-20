@@ -5,9 +5,11 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 
 import java.sql.Connection;
+import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Properties;
 import java.util.concurrent.ExecutionException;
 
 import dam.android.dependeciapp.AsyncTasks.CreaConexion;
@@ -55,9 +57,9 @@ public class Conexion {
             ResultSet rs = login.executeQuery();
             return rs;
         } catch (SQLException e) {
-            e.printStackTrace();
             return null;
         }
+
     }
 
     public ResultSet getRecordatorios(int id){

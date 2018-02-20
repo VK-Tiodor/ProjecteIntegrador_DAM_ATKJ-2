@@ -27,8 +27,10 @@ public class CargarUbicacionSQLite extends AsyncTask<Context,Void,Ubicacion> {
 
         Cursor cursor = db.getRows();
         if(cursor != null) {
-            ubicacion = new Ubicacion(cursor);
-            cursor.close();
+            if (cursor.moveToFirst()) {
+                ubicacion = new Ubicacion(cursor);
+                cursor.close();
+            }
         } else {
             Log.e("NULL_LOCATION_CURSOR","El cursor del DB Manager de ubicaciones es nulo, la aplicación no consigue acceso a la base de datos interna");
         }
