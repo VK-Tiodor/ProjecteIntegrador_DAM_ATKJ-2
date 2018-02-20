@@ -1,6 +1,7 @@
 package dam.android.dependeciapp;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.FloatingActionButton;
@@ -200,6 +201,11 @@ public class MainActivity extends AppCompatActivity
                 i.putExtra("Usuario", user);
                 startActivity(i);
                 break;
+            case R.id.nav_informes:
+                Uri uri = Uri.parse("http://149.202.8.235/jasperserver/flow.html?_flowId=viewReportFlow&_flowId=viewReportFlow&ParentFolderUri=%2FdamG1%2FInformes&reportUnit=%2FdamG1%2FInformes%2FAvisos&standAlone=true&j_username=damG1&j_password=jatk1");
+                Intent intent = new Intent(Intent.ACTION_VIEW, uri);
+                startActivity(intent);
+                break;
             case R.id.nav_cerrarSesion:
                 cerrarSesion();
                 break;
@@ -247,7 +253,8 @@ public class MainActivity extends AppCompatActivity
                     //Le pasamos el menu para poder hacerlo visible al abrir el fragmento de Recordatorio Detalle
                     return RecordatorioFragment.newInstance(user.getIdPersona());
                 case 1:
-                    return new MapFragment();
+                    //return new MapFragment();
+
                 case 2:
                     return new BotonFragment();
             }
