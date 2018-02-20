@@ -43,7 +43,7 @@ public final class DependenciaDBContract {
         public static final String DIRECCION = "direccion";
 
 
-        public static final String CREATE_TABLE = "CREATE TABLE " + UbicacionesDBContract.TABLE_NAME
+        public static final String CREATE_TABLE = "CREATE TABLE IF NOT EXISTS " + UbicacionesDBContract.TABLE_NAME
                 + " ("
                 + UbicacionesDBContract._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
                 + UbicacionesDBContract.LATITUD + " REAL NOT NULL, "

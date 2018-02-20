@@ -71,6 +71,8 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
     @SuppressLint("MissingPermission")
     private void enableMyLocation() {
         mMap.setMyLocationEnabled(true);
+        DependenciaDBManager.UbicacionesDBManager db = new DependenciaDBManager.UbicacionesDBManager(getContext());
+        db.createTableIfNotExist();
         cargarUbicacionSQLite = new CargarUbicacionSQLite();
         cargarUbicacionSQLite.execute(getContext());
         Ubicacion ubicacion = null;
@@ -84,7 +86,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
         LatLng lastKnownLocation = (ubicacion == null) ? null : new LatLng(ubicacion.getLatitud(), ubicacion.getLongitud());
         MyLocationListener myLocationListener = new MyLocationListener(lastKnownLocation);
         LocationManager locationManager = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
-        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 10000, 10, myLocationListener);
+        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 5000, 5, myLocationListener);
     }
 
     @Override
