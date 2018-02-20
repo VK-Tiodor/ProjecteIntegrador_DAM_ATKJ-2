@@ -13,27 +13,33 @@ import dam.android.dependeciapp.Controladores.SQLite.DependenciaDBManager;
  * Created by Tiodor on 20/02/2018.
  */
 
-public class GuardarUbicacionSQLite extends AsyncTask {
+public class GuardarUbicacionSQLite extends AsyncTask{
+
+    private Context applicationContext;
+    private LatLng locationLatLng;
+    private String addressLine;
+
+    public GuardarUbicacionSQLite(Context context, LatLng latLng, String address){
+        applicationContext = context;
+        locationLatLng = latLng;
+        addressLine = address;
+    }
 
     @Override
     protected Object doInBackground(Object[] objects) {
-        Context applicationContext = (Context) objects[0];
-        LatLng latLngLocation = (LatLng) objects[1];
-        String address = (String) objects[2];
-
-        saveCurrentLocationInSQLite(applicationContext, latLngLocation, address);
+        saveCurrentLocationInSQLite();
 
         return null;
     }
 
-    private void saveCurrentLocationInSQLite(Context context, LatLng latLng, String address) {
-        DependenciaDBManager.UbicacionesDBManager db = new DependenciaDBManager.UbicacionesDBManager(context);
+    private void saveCurrentLocationInSQLite() {
+        DependenciaDBManager.UbicacionesDBManager db = new DependenciaDBManager.UbicacionesDBManager(applicationContext);
         Cursor cursor = db.getRows();
         if(cursor != null) {
             if (cursor.moveToFirst()) {
-                db.update(1, latLng.latitude, latLng.longitude, address);
+                db.update(1, locationLatLng.latitude, locationLatLng.longitude, addressLine);
             } else {
-                db.insert(latLng.latitude, latLng.longitude, address);
+                db.insert(locationLatLng.latitude, locationLatLng.longitude, addressLine);
             }
         } else {
             Log.e("NULL_LOCATION_CURSOR","El cursor del DB Manager de ubicaciones es nulo, la aplicación no consigue acceso a la base de datos interna");

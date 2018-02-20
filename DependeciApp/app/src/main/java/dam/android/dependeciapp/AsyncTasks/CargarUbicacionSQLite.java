@@ -12,13 +12,11 @@ import dam.android.dependeciapp.Pojo.Ubicacion;
  * Created by Tiodor on 20/02/2018.
  */
 
-public class CargarUbicacionSQLite extends AsyncTask {
+public class CargarUbicacionSQLite extends AsyncTask<Context,Void,Ubicacion> {
 
     @Override
-    protected Object doInBackground(Object[] objects) {
-        Context applicationContext = (Context) objects[0];
-
-        Ubicacion ubicacion = getLastLocationFromSQLite(applicationContext);
+    protected Ubicacion doInBackground(Context...contexts) {
+        Ubicacion ubicacion = getLastLocationFromSQLite(contexts[0]);
 
         return ubicacion;
     }

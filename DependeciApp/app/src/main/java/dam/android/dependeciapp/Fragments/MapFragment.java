@@ -154,7 +154,6 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
 
         @SuppressLint("MissingPermission")
         public MyLocationListener(LatLng lastKnownlocation) {
-            guardarUbicacion = new GuardarUbicacionSQLite();
 
             if (lastKnownlocation != null) {
                 myLocation = lastKnownlocation;
@@ -183,7 +182,8 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
                         myMarker = mMap.addMarker(new MarkerOptions().position(locationLatLng).title(getString(R.string.maps_marker_you_are_here)).snippet(addressLine));
                         myMarker.showInfoWindow();
 
-                        guardarUbicacion.execute(getContext(), locationLatLng, addressLine);
+                        guardarUbicacion = new GuardarUbicacionSQLite(getContext(), locationLatLng, addressLine);
+                        guardarUbicacion.execute();
                     }
                 } catch (IOException e) {
                     e.printStackTrace();
