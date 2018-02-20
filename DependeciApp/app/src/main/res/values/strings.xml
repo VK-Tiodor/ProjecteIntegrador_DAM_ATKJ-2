@@ -12,6 +12,7 @@
     <string name="aviso_enviadio">Se ha enviado un aviso a la central</string>
     <string name="aviso_fallido">Ha habido un error enviando el aviso</string>
     <string name="no_conexion_aviso">No hay conexion, no se puede enviar el aviso</string>
+    <string name="ver_informes">Ver informe de avisos</string>
 
     <!-- Strings related to login -->
     <string name="prompt_dni">DNI</string>

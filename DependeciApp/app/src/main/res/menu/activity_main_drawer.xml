@@ -11,6 +11,10 @@
                     android:icon="@drawable/ic_usuario"
                     android:title="@string/your_data" />
                 <item
+                    android:id="@+id/nav_informes"
+                    android:icon="@android:drawable/ic_input_get"
+                    android:title="@string/ver_informes" />
+                <item
                     android:id="@+id/nav_cerrarSesion"
                     android:icon="?android:attr/actionModeCloseDrawable"
                     android:title="@string/cerrar_sesion" />
