@@ -60,6 +60,7 @@ public class Usuario implements Serializable {
             dt = df.parse(cursor.getString(7));
             fAlta = new Date(dt.getTime());
             pass = cursor.getString(8);
+            cursor.close();
         } catch (ParseException e) {
             e.printStackTrace();
         }

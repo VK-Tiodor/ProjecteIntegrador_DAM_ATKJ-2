@@ -78,6 +78,7 @@ public class RecordatorioFragment extends Fragment implements Comparator<Recorda
                 recordatorioList.add(r);
             } while (cursor.moveToNext());
             Collections.sort(recordatorioList, this);
+            cursor.close();
         } else
             obtenListaOnline();
     }
