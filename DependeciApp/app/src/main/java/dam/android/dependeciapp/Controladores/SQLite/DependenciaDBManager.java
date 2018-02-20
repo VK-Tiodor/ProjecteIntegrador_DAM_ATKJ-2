@@ -20,12 +20,12 @@ public class DependenciaDBManager {
             recordatoriosDBHelper = DependenciaDBHelper.RecordatoriosDBHelper.getInstance(context);
         }
 
-        public void insert(String titulo, String contenido, String fecha, String hora) {
+        public void insert(String id,String titulo, String contenido, String fecha, String hora) {
             SQLiteDatabase sqLiteDatabase = recordatoriosDBHelper.getWritableDatabase();
 
             if (sqLiteDatabase != null) {
                 ContentValues contentValues = new ContentValues();
-
+                contentValues.put(DependenciaDBContract.RecordatoriosDBContract._ID,id);
                 contentValues.put(DependenciaDBContract.RecordatoriosDBContract.TITULO, titulo);
                 contentValues.put(DependenciaDBContract.RecordatoriosDBContract.CONTENIDO, contenido);
                 contentValues.put(DependenciaDBContract.RecordatoriosDBContract.FECHA, fecha);
@@ -76,12 +76,7 @@ public class DependenciaDBManager {
             sqLiteDatabase.close();
 
         }
-        public void restartAutonum(){
-            SQLiteDatabase sqLiteDatabase = recordatoriosDBHelper.getWritableDatabase();
-            sqLiteDatabase.execSQL(DependenciaDBContract.RecordatoriosDBContract.RESTART_AUTONUM);
-            sqLiteDatabase.close();
 
-        }
 
         public Cursor getRows() {
             Cursor cursor = null;

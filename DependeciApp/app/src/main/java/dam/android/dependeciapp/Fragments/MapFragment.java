@@ -87,6 +87,8 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
         MyLocationListener myLocationListener = new MyLocationListener(lastKnownLocation);
         LocationManager locationManager = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
         locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 5000, 5, myLocationListener);
+        cargarUbicacionSQLite=null;
+
     }
 
     @Override
@@ -129,7 +131,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
 
     public LatLng getMyLastLocation(){
         Ubicacion ubicacion = null;
-
+        cargarUbicacionSQLite = new CargarUbicacionSQLite();
         cargarUbicacionSQLite.execute(getContext());
         try {
             ubicacion = (Ubicacion) cargarUbicacionSQLite.get();
@@ -140,7 +142,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
         }
 
         LatLng myLastLocation = (ubicacion == null) ? null : new LatLng(ubicacion.getLatitud(), ubicacion.getLongitud());
-
+        cargarUbicacionSQLite=null;
         return myLastLocation;
     }
 
@@ -186,6 +188,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
 
                         guardarUbicacion = new GuardarUbicacionSQLite(getContext(), locationLatLng, addressLine);
                         guardarUbicacion.execute();
+                        guardarUbicacion=null;
                     }
                 } catch (IOException e) {
                     e.printStackTrace();

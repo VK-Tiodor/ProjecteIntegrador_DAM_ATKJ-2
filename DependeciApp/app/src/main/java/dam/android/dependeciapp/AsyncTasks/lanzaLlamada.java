@@ -30,19 +30,17 @@ public class LanzaLlamada extends AsyncTask<String, Void, Boolean> {
     public LanzaLlamada(View view,Context cont){
         this.view=view;
         this.context=cont;
-
     }
 
     @Override
     protected Boolean doInBackground(String... strings)  {
         Boolean result = false;
         try {
-
             // Se crea la conexión con el servidor
             Socket clientSocket = new Socket();
             InetSocketAddress sockAddr = new InetSocketAddress(MACHINE, PORT);
 
-            clientSocket.connect(sockAddr);
+            clientSocket.connect(sockAddr,500);
 
             BufferedReader br = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
             BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(clientSocket.getOutputStream()));
@@ -64,11 +62,11 @@ public class LanzaLlamada extends AsyncTask<String, Void, Boolean> {
                     bw.write(strings[0]);
                     bw.newLine();
                     bw.flush();
-                    //Escribimos la latidud
+                    //Escribimos la longitud
                     bw.write(strings[1]);
                     bw.newLine();
                     bw.flush();
-                    //Escribimos la longitud
+                    //Escribimos la latitud
                     bw.write(strings[2]);
                     bw.newLine();
                     bw.flush();

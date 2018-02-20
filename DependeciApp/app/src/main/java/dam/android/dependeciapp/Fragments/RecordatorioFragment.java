@@ -19,6 +19,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 import dam.android.dependeciapp.AsyncTasks.CreaRecordatorios;
 import dam.android.dependeciapp.Controladores.Conexion;
@@ -35,16 +36,16 @@ public class RecordatorioFragment extends Fragment implements Comparator<Recorda
     private RecyclerView recyclerView;
     private FABToolbarLayout fabToolbar;
     private int idUsuario;
-
+    private Conexion conexion;
     public RecordatorioFragment() {
     }
 
     public static RecordatorioFragment newInstance(int id) {
         RecordatorioFragment fragment = new RecordatorioFragment();
         fragment.SetIdUsuario(id);
+
         return fragment;
     }
-
     public void SetIdUsuario(int id) {
         idUsuario = id;
     }
@@ -52,6 +53,7 @@ public class RecordatorioFragment extends Fragment implements Comparator<Recorda
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        conexion=new Conexion();
         if (savedInstanceState != null)
             idUsuario = savedInstanceState.getInt("userId");
         obtenListaRecordatorios();
@@ -84,11 +86,17 @@ public class RecordatorioFragment extends Fragment implements Comparator<Recorda
     }
 
     private void obtenListaOnline() {
-        if (Conexion.isNetDisponible(getContext())) {
-            Conexion con = new Conexion();
-            CreaRecordatorios cr = new CreaRecordatorios(recordatorioList, getContext(),con);
+        if (Conexion.isNetDisponible(getContext(),true)) {
+            CreaRecordatorios cr = new CreaRecordatorios(recordatorioList, getContext(),conexion,idUsuario);
             cr.execute(idUsuario);
-            cr=null;
+            try {
+                cr.get();
+                cr=null;
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            } catch (ExecutionException e) {
+                e.printStackTrace();
+            }
         }else{
             Toast.makeText(getContext(), R.string.no_carga_recordatorios, Toast.LENGTH_LONG).show();
         }
@@ -109,7 +117,7 @@ public class RecordatorioFragment extends Fragment implements Comparator<Recorda
             //ordenamos la lsita con un comparador de fechas
             //Lo hice con Collections en vez de con recordatorioList.sort(this);
             //Porque esta ultima, no esta disponible en versiones menorea a la API 24
-            recyclerView.setAdapter(new RecordatorioAdapter(recordatorioList, context, fabToolbar, idUsuario));
+            recyclerView.setAdapter(new RecordatorioAdapter(recordatorioList, context, fabToolbar, idUsuario,conexion));
             recyclerView.getAdapter().notifyDataSetChanged();
         }
         return view;

@@ -30,7 +30,7 @@ public final class DependenciaDBContract {
 
         public static final String DELETE_TABLE = "DROP TABLE IF EXISTS " + RecordatoriosDBContract.TABLE_NAME;
         public static final String RESTART_AUTONUM="DELETE FROM SQLITE_SEQUENCE WHERE NAME = '"+RecordatoriosDBContract.TABLE_NAME+"'";
-
+        public static final String SET_AUTONUM="INSERT INTO sqlite_sequence VALUES ('"+RecordatoriosDBContract.TABLE_NAME+"'";
     }
 
     public static class UbicacionesDBContract {

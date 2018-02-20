@@ -25,12 +25,14 @@ public class RecordatorioAdapter extends RecyclerView.Adapter<RecordatorioAdapte
     private RecordatorioAdapter adapter;
     private FABToolbarLayout fabToolbar;
     private int idUsuario;
+    private Conexion conexion;
 
 
-    public RecordatorioAdapter(List<Recordatorio> items, Context cont, FABToolbarLayout fabToolbar,int id) {
+    public RecordatorioAdapter(List<Recordatorio> items, Context cont, FABToolbarLayout fabToolbar,int id,Conexion con) {
         recordatorioList = items;
         context = cont;
         idUsuario=id;
+        conexion=con;
         this.fabToolbar = fabToolbar;
     }
 

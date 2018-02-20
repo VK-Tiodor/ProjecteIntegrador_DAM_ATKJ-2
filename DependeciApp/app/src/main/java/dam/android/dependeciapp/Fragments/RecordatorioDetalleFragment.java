@@ -14,6 +14,7 @@ import com.github.fafaldo.fabtoolbar.widget.FABToolbarLayout;
 import java.util.concurrent.ExecutionException;
 
 import dam.android.dependeciapp.AsyncTasks.CreaRecordatorios;
+import dam.android.dependeciapp.AsyncTasks.RecordatorioTerminado;
 import dam.android.dependeciapp.Controladores.Conexion;
 import dam.android.dependeciapp.Controladores.RecordatorioAdapter;
 import dam.android.dependeciapp.Controladores.SQLite.DependenciaDBManager;
@@ -83,13 +84,15 @@ public class RecordatorioDetalleFragment extends Fragment {
                 adapter.getRecordatorioList().remove(recordatorio);
                 DependenciaDBManager.RecordatoriosDBManager db = new DependenciaDBManager.RecordatoriosDBManager(getContext());
                 db.delete(String.valueOf(recordatorio.id));
+                Conexion con = new Conexion();
+                RecordatorioTerminado rt = new RecordatorioTerminado(getContext(),con);
+                rt.execute(recordatorio.getId());
                 //Si no hay ningun recordatorio en el List se cargan desde la base de datos
                 CreaRecordatorios cr = null;
                 if (adapter.getRecordatorioList().size() == 0) {
-                    if (Conexion.isNetDisponible(getContext())) {
+                    if (Conexion.isNetDisponible(getContext(),true)) {
                         try {
-                            Conexion con = new Conexion();
-                            cr = new CreaRecordatorios(adapter.getRecordatorioList(), getContext(), con);
+                            cr = new CreaRecordatorios(adapter.getRecordatorioList(), getContext(), con,idUsuario);
                             cr.execute(idUsuario);
                             Boolean b = cr.get();
                         } catch (InterruptedException e) {

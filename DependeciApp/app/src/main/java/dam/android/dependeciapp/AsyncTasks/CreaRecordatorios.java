@@ -30,22 +30,25 @@ public class CreaRecordatorios extends AsyncTask<Integer, Void, Boolean> impleme
     private List<Recordatorio> recordatorioList;
     private Context context;
     private Conexion con;
+    private int idUsuario;
 
-    public CreaRecordatorios(List<Recordatorio> lista, Context context,Conexion con) {
+    public CreaRecordatorios(List<Recordatorio> lista, Context context,Conexion con,int idUsuario) {
         recordatorioList = lista;
         this.context = context;
         this.con=con;
+        this.idUsuario=idUsuario;
     }
 
     @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
     protected Boolean doInBackground(Integer... integers) {
         if (con != null) {
-            ResultSet rs = con.getRecordatorios(integers[0]);
+            ResultSet rs = con.getMedicinas(integers[0]);
             try {
                 DependenciaDBManager.RecordatoriosDBManager db = new DependenciaDBManager.RecordatoriosDBManager(context);
-                db.restartAutonum();
-                int id = 1;
+                int id = con.getLastId();
+                //db.setAutonum(id);
+
                 while (rs.next()) {
                     Date fechaActual = new Date();
                     String nombreMedicina = rs.getString("Nombre");
@@ -64,7 +67,6 @@ public class CreaRecordatorios extends AsyncTask<Integer, Void, Boolean> impleme
 
                         //Obtenemos la fecha y la hora de la toma
                         String fechaHora = calendar.getTime().toString();
-                        Date fechaDeLaToma = calendar.getTime();
 
                         //Partimos el String para trabjar con el
                         String[] fechaHoraArray = fechaHora.split(" ");
@@ -75,7 +77,10 @@ public class CreaRecordatorios extends AsyncTask<Integer, Void, Boolean> impleme
                         Recordatorio r = new Recordatorio(id, titulo, contenido,  hora,calendar.getTime());
 
                         //Establecemos una fecha para poder compararlos luego para ordenar la lista
-                        db.insert(r.titulo, r.content, fechaHora, r.hora);
+                        db.insert(String.valueOf(r.id),r.titulo, r.content, fechaHora, r.hora);
+                        if(con!=null)
+                        con.insertInTareasPendientes(r,toma,idUsuario);
+
                         recordatorioList.add(r);
                         id++;
                     }

@@ -53,7 +53,7 @@ public class LoginActivity extends AppCompatActivity {
         mProgressView = findViewById(R.id.login_progress);
         mLoginFormView = findViewById(R.id.login_form);
 
-        if (Conexion.isNetDisponible(getApplicationContext()))
+        if (Conexion.isNetDisponible(getApplicationContext(),true))
             con = new Conexion();
 
         Intent i = getIntent();
