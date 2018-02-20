@@ -17,6 +17,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -33,9 +34,12 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import java.io.IOException;
 import java.util.List;
 import java.util.Locale;
+import java.util.concurrent.ExecutionException;
 
+import dam.android.dependeciapp.AsyncTasks.CargarUbicacionSQLite;
 import dam.android.dependeciapp.AsyncTasks.GuardarUbicacionSQLite;
 import dam.android.dependeciapp.Controladores.SQLite.DependenciaDBManager;
+import dam.android.dependeciapp.Pojo.Ubicacion;
 import dam.android.dependeciapp.R;
 
 /**
@@ -47,8 +51,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
     private static final int REQUEST_MAPS = 1;
     private final String[] PERMISSIONS_MAPS = {Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION};
     private GoogleMap mMap;
-    private SupportMapFragment mapFragment;
-    private MyLocationListener myLocationListener;
+    private CargarUbicacionSQLite cargarUbicacionSQLite;
 
     public static MapFragment newInstance() {
         return new MapFragment();
@@ -68,11 +71,20 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
     @SuppressLint("MissingPermission")
     private void enableMyLocation() {
         mMap.setMyLocationEnabled(true);
+        cargarUbicacionSQLite = new CargarUbicacionSQLite();
+        cargarUbicacionSQLite.execute(getContext());
+        Ubicacion ubicacion = null;
+        try {
+            ubicacion = (Ubicacion) cargarUbicacionSQLite.get();
+        } catch (InterruptedException e) {
+            Log.e("ASYNCTASK_CARGAR_UBI", e.getMessage());
+        } catch (ExecutionException e) {
+            Log.e("ASYNCTASK_CARGAR_UBI", e.getMessage());
+        }
+        LatLng lastKnownLocation = (ubicacion == null) ? null : new LatLng(ubicacion.getLatitud(), ubicacion.getLongitud());
+        MyLocationListener myLocationListener = new MyLocationListener(lastKnownLocation);
         LocationManager locationManager = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
-        Criteria criteria = new Criteria();
-        Location lastKnownLocation = locationManager.getLastKnownLocation(locationManager.getBestProvider(criteria, false));
-        myLocationListener = new MyLocationListener(lastKnownLocation);
-        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 10, myLocationListener);
+        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 10000, 10, myLocationListener);
     }
 
     @Override
@@ -113,8 +125,21 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
         return (f instanceof MapFragment);
     }
 
-    public LatLng getMyListenerLocation(){
-        return myLocationListener.getMyLocation();
+    public LatLng getMyLastLocation(){
+        Ubicacion ubicacion = null;
+
+        cargarUbicacionSQLite.execute(getContext());
+        try {
+            ubicacion = (Ubicacion) cargarUbicacionSQLite.get();
+        } catch (InterruptedException e) {
+            Log.e("ASYNCTASK_CARGAR_UBI", e.getMessage());
+        } catch (ExecutionException e) {
+            Log.e("ASYNCTASK_CARGAR_UBI", e.getMessage());
+        }
+
+        LatLng myLastLocation = (ubicacion == null) ? null : new LatLng(ubicacion.getLatitud(), ubicacion.getLongitud());
+
+        return myLastLocation;
     }
 
     private class MyLocationListener implements LocationListener {
