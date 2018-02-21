@@ -52,6 +52,29 @@ public class Conexion {
         }
     }
 
+    public Conexion(boolean noAsync) {
+        try {
+            String driver = "com.mysql.jdbc.Driver";
+
+            Class.forName(driver).newInstance();
+
+            String jdbcUrl = "jdbc:mysql://149.202.8.230:3306/proyecto1";
+            //Conectando
+            Properties pc = new Properties();
+            pc.put("user", "grupo1");
+            pc.put("password", "jatk1");
+            con = DriverManager.getConnection(jdbcUrl, pc);
+        } catch (InstantiationException e) {
+            e.printStackTrace();
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
     public ResultSet IniciaSesion(String DNI, String pass) {
         try {
             String sql = "call inicia_sesion(?, ?)";
@@ -79,7 +102,8 @@ public class Conexion {
             return null;
         }
     }
-    public int getLastId(){
+
+    public int getLastId() {
         String sql = "select idTarea from TareasPendientes\n" +
                 "order by idTarea desc limit 1";
         try {
@@ -112,7 +136,7 @@ public class Conexion {
 
     //Este Metodo es el usado en el Thread principal. Hace el ping de manera Asincrona para
     //evitar el colapso de la App
-    public static boolean isNetDisponible(Context context,boolean async) {
+    public static boolean isNetDisponible(Context context, boolean async) {
         ConnectivityManager connectivityManager = (ConnectivityManager)
                 context.getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo actNetInfo = connectivityManager.getActiveNetworkInfo();
@@ -121,7 +145,7 @@ public class Conexion {
             p.execute();
             try {
                 boolean hayConexion = p.get();
-                p=null;
+                p = null;
                 return hayConexion;
             } catch (InterruptedException e) {
                 e.printStackTrace();
@@ -131,6 +155,7 @@ public class Conexion {
         }
         return false;
     }
+
     //Este es el usado en Async tasks, hace el ping aqui mismo
     public static boolean isNetDisponible(Context context) {
         ConnectivityManager connectivityManager = (ConnectivityManager)
@@ -141,11 +166,11 @@ public class Conexion {
             String ip = "149.202.8.230"; // Ip de la máquina remota
             try {
                 ping = InetAddress.getByName(ip);
-                if (ping.isReachable(5000)) {// Tiempo de espera
-                    ping=null;
+                if (ping.isReachable(1000)) {// Tiempo de espera
+                    ping = null;
                     return true;
                 } else {
-                    ping=null;
+                    ping = null;
                     return false;
                 }
             } catch (IOException ex) {
@@ -156,31 +181,32 @@ public class Conexion {
         return false;
     }
 
-    public void insertInTareasPendientes(Recordatorio r,int toma,int idUsuario){
+    public void insertInTareasPendientes(Recordatorio r, int toma, int idUsuario) {
         String sql = "INSERT INTO `proyecto1`.`TareasPendientes` (`idTarea`, `idDependiente`, `Fecha`, `Encabezado`, `Descripcion`, `horasRepeticion`, `tareaAsistente`, `realizada`) " +
                 "VALUES (?, ?, ?, ?, ?, ?, ?, ?);";
         try {
             PreparedStatement insert = con.prepareStatement(sql);
-            insert.setInt(1,r.getId());
-            insert.setInt(2,idUsuario);
+            insert.setInt(1, r.getId());
+            insert.setInt(2, idUsuario);
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.S");
-            insert.setString(3,sdf.format(r.getFecha()));
-            insert.setString(4,r.getTitulo());
-            insert.setString(5,r.getContent());
-            insert.setInt(6,toma);
-            insert.setInt(7,0);
-            insert.setInt(8,0);
+            insert.setString(3, sdf.format(r.getFecha()));
+            insert.setString(4, r.getTitulo());
+            insert.setString(5, r.getContent());
+            insert.setInt(6, toma);
+            insert.setInt(7, 0);
+            insert.setInt(8, 0);
             insert.execute();
         } catch (SQLException e) {
             e.printStackTrace();
         }
 
     }
-    public void setTareaTerminada(int id){
+
+    public void setTareaTerminada(int id) {
         String sql = "UPDATE `proyecto1`.`TareasPendientes` SET `realizada`='1' WHERE `idTarea`=?";
         try {
             PreparedStatement update = con.prepareStatement(sql);
-            update.setInt(1,id);
+            update.setInt(1, id);
             update.execute();
         } catch (SQLException e) {
             e.printStackTrace();

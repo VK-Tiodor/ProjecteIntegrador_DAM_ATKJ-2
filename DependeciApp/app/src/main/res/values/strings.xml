@@ -47,6 +47,7 @@
     <string name="title_item_list">Items</string>
     <string name="title_item_detail">Item Detail</string>
     <string name="inicia_sesion_automaticamente">Inicia sesion automaticamente</string>
+    <string name="no_inicia_sesion">No se ha podido iniciar sesion, comprueba tu conexion a internet</string>
 
     <!-- Strings related to "activity_usuario" Layout -->
     <string name="tvUsuarioId">Identificador de Usuario: </string>

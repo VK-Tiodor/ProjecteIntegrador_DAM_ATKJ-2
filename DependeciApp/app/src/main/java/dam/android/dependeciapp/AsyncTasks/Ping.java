@@ -18,7 +18,7 @@ public class Ping extends AsyncTask<Void,Void,Boolean> {
         String ip = "149.202.8.230"; // Ip de la máquina remota
         try {
             ping = InetAddress.getByName(ip);
-            if (ping.isReachable(5000)) {// Tiempo de espera
+            if (ping.isReachable(1000)) {// Tiempo de espera
                 ping=null;
                 return true;
             } else {

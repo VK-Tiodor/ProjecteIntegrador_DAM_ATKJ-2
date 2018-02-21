@@ -21,6 +21,7 @@ import android.widget.Toast;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.concurrent.ExecutionException;
 
 import dam.android.dependeciapp.Controladores.Conexion;
 import dam.android.dependeciapp.Controladores.SQLite.DependenciaDBManager;
@@ -53,8 +54,6 @@ public class LoginActivity extends AppCompatActivity {
         mProgressView = findViewById(R.id.login_progress);
         mLoginFormView = findViewById(R.id.login_form);
 
-        if (Conexion.isNetDisponible(getApplicationContext(),true))
-            con = new Conexion();
 
         Intent i = getIntent();
         boolean hasCerradoSesion = false;
@@ -67,7 +66,7 @@ public class LoginActivity extends AppCompatActivity {
         //Si la sesion se inicia automaticamente no se cargan ni la UI ni las preferencais
         //para ahorrar recursos y tiempo
         if (!seHaIniciado) {
-           // setContentView(R.layout.activity_login);
+            // setContentView(R.layout.activity_login);
             setUI();
             cargaPreferencias();
         }
@@ -93,6 +92,9 @@ public class LoginActivity extends AppCompatActivity {
         if (mAuthTask != null) {
             return;
         }
+
+        showProgress(true);
+
         etDNI.setError(null);
         etPass.setError(null);
 
@@ -109,24 +111,33 @@ public class LoginActivity extends AppCompatActivity {
         }
         if (TextUtils.isEmpty(DNI)) {
             cancel = true;
-            focusView=etDNI;
+            focusView = etDNI;
             Toast.makeText(this, R.string.error_field_required, Toast.LENGTH_LONG).show();
 
         } else if (!dniValido(DNI.trim())) {
             Toast.makeText(this, R.string.error_invalid_DNI, Toast.LENGTH_LONG).show();
-            focusView=etDNI;
+            focusView = etDNI;
             cancel = true;
         }
         if (cancel) {
             // There was an error; don't attempt login and focus the first
             // form field with an error.
+            showProgress(false);
             focusView.requestFocus();
         } else {
             // Show a progress spinner, and kick off a background task to
             // perform the user login attempt.
-            showProgress(true);
             mAuthTask = new UserLoginTask();
             mAuthTask.execute(DNI.trim(), password);
+            try {
+                if(!mAuthTask.get())
+                    Toast.makeText(this, R.string.no_inicia_sesion, Toast.LENGTH_LONG).show();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            } catch (ExecutionException e) {
+                e.printStackTrace();
+            }
+
         }
     }
 
@@ -257,6 +268,8 @@ public class LoginActivity extends AppCompatActivity {
         protected Boolean doInBackground(String... strings) {
             String usuario = strings[0];
             String pass = strings[1];
+            if (Conexion.isNetDisponible(getApplicationContext()))
+                con = new Conexion(true);
 
             if (con != null) {
                 return iniciaSesionOnline(usuario, pass);
@@ -302,12 +315,14 @@ public class LoginActivity extends AppCompatActivity {
             Cursor cursor = db.getRows();
             if (cursor != null) {
                 cursor.moveToFirst();
-                String userSQL = cursor.getString(1);
-                String passSQL = cursor.getString(8);
-                if (user.toUpperCase().equals(userSQL) && pass.equals(passSQL)) {
-                    this.user = new Usuario(cursor);
-                    // GuardaUsuarioPass(user, pass);
-                    return true;
+                if (cursor.getColumnCount() < 0) {
+                    String userSQL = cursor.getString(1);
+                    String passSQL = cursor.getString(8);
+                    if (user.toUpperCase().equals(userSQL) && pass.equals(passSQL)) {
+                        this.user = new Usuario(cursor);
+                        // GuardaUsuarioPass(user, pass);
+                        return true;
+                    }
                 }
             }
             return false;
@@ -321,12 +336,12 @@ public class LoginActivity extends AppCompatActivity {
                 Intent i = new Intent(getApplicationContext(), MainActivity.class);
                 i.putExtra("user", user);
                 startActivity(i);
-                con=null;
+                con = null;
                 finish();
             } else {
                 if (etPass != null) {
-                    etPass.setError(getString(R.string.error_incorrect_password));
-                    etPass.requestFocus();
+                    //etPass.setError(getString(R.string.error_incorrect_password));
+                    //etPass.requestFocus();
                 }
             }
         }
