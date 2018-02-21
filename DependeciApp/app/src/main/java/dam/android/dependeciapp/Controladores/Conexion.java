@@ -141,7 +141,8 @@ public class Conexion {
                 context.getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo actNetInfo = connectivityManager.getActiveNetworkInfo();
         if (actNetInfo != null && actNetInfo.isConnected()) {
-            Ping p = new Ping();
+            return true;
+           /* Ping p = new Ping();
             p.execute();
             try {
                 boolean hayConexion = p.get();
@@ -151,7 +152,7 @@ public class Conexion {
                 e.printStackTrace();
             } catch (ExecutionException e) {
                 e.printStackTrace();
-            }
+            }*/
         }
         return false;
     }
@@ -162,11 +163,11 @@ public class Conexion {
                 context.getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo actNetInfo = connectivityManager.getActiveNetworkInfo();
         if (actNetInfo != null && actNetInfo.isConnected()) {
-            InetAddress ping;
+           /* InetAddress ping;
             String ip = "149.202.8.230"; // Ip de la máquina remota
             try {
                 ping = InetAddress.getByName(ip);
-                if (ping.isReachable(1000)) {// Tiempo de espera
+                if (ping.isReachable(5000)) {// Tiempo de espera
                     ping = null;
                     return true;
                 } else {
@@ -175,8 +176,8 @@ public class Conexion {
                 }
             } catch (IOException ex) {
                 System.out.println(ex);
-            }
-            return false;
+            }*/
+            return true;
         }
         return false;
     }
@@ -207,10 +208,21 @@ public class Conexion {
         try {
             PreparedStatement update = con.prepareStatement(sql);
             update.setInt(1, id);
-            update.execute();
+            update.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
         }
+    }
+    public void eliminaTarea(int id){
+        String sql ="DELETE FROM `proyecto1`.`TareasPendientes` WHERE `idTarea`=?";
+        try {
+            PreparedStatement update = con.prepareStatement(sql);
+            update.setInt(1, id);
+            update.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
 
     }
 

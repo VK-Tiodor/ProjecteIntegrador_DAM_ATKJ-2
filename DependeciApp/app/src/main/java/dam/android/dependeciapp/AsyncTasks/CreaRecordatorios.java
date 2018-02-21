@@ -4,6 +4,7 @@ import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.support.annotation.RequiresApi;
+import android.support.v7.widget.RecyclerView;
 import android.widget.Toast;
 
 import java.sql.ResultSet;
@@ -15,6 +16,7 @@ import java.util.Date;
 import java.util.List;
 
 import dam.android.dependeciapp.Controladores.Conexion;
+import dam.android.dependeciapp.Controladores.RecordatorioAdapter;
 import dam.android.dependeciapp.Controladores.SQLite.DependenciaDBManager;
 import dam.android.dependeciapp.Pojo.Recordatorio;
 import dam.android.dependeciapp.R;
@@ -46,7 +48,7 @@ public class CreaRecordatorios extends AsyncTask<Integer, Void, Boolean> impleme
             ResultSet rs = con.getMedicinas(integers[0]);
             try {
                 DependenciaDBManager.RecordatoriosDBManager db = new DependenciaDBManager.RecordatoriosDBManager(context);
-                int id = con.getLastId();
+                int id = con.getLastId()+1;
                 //db.setAutonum(id);
 
                 while (rs.next()) {

@@ -76,6 +76,12 @@ public class DependenciaDBManager {
             sqLiteDatabase.close();
 
         }
+        public void vaciaTabla(){
+            SQLiteDatabase sqLiteDatabase = recordatoriosDBHelper.getWritableDatabase();
+            sqLiteDatabase.execSQL(DependenciaDBContract.RecordatoriosDBContract.DELETE_TABLE);
+            sqLiteDatabase.execSQL(DependenciaDBContract.RecordatoriosDBContract.CREATE_TABLE);
+            sqLiteDatabase.close();
+        }
 
 
         public Cursor getRows() {

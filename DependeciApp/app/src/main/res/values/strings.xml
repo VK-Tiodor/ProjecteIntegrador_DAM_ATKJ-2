@@ -43,6 +43,7 @@
     <!-- Strings related to "activity_main_drawer" Layout -->
     <string name="your_data">Tus datos</string>
     <string name="assistant_data">Datos de tu asistente</string>
+    <string name="refresca_recordatorios">Refrescar recordatorios</string>
     <string name="cerrar_sesion">Cerrar sesión</string>
     <string name="title_item_list">Items</string>
     <string name="title_item_detail">Item Detail</string>

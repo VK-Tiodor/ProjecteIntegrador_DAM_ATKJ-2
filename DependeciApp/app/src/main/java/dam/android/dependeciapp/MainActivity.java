@@ -1,6 +1,9 @@
 package dam.android.dependeciapp;
 
+import android.content.Context;
 import android.content.Intent;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.AppBarLayout;
@@ -20,6 +23,7 @@ import android.support.v7.widget.Toolbar;
 
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.FrameLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -28,6 +32,7 @@ import com.google.android.gms.maps.model.LatLng;
 
 import java.sql.SQLException;
 import java.util.List;
+import java.util.Map;
 
 import dam.android.dependeciapp.AsyncTasks.LanzaLlamada;
 import dam.android.dependeciapp.Controladores.Conexion;
@@ -50,6 +55,9 @@ public class MainActivity extends AppCompatActivity
     private FABToolbarLayout fabToolbar;
     private MapFragment mapFragment;
     private RecordatorioFragment recordatorioFragment;
+    private TabLayout tabLayout;
+
+    FrameLayout recordatoriosFrame;
 
 
     @Override
@@ -59,55 +67,12 @@ public class MainActivity extends AppCompatActivity
         Intent i = getIntent();
         if (i != null)
             user = (Usuario) i.getSerializableExtra("user");
-        setUI();
+       setComunUI();
     }
-
-    private void setUI() {
+    private void setComunUI(){
         appBarLayout = (AppBarLayout) findViewById(R.id.appbar);
         toolbar = (Toolbar) findViewById(R.id.toolbar);
-        fabToolbar = (FABToolbarLayout) findViewById(R.id.fabtoolbar);
         setSupportActionBar(toolbar);
-        fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (user != null && Conexion.isNetDisponible(getApplicationContext(),true)) {
-                    LatLng ubicacion = mapFragment.getMyLastLocation();
-                    //Establecemos unos predeterminados por si no hubiera ubicacion
-                    double lat = 0;
-                    double lon = 0;
-                    if (ubicacion != null) {
-                        lat = ubicacion.latitude;
-                        lon = ubicacion.longitude;
-                    }
-                    LanzaLlamada llamada = new LanzaLlamada(view, getApplicationContext());
-                    llamada.execute(user.getIdPersona() + "",lon+ "", lat + "");
-                } else {
-                    Toast.makeText(getApplicationContext(), R.string.no_conexion_aviso, Toast.LENGTH_SHORT).show();
-                }
-            }
-        });
-        fabGigante = (FloatingActionButton) findViewById(R.id.fab_gigante);
-        fabGigante.setOnClickListener(new View.OnClickListener() {
-
-            @Override
-            public void onClick(View view) {
-                if (user != null && Conexion.isNetDisponible(getApplicationContext(),true)) {
-                    LatLng ubicacion = mapFragment.getMyLastLocation();
-                    double lat = 0;
-                    double lon = 0;
-                    if (ubicacion != null) {
-                        lat = ubicacion.latitude;
-                        lon = ubicacion.longitude;
-                    }
-                    LanzaLlamada llamada = new LanzaLlamada(view, getApplicationContext());
-                    llamada.execute(user.getIdPersona() + "", lon + "", lat + "");
-                } else {
-                    Toast.makeText(getApplicationContext(), R.string.no_conexion_aviso, Toast.LENGTH_SHORT).show();
-                }
-            }
-        });
-        fabGigante.hide();
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         final ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
@@ -117,8 +82,41 @@ public class MainActivity extends AppCompatActivity
         navigationView.setNavigationItemSelectedListener(this);
         TextView tvNombre = (TextView) navigationView.getHeaderView(0).findViewById(R.id.tvNombre);
         tvNombre.setText(user.getNombre() + " " + user.getApellidos());
+        fabGigante = (FloatingActionButton) findViewById(R.id.fab_gigante);
+        fabGigante.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View view) {
+                enviaAviso(view);
+            }
+        });
+        fab = (FloatingActionButton) findViewById(R.id.fab);
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                enviaAviso(view);
+
+            }
+        });
+        fabToolbar = (FABToolbarLayout) findViewById(R.id.fabtoolbar);
+
+
+        recordatoriosFrame = findViewById(R.id.frameRecordatorios);
+        if (recordatoriosFrame == null)
+            setUIPhone();
+        else
+            setUITablet();
+    }
+    private void setUITablet() {
+        mapFragment = new MapFragment();
+        recordatorioFragment = RecordatorioFragment.newInstance(user.getIdPersona());
+        getSupportFragmentManager().beginTransaction().replace(R.id.frameRecordatorios, recordatorioFragment).addToBackStack(null).commit();
+        getSupportFragmentManager().beginTransaction().replace(R.id.frameMap, mapFragment).addToBackStack(null).commit();
+    }
+    private void setUIPhone() {
+        fabGigante.hide();
         mViewPager = (ViewPager) findViewById(R.id.tabsContainer);
-        final TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
+        tabLayout = (TabLayout) findViewById(R.id.tabs);
         mViewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout));
         tabLayout.addOnTabSelectedListener(new TabLayout.ViewPagerOnTabSelectedListener(mViewPager));
         mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
@@ -139,6 +137,7 @@ public class MainActivity extends AppCompatActivity
                         float centreY = screenView.getHeight() / 3;
                         fab.animate().scaleX(4).scaleY(4).translationX(-centrex).translationY(-centreY + 50).setDuration(200);
                         fabGigante.show();
+                        fab.hide();
                         break;
                 }
             }
@@ -163,11 +162,30 @@ public class MainActivity extends AppCompatActivity
 
             @Override
             public void onTabReselected(TabLayout.Tab tab) {
-
             }
 
         });
+    }
 
+
+
+    private void enviaAviso(View view) {
+        ConnectivityManager connectivityManager = (ConnectivityManager)
+                getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo actNetInfo = connectivityManager.getActiveNetworkInfo();
+        if (user != null && actNetInfo != null && actNetInfo.isConnected()) {
+            LatLng ubicacion = mapFragment.getMyLastLocation();
+            double lat = 0;
+            double lon = 0;
+            if (ubicacion != null) {
+                lat = ubicacion.latitude;
+                lon = ubicacion.longitude;
+            }
+            LanzaLlamada llamada = new LanzaLlamada(view, getApplicationContext());
+            llamada.execute(user.getIdPersona() + "", lon + "", lat + "");
+        } else {
+            Toast.makeText(getApplicationContext(), R.string.no_conexion_aviso, Toast.LENGTH_SHORT).show();
+        }
     }
 
     //Metodo para cerrar el RecordatorioDetalleFragment que pueda haber abierto
@@ -192,12 +210,12 @@ public class MainActivity extends AppCompatActivity
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
         } else {
-            try {
-                //Cerramos la conexion
-                recordatorioFragment.getConexion().getCon().close();
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
+            //  try {
+            //Cerramos la conexion
+            // recordatorioFragment.getConexion().getCon().close();
+            // } catch (SQLException e) {
+            //       e.printStackTrace();
+            //  }
             //Y finalizamos la activity
             finish();
             super.onBackPressed();
@@ -226,6 +244,9 @@ public class MainActivity extends AppCompatActivity
                 Uri uri = Uri.parse("http://149.202.8.235/jasperserver/flow.html?_flowId=viewReportFlow&_flowId=viewReportFlow&ParentFolderUri=%2FdamG1%2FInformes&reportUnit=%2FdamG1%2FInformes%2FAvisos&standAlone=true&j_username=damG1&j_password=jatk1");
                 Intent intent = new Intent(Intent.ACTION_VIEW, uri);
                 startActivity(intent);
+                break;
+            case R.id.nav_refrescar:
+                recordatorioFragment.refrescaAvisos();
                 break;
             case R.id.nav_cerrarSesion:
                 cerrarSesion();
@@ -256,6 +277,15 @@ public class MainActivity extends AppCompatActivity
     protected void onRestoreInstanceState(Bundle savedInstanceState) {
         super.onRestoreInstanceState(savedInstanceState);
         user = (Usuario) savedInstanceState.getSerializable("user");
+        fab.animate().scaleX(1).scaleY(1).translationX(0).translationY(0).setDuration(500);
+        // recordatorioFragment.getConexion()=new Conexion();
+        recordatorioFragment = RecordatorioFragment.newInstance(user.getIdPersona());
+        mapFragment = new MapFragment();
+        int i = tabLayout.getSelectedTabPosition();
+        if (tabLayout.getSelectedTabPosition() == 2)
+            fab.hide();
+
+
     }
 
     /**
@@ -273,7 +303,7 @@ public class MainActivity extends AppCompatActivity
             switch (position) {
                 case 0:
                     //Le pasamos el menu para poder hacerlo visible al abrir el fragmento de Recordatorio Detalle
-                    recordatorioFragment=RecordatorioFragment.newInstance(user.getIdPersona());
+                    recordatorioFragment = RecordatorioFragment.newInstance(user.getIdPersona());
                     return recordatorioFragment;
                 case 1:
                     mapFragment = new MapFragment();

@@ -10,6 +10,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Adapter;
 import android.widget.Toast;
 
 import com.github.fafaldo.fabtoolbar.widget.FABToolbarLayout;
@@ -22,6 +23,8 @@ import java.util.List;
 import java.util.concurrent.ExecutionException;
 
 import dam.android.dependeciapp.AsyncTasks.CreaRecordatorios;
+import dam.android.dependeciapp.AsyncTasks.EliminaRecordatorio;
+import dam.android.dependeciapp.AsyncTasks.RecordatorioTerminado;
 import dam.android.dependeciapp.Controladores.Conexion;
 import dam.android.dependeciapp.Controladores.RecordatorioAdapter;
 import dam.android.dependeciapp.Controladores.SQLite.DependenciaDBManager;
@@ -37,6 +40,7 @@ public class RecordatorioFragment extends Fragment implements Comparator<Recorda
     private FABToolbarLayout fabToolbar;
     private int idUsuario;
     private Conexion conexion;
+
     public RecordatorioFragment() {
     }
 
@@ -50,6 +54,7 @@ public class RecordatorioFragment extends Fragment implements Comparator<Recorda
 
         return fragment;
     }
+
     public void SetIdUsuario(int id) {
         idUsuario = id;
     }
@@ -57,7 +62,9 @@ public class RecordatorioFragment extends Fragment implements Comparator<Recorda
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        conexion=new Conexion();
+        conexion = new Conexion();
+        recordatorioList = new ArrayList<>();
+
         if (savedInstanceState != null)
             idUsuario = savedInstanceState.getInt("userId");
         obtenListaRecordatorios();
@@ -80,30 +87,71 @@ public class RecordatorioFragment extends Fragment implements Comparator<Recorda
             cursor.moveToFirst();
             do {
                 Date fecha = new Date(cursor.getString(3));
-                Recordatorio r = new Recordatorio(cursor.getInt(0), cursor.getString(1), cursor.getString(2), cursor.getString(4),fecha);
+                Recordatorio r = new Recordatorio(cursor.getInt(0), cursor.getString(1), cursor.getString(2), cursor.getString(4), fecha);
                 recordatorioList.add(r);
             } while (cursor.moveToNext());
             Collections.sort(recordatorioList, this);
             cursor.close();
+           // recyclerView.getAdapter().notifyDataSetChanged();
+
         } else
             obtenListaOnline();
     }
 
     private void obtenListaOnline() {
-        if (Conexion.isNetDisponible(getContext(),true)) {
-            CreaRecordatorios cr = new CreaRecordatorios(recordatorioList, getContext(),conexion,idUsuario);
+        if (Conexion.isNetDisponible(getContext(), true)) {
+            CreaRecordatorios cr = new CreaRecordatorios(recordatorioList, getContext(), conexion, idUsuario);
             cr.execute(idUsuario);
             try {
                 cr.get();
-                cr=null;
+                recyclerView.getAdapter().notifyDataSetChanged();
+                cr = null;
             } catch (InterruptedException e) {
                 e.printStackTrace();
             } catch (ExecutionException e) {
                 e.printStackTrace();
             }
-        }else{
+        } else {
             Toast.makeText(getContext(), R.string.no_carga_recordatorios, Toast.LENGTH_LONG).show();
         }
+    }
+
+    public void refrescaAvisos() {
+        DependenciaDBManager.RecordatoriosDBManager db = new DependenciaDBManager.RecordatoriosDBManager(getContext());
+        Cursor cursor = db.getRows();
+        EliminaRecordatorio rt = null;
+        if (cursor.moveToFirst()) {
+            do {
+                String idRecordatorioString = cursor.getString(0);
+                if (idRecordatorioString != null) {
+                    int idRecordatorio = Integer.valueOf(idRecordatorioString);
+                    rt = new EliminaRecordatorio(getContext(), conexion);
+                    rt.execute(idRecordatorio);
+                }
+
+            } while (cursor.moveToNext());
+        }
+        try {
+            rt.get();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        }
+        db.vaciaTabla();
+        recordatorioList.clear();
+        //recyclerView.getAdapter().notifyDataSetChanged();
+
+        CreaRecordatorios cr = new CreaRecordatorios(recordatorioList, getContext(), conexion, idUsuario);
+        cr.execute(idUsuario);
+        try {
+            cr.get();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        }
+        recyclerView.getAdapter().notifyDataSetChanged();
     }
 
     @Override
@@ -121,8 +169,10 @@ public class RecordatorioFragment extends Fragment implements Comparator<Recorda
             //ordenamos la lsita con un comparador de fechas
             //Lo hice con Collections en vez de con recordatorioList.sort(this);
             //Porque esta ultima, no esta disponible en versiones menorea a la API 24
-            recyclerView.setAdapter(new RecordatorioAdapter(recordatorioList, context, fabToolbar, idUsuario,conexion));
+            recyclerView.setAdapter(new RecordatorioAdapter(recordatorioList, context, fabToolbar, idUsuario, conexion));
+            //obtenListaRecordatorios();
             recyclerView.getAdapter().notifyDataSetChanged();
+
         }
         return view;
     }
