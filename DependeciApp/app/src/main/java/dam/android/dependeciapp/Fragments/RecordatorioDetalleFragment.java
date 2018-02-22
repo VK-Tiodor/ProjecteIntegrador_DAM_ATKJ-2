@@ -5,7 +5,9 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -13,7 +15,7 @@ import com.github.fafaldo.fabtoolbar.widget.FABToolbarLayout;
 
 import java.util.concurrent.ExecutionException;
 
-import dam.android.dependeciapp.AsyncTasks.CreaRecordatorios;
+import dam.android.dependeciapp.AsyncTasks.CargaRecordatorios;
 import dam.android.dependeciapp.AsyncTasks.RecordatorioTerminado;
 import dam.android.dependeciapp.Controladores.Conexion;
 import dam.android.dependeciapp.Controladores.RecordatorioAdapter;
@@ -38,6 +40,8 @@ public class RecordatorioDetalleFragment extends Fragment {
     private RecordatorioAdapter adapter;
     private Fragment fragment;
     private int idUsuario;
+    private RelativeLayout fabContiner;
+    private FrameLayout mapFrame;
 
 
     public RecordatorioDetalleFragment() {
@@ -55,9 +59,11 @@ public class RecordatorioDetalleFragment extends Fragment {
     public void setAdapter(RecordatorioAdapter adapter) {
         this.adapter = adapter;
     }
+
     public void setRecordatorio(Recordatorio recordatorio) {
         this.recordatorio = recordatorio;
     }
+
     public void setIdUsuario(int idUsuario) {
         this.idUsuario = idUsuario;
     }
@@ -71,7 +77,13 @@ public class RecordatorioDetalleFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
+
         View v = inflater.inflate(R.layout.fragment_recordatorio_detalle, container, false);
+        fabContiner = getActivity().findViewById(R.id.fabtoolbar_container);
+        mapFrame = getActivity().findViewById(R.id.frameMap);
+        if (mapFrame != null)
+            fabContiner.setVisibility(View.VISIBLE);
+
         titulo = v.findViewById(R.id.tvTitulo);
         contenido = v.findViewById(R.id.tvContenido);
         cuando = v.findViewById(R.id.tvFecha);
@@ -85,14 +97,16 @@ public class RecordatorioDetalleFragment extends Fragment {
                 DependenciaDBManager.RecordatoriosDBManager db = new DependenciaDBManager.RecordatoriosDBManager(getContext());
                 db.delete(String.valueOf(recordatorio.id));
                 Conexion con = new Conexion();
-                RecordatorioTerminado rt = new RecordatorioTerminado(getContext(),con);
+                RecordatorioTerminado rt = new RecordatorioTerminado(getContext(), con);
                 rt.execute(recordatorio.getId());
                 //Si no hay ningun recordatorio en el List se cargan desde la base de datos
-                CreaRecordatorios cr = null;
+                CargaRecordatorios cr = null;
+                if (mapFrame != null)
+                    fabContiner.setVisibility(View.INVISIBLE);
                 if (adapter.getRecordatorioList().size() == 0) {
-                    if (Conexion.isNetDisponible(getContext(),true)) {
+                    if (Conexion.isNetDisponible(getContext(), true)) {
                         try {
-                            cr = new CreaRecordatorios(adapter.getRecordatorioList(), getContext(), con,idUsuario);
+                            cr = new CargaRecordatorios(adapter.getRecordatorioList(), getContext(), con, idUsuario);
                             cr.execute(idUsuario);
                             Boolean b = cr.get();
                         } catch (InterruptedException e) {

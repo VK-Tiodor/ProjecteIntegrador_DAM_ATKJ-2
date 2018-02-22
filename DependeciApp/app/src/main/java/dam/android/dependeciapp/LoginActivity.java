@@ -20,6 +20,7 @@ import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.text.style.BulletSpan;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
@@ -42,7 +43,7 @@ public class LoginActivity extends AppCompatActivity {
     /**
      * Keep track of the login task to ensure we can cancel it if requested.
      */
-    
+
     private static final int REQUEST_MAPS = 1;
     private final String[] PERMISSIONS_MAPS = {Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION};
     private UserLoginTask mAuthTask = null;
@@ -68,7 +69,7 @@ public class LoginActivity extends AppCompatActivity {
 
         Intent i = getIntent();
         boolean hasCerradoSesion = false;
-           if (i != null)
+        if (i != null)
             hasCerradoSesion = i.getBooleanExtra("CIERRA_SESION", false);
         if (hasCerradoSesion)
             borrarPreferencias();
@@ -99,10 +100,13 @@ public class LoginActivity extends AppCompatActivity {
 
     }
 
-    private void askForMapPermission(){
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
-                && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(this, PERMISSIONS_MAPS, REQUEST_MAPS);
+    private void askForMapPermission() {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
+        } else {
+            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
+                    && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                ActivityCompat.requestPermissions(this, PERMISSIONS_MAPS, REQUEST_MAPS);
+            }
         }
     }
 

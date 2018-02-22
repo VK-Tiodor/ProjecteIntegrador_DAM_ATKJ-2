@@ -31,14 +31,6 @@ public class Conexion {
         CreaConexion();
     }
 
-    public Connection getCon() {
-        return con;
-    }
-
-    public void setCon(Connection con) {
-        this.con = con;
-    }
-
 
     private void CreaConexion() {
         try {
@@ -78,6 +70,8 @@ public class Conexion {
     public ResultSet IniciaSesion(String DNI, String pass) {
         try {
             String sql = "call inicia_sesion(?, ?)";
+            if(con==null)
+                return null;
             PreparedStatement login = con.prepareStatement(sql);
             login.setString(1, DNI);
             login.setString(2, pass);
@@ -89,19 +83,6 @@ public class Conexion {
 
     }
 
-    public ResultSet getMedicinas(int id) {
-
-        try {
-            String sql = "call get_medicinas(?)";
-            PreparedStatement login = con.prepareStatement(sql);
-            login.setInt(1, id);
-            ResultSet rs = login.executeQuery();
-            return rs;
-        } catch (SQLException e) {
-            e.printStackTrace();
-            return null;
-        }
-    }
 
     public int getLastId() {
         String sql = "select idTarea from TareasPendientes\n" +
@@ -182,29 +163,9 @@ public class Conexion {
         return false;
     }
 
-    public void insertInTareasPendientes(Recordatorio r, int toma, int idUsuario) {
-        String sql = "INSERT INTO `proyecto1`.`TareasPendientes` (`idTarea`, `idDependiente`, `Fecha`, `Encabezado`, `Descripcion`, `horasRepeticion`, `tareaAsistente`, `realizada`) " +
-                "VALUES (?, ?, ?, ?, ?, ?, ?, ?);";
-        try {
-            PreparedStatement insert = con.prepareStatement(sql);
-            insert.setInt(1, r.getId());
-            insert.setInt(2, idUsuario);
-            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.S");
-            insert.setString(3, sdf.format(r.getFecha()));
-            insert.setString(4, r.getTitulo());
-            insert.setString(5, r.getContent());
-            insert.setInt(6, toma);
-            insert.setInt(7, 0);
-            insert.setInt(8, 0);
-            insert.execute();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-
-    }
 
     public void setTareaTerminada(int id) {
-        String sql = "UPDATE `proyecto1`.`TareasPendientes` SET `realizada`='1' WHERE `idTarea`=?";
+        String sql = "CALL estableceLaTareaRealizada(?)";
         try {
             PreparedStatement update = con.prepareStatement(sql);
             update.setInt(1, id);
@@ -213,17 +174,18 @@ public class Conexion {
             e.printStackTrace();
         }
     }
-    public void eliminaTarea(int id){
-        String sql ="DELETE FROM `proyecto1`.`TareasPendientes` WHERE `idTarea`=?";
+
+    public ResultSet getRecordatorios(int id) {
         try {
-            PreparedStatement update = con.prepareStatement(sql);
-            update.setInt(1, id);
-            update.executeUpdate();
+            String sql = "call get_recordatorios(?)";
+            PreparedStatement ps = con.prepareStatement(sql);
+            ps.setInt(1, id);
+
+            return ps.executeQuery();
         } catch (SQLException e) {
             e.printStackTrace();
         }
-
-
+        return null;
     }
 
 }

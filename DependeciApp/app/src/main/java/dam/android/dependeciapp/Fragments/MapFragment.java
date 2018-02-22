@@ -11,6 +11,7 @@ import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.location.LocationProvider;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -47,6 +48,8 @@ import dam.android.dependeciapp.R;
  */
 @SuppressLint("ValidFragment")
 public class MapFragment extends Fragment implements OnMapReadyCallback {
+    private final String[] PERMISSIONS_MAPS = {Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION};
+    private static final int REQUEST_MAPS = 1;
 
     private GoogleMap mMap;
     private CargarUbicacionSQLite cargarUbicacionSQLite;
@@ -57,17 +60,31 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, @Nullable Bundle savedInstanceState) {
+        askForMapPermission();
         View rootView = inflater.inflate(R.layout.fragment_map, container, false);
         SupportMapFragment mapFragment = (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
-        if(isFocusOnMapFragment()) {
+        if (isFocusOnMapFragment()) {
             Toast.makeText(getContext(), R.string.maps_this_may_take_a_few_seconds, Toast.LENGTH_LONG).show();
         }
         return rootView;
     }
 
+    private void askForMapPermission() {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
+        } else {
+            if (ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
+                    && ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                ActivityCompat.requestPermissions(getActivity(), PERMISSIONS_MAPS, REQUEST_MAPS);
+            }
+        }
+    }
+
+    // @SuppressLint("MissingPermission")
     @SuppressLint("MissingPermission")
     private void enableMyLocation() {
+        //if (ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+
         mMap.setMyLocationEnabled(true);
         DependenciaDBManager.UbicacionesDBManager db = new DependenciaDBManager.UbicacionesDBManager(getContext());
         db.createTableIfNotExist();
@@ -85,7 +102,10 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
         MyLocationListener myLocationListener = new MyLocationListener(lastKnownLocation);
         LocationManager locationManager = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
         locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000, 1, myLocationListener);
-        cargarUbicacionSQLite=null;
+        cargarUbicacionSQLite = null;
+
+        // }
+
 
     }
 
@@ -97,19 +117,19 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
         enableMyLocation();
     }
 
-    public boolean isFocusOnMapFragment(){
+    public boolean isFocusOnMapFragment() {
         FragmentActivity fa = getActivity();
-        if(fa == null){
+        if (fa == null) {
             return false;
         }
         Fragment f = fa.getSupportFragmentManager().getPrimaryNavigationFragment();
-        if(f == null){
+        if (f == null) {
             return false;
         }
         return (f instanceof MapFragment);
     }
 
-    public LatLng getMyLastLocation(){
+    public LatLng getMyLastLocation() {
         Ubicacion ubicacion = null;
         cargarUbicacionSQLite = new CargarUbicacionSQLite();
         cargarUbicacionSQLite.execute(getContext());
@@ -122,7 +142,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
         }
 
         LatLng myLastLocation = (ubicacion == null) ? null : new LatLng(ubicacion.getLatitud(), ubicacion.getLongitud());
-        cargarUbicacionSQLite=null;
+        cargarUbicacionSQLite = null;
         return myLastLocation;
     }
 
@@ -168,9 +188,9 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
 
                         guardarUbicacion = new GuardarUbicacionSQLite(getContext(), locationLatLng, addressLine);
                         guardarUbicacion.execute();
-                        guardarUbicacion=null;
+                        guardarUbicacion = null;
                     }
-                } catch (IOException e) {
+                } catch (IOException | NullPointerException e) {
                     e.printStackTrace();
                 }
             }
@@ -178,21 +198,21 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
 
         @Override
         public void onProviderDisabled(String provider) {
-            if(isFocusOnMapFragment()) {
+            if (isFocusOnMapFragment()) {
                 Toast.makeText(getContext(), R.string.gps_disabled, Toast.LENGTH_LONG).show();
             }
         }
 
         @Override
         public void onProviderEnabled(String provider) {
-            if(isFocusOnMapFragment()) {
+            if (isFocusOnMapFragment()) {
                 Toast.makeText(getContext(), R.string.gps_enabled, Toast.LENGTH_LONG).show();
             }
         }
 
         @Override
         public void onStatusChanged(String provider, int status, Bundle extras) {
-            if(isFocusOnMapFragment()){
+            if (isFocusOnMapFragment()) {
                 switch (status) {
                     case LocationProvider.OUT_OF_SERVICE:
                         Toast.makeText(getContext(), R.string.maps_provider_out_of_service, Toast.LENGTH_LONG).show();

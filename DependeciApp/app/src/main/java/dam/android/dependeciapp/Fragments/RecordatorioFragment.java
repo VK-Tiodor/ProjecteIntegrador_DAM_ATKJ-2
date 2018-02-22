@@ -10,7 +10,6 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Adapter;
 import android.widget.Toast;
 
 import com.github.fafaldo.fabtoolbar.widget.FABToolbarLayout;
@@ -22,9 +21,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
-import dam.android.dependeciapp.AsyncTasks.CreaRecordatorios;
-import dam.android.dependeciapp.AsyncTasks.EliminaRecordatorio;
-import dam.android.dependeciapp.AsyncTasks.RecordatorioTerminado;
+import dam.android.dependeciapp.AsyncTasks.CargaRecordatorios;
 import dam.android.dependeciapp.Controladores.Conexion;
 import dam.android.dependeciapp.Controladores.RecordatorioAdapter;
 import dam.android.dependeciapp.Controladores.SQLite.DependenciaDBManager;
@@ -67,7 +64,7 @@ public class RecordatorioFragment extends Fragment implements Comparator<Recorda
 
         if (savedInstanceState != null)
             idUsuario = savedInstanceState.getInt("userId");
-        obtenListaRecordatorios();
+        //obtenListaRecordatorios();
     }
 
     private void obtenListaRecordatorios() {
@@ -100,7 +97,7 @@ public class RecordatorioFragment extends Fragment implements Comparator<Recorda
 
     private void obtenListaOnline() {
         if (Conexion.isNetDisponible(getContext(), true)) {
-            CreaRecordatorios cr = new CreaRecordatorios(recordatorioList, getContext(), conexion, idUsuario);
+            CargaRecordatorios cr = new CargaRecordatorios(recordatorioList, getContext(), conexion, idUsuario);
             cr.execute(idUsuario);
             try {
                 cr.get();
@@ -120,31 +117,10 @@ public class RecordatorioFragment extends Fragment implements Comparator<Recorda
 
     public void refrescaAvisos() {
         DependenciaDBManager.RecordatoriosDBManager db = new DependenciaDBManager.RecordatoriosDBManager(getContext());
-        Cursor cursor = db.getRows();
-        EliminaRecordatorio rt = null;
-        if (cursor.moveToFirst()) {
-            do {
-                String idRecordatorioString = cursor.getString(0);
-                if (idRecordatorioString != null) {
-                    int idRecordatorio = Integer.valueOf(idRecordatorioString);
-                    rt = new EliminaRecordatorio(getContext(), conexion);
-                    rt.execute(idRecordatorio);
-                }
-
-            } while (cursor.moveToNext());
-        }
-        try {
-            rt.get();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        } catch (ExecutionException e) {
-            e.printStackTrace();
-        }
         db.vaciaTabla();
         recordatorioList.clear();
         //recyclerView.getAdapter().notifyDataSetChanged();
-
-        CreaRecordatorios cr = new CreaRecordatorios(recordatorioList, getContext(), conexion, idUsuario);
+        CargaRecordatorios cr = new CargaRecordatorios(recordatorioList, getContext(), conexion, idUsuario);
         cr.execute(idUsuario);
         try {
             cr.get();
@@ -176,6 +152,8 @@ public class RecordatorioFragment extends Fragment implements Comparator<Recorda
             recyclerView.getAdapter().notifyDataSetChanged();
 
         }
+        refrescaAvisos();
+
         return view;
     }
 

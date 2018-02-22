@@ -28,6 +28,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.FrameLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -61,7 +62,7 @@ public class MainActivity extends AppCompatActivity
     private MapFragment mapFragment;
     private RecordatorioFragment recordatorioFragment;
     private TabLayout tabLayout;
-
+    private RelativeLayout fabContiner;
     FrameLayout recordatoriosFrame;
 
 
@@ -75,6 +76,7 @@ public class MainActivity extends AppCompatActivity
        setComunUI();
     }
     private void setComunUI(){
+        fabContiner= findViewById(R.id.fabtoolbar_container);
         appBarLayout = (AppBarLayout) findViewById(R.id.appbar);
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -111,6 +113,7 @@ public class MainActivity extends AppCompatActivity
             setUIPhone();
         else
             setUITablet();
+
     }
     private void setUITablet() {
         mapFragment = new MapFragment();
@@ -159,8 +162,7 @@ public class MainActivity extends AppCompatActivity
                         fabGigante.hide();
                         fab.show();
                         fab.animate().scaleX(1).scaleY(1).translationX(0).translationY(0).setDuration(500);
-
-
+                        fabContiner.setVisibility(View.VISIBLE);
                         break;
                 }
             }
@@ -213,13 +215,7 @@ public class MainActivity extends AppCompatActivity
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
         } else {
-            //  try {
-            //Cerramos la conexion
-            // recordatorioFragment.getConexion().getCon().close();
-            // } catch (SQLException e) {
-            //       e.printStackTrace();
-            //  }
-            //Y finalizamos la activity
+
             finish();
             super.onBackPressed();
         }
@@ -285,8 +281,8 @@ public class MainActivity extends AppCompatActivity
         recordatorioFragment = RecordatorioFragment.newInstance(user.getIdPersona());
         mapFragment = new MapFragment();
         int i = tabLayout.getSelectedTabPosition();
-        if (tabLayout.getSelectedTabPosition() == 2)
-            fab.hide();
+        if (i == 2)
+            fabContiner.setVisibility(View.INVISIBLE);
 
 
     }

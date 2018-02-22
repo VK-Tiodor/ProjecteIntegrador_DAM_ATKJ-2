@@ -44,19 +44,7 @@ public class Recordatorio implements Serializable {
         return hora;
     }
 
-    //Transforma el Double de la cantidad a texto
-    public static String cantidadATexto(Context context, double cantidad) {
-        if (cantidad == 0.25) {
-            return context.getString(R.string.cuarto) + " ";
-        }
-        if (cantidad == 0.5) {
-            return context.getString(R.string.media) + " ";
-        }
-        if (cantidad == 1.0)
-            return context.getString(R.string.pastilla) + " ";
 
-        return (int) cantidad + context.getString(R.string.pastillas) + " ";
-    }
 
     public static String obtrenCuando(Context context, Recordatorio recordatorio) {
         Calendar calendar = Calendar.getInstance();
