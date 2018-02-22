@@ -104,7 +104,9 @@ public class RecordatorioFragment extends Fragment implements Comparator<Recorda
             cr.execute(idUsuario);
             try {
                 cr.get();
-                recyclerView.getAdapter().notifyDataSetChanged();
+                if(recyclerView!=null)
+                if(recyclerView.getAdapter()!=null)
+                    recyclerView.getAdapter().notifyDataSetChanged();
                 cr = null;
             } catch (InterruptedException e) {
                 e.printStackTrace();
