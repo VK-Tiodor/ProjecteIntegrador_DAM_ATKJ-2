@@ -48,8 +48,6 @@ import dam.android.dependeciapp.R;
 @SuppressLint("ValidFragment")
 public class MapFragment extends Fragment implements OnMapReadyCallback {
 
-    private static final int REQUEST_MAPS = 1;
-    private final String[] PERMISSIONS_MAPS = {Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION};
     private GoogleMap mMap;
     private CargarUbicacionSQLite cargarUbicacionSQLite;
 
@@ -86,35 +84,17 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
         LatLng lastKnownLocation = (ubicacion == null) ? null : new LatLng(ubicacion.getLatitud(), ubicacion.getLongitud());
         MyLocationListener myLocationListener = new MyLocationListener(lastKnownLocation);
         LocationManager locationManager = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
-        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 5000, 5, myLocationListener);
+        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000, 1, myLocationListener);
         cargarUbicacionSQLite=null;
 
     }
 
     @Override
+    @SuppressLint("MissingPermission")
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
 
-        if (ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
-                && ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(getActivity(), PERMISSIONS_MAPS, REQUEST_MAPS);
-        } else {
-            enableMyLocation();
-        }
-    }
-
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        if (requestCode == REQUEST_MAPS) {
-            if (grantResults[0] == PackageManager.PERMISSION_GRANTED && grantResults[1] == PackageManager.PERMISSION_GRANTED) {
-                enableMyLocation();
-            } else {
-                Toast.makeText(getContext(), R.string.maps_right_required, Toast.LENGTH_LONG).show();
-            }
-        } else {
-            super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        }
+        enableMyLocation();
     }
 
     public boolean isFocusOnMapFragment(){
