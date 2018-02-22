@@ -63,7 +63,8 @@ public class MainActivity extends AppCompatActivity
     private RecordatorioFragment recordatorioFragment;
     private TabLayout tabLayout;
     private RelativeLayout fabContiner;
-    FrameLayout recordatoriosFrame;
+    private FrameLayout recordatoriosFrame;
+    private BotonFragment botonFragment;
 
 
     @Override
@@ -73,10 +74,11 @@ public class MainActivity extends AppCompatActivity
         Intent i = getIntent();
         if (i != null)
             user = (Usuario) i.getSerializableExtra("user");
-       setComunUI();
+        setComunUI();
     }
-    private void setComunUI(){
-        fabContiner= findViewById(R.id.fabtoolbar_container);
+
+    private void setComunUI() {
+        fabContiner = findViewById(R.id.fabtoolbar_container);
         appBarLayout = (AppBarLayout) findViewById(R.id.appbar);
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -115,12 +117,14 @@ public class MainActivity extends AppCompatActivity
             setUITablet();
 
     }
+
     private void setUITablet() {
         mapFragment = new MapFragment();
         recordatorioFragment = RecordatorioFragment.newInstance(user.getIdPersona());
         getSupportFragmentManager().beginTransaction().replace(R.id.frameRecordatorios, recordatorioFragment).addToBackStack(null).commit();
         getSupportFragmentManager().beginTransaction().replace(R.id.frameMap, mapFragment).addToBackStack(null).commit();
     }
+
     private void setUIPhone() {
         fabGigante.hide();
         mViewPager = (ViewPager) findViewById(R.id.tabsContainer);
@@ -155,7 +159,7 @@ public class MainActivity extends AppCompatActivity
                 int posicion = tab.getPosition();
                 switch (posicion) {
                     case 0:
-                        cierraRecordatorioDetalle();
+                        cierraRecordatorioDetalle(true);
                         appBarLayout.setExpanded(true);
                         break;
                     case 2:
@@ -194,17 +198,16 @@ public class MainActivity extends AppCompatActivity
     }
 
     //Metodo para cerrar el RecordatorioDetalleFragment que pueda haber abierto
-    private void cierraRecordatorioDetalle() {
+    private void cierraRecordatorioDetalle(boolean escondeFab) {
         List<Fragment> listFragment = getSupportFragmentManager().getFragments();
         //Seleccionamos el fragment que sea RecordatorioDetalleFragment y lo eliminamos
         for (Fragment fragment : listFragment) {
             if (fragment instanceof RecordatorioDetalleFragment) {
                 getSupportFragmentManager().beginTransaction().remove(fragment).commit();
                 fabToolbar.hide();
-                fab.hide();
+                if (escondeFab)
+                    fab.hide();
                 // fab.animate().scaleX(1).scaleY(1).translationX(0).translationY(0).setDuration(500);
-
-
             }
         }
     }
@@ -214,8 +217,10 @@ public class MainActivity extends AppCompatActivity
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
-        } else {
+        } else if (fabToolbar.isToolbar()) {
+            cierraRecordatorioDetalle(false);
 
+        } else {
             finish();
             super.onBackPressed();
         }
@@ -280,6 +285,8 @@ public class MainActivity extends AppCompatActivity
         // recordatorioFragment.getConexion()=new Conexion();
         recordatorioFragment = RecordatorioFragment.newInstance(user.getIdPersona());
         mapFragment = new MapFragment();
+        botonFragment = new BotonFragment();
+        // botonFragment.estableceSegunOrientacion();
         int i = tabLayout.getSelectedTabPosition();
         if (i == 2)
             fabContiner.setVisibility(View.INVISIBLE);
@@ -308,7 +315,8 @@ public class MainActivity extends AppCompatActivity
                     mapFragment = new MapFragment();
                     return mapFragment;
                 case 2:
-                    return new BotonFragment();
+                    botonFragment = new BotonFragment();
+                    return botonFragment;
             }
             return null;
         }

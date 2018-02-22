@@ -72,6 +72,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
 
     private void askForMapPermission() {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
+
         } else {
             if (ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
                     && ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
@@ -81,41 +82,37 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
     }
 
     // @SuppressLint("MissingPermission")
-    @SuppressLint("MissingPermission")
     private void enableMyLocation() {
-        //if (ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-
-        mMap.setMyLocationEnabled(true);
-        DependenciaDBManager.UbicacionesDBManager db = new DependenciaDBManager.UbicacionesDBManager(getContext());
-        db.createTableIfNotExist();
-        cargarUbicacionSQLite = new CargarUbicacionSQLite();
-        cargarUbicacionSQLite.execute(getContext());
-        Ubicacion ubicacion = null;
-        try {
-            ubicacion = (Ubicacion) cargarUbicacionSQLite.get();
-        } catch (InterruptedException e) {
-            Log.e("ASYNCTASK_CARGAR_UBI", e.getMessage());
-        } catch (ExecutionException e) {
-            Log.e("ASYNCTASK_CARGAR_UBI", e.getMessage());
+        if (ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            askForMapPermission();
+        } else {
+            mMap.setMyLocationEnabled(true);
+            DependenciaDBManager.UbicacionesDBManager db = new DependenciaDBManager.UbicacionesDBManager(getContext());
+            db.createTableIfNotExist();
+            cargarUbicacionSQLite = new CargarUbicacionSQLite();
+            cargarUbicacionSQLite.execute(getContext());
+            Ubicacion ubicacion = null;
+            try {
+                ubicacion = (Ubicacion) cargarUbicacionSQLite.get();
+            } catch (InterruptedException e) {
+                Log.e("ASYNCTASK_CARGAR_UBI", e.getMessage());
+            } catch (ExecutionException e) {
+                Log.e("ASYNCTASK_CARGAR_UBI", e.getMessage());
+            }
+            LatLng lastKnownLocation = (ubicacion == null) ? null : new LatLng(ubicacion.getLatitud(), ubicacion.getLongitud());
+            MyLocationListener myLocationListener = new MyLocationListener(lastKnownLocation);
+            LocationManager locationManager = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
+            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000, 1, myLocationListener);
+            cargarUbicacionSQLite = null;
         }
-        LatLng lastKnownLocation = (ubicacion == null) ? null : new LatLng(ubicacion.getLatitud(), ubicacion.getLongitud());
-        MyLocationListener myLocationListener = new MyLocationListener(lastKnownLocation);
-        LocationManager locationManager = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
-        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000, 1, myLocationListener);
-        cargarUbicacionSQLite = null;
-
-        // }
-
-
     }
+        @Override
+        @SuppressLint("MissingPermission")
+        public void onMapReady (GoogleMap googleMap){
+            mMap = googleMap;
 
-    @Override
-    @SuppressLint("MissingPermission")
-    public void onMapReady(GoogleMap googleMap) {
-        mMap = googleMap;
-
-        enableMyLocation();
-    }
+            enableMyLocation();
+        }
 
     public boolean isFocusOnMapFragment() {
         FragmentActivity fa = getActivity();

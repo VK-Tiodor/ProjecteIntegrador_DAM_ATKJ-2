@@ -88,6 +88,12 @@ public class LoginActivity extends AppCompatActivity {
     private void setUI() {
         cbGuardaUsuarioPass = (CheckBox) findViewById(R.id.cbGuarda);
         cbIniciaSesion = (CheckBox) findViewById(R.id.cbSesion);
+        cbIniciaSesion.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                cbGuardaUsuarioPass.setChecked(true);
+            }
+        });
         etDNI = (EditText) findViewById(R.id.DNI);
         etPass = (EditText) findViewById(R.id.password);
         Button btLogin = (Button) findViewById(R.id.DNI_sign_in_button);
@@ -101,12 +107,13 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void askForMapPermission() {
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
-        } else {
+        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.M) {
             if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
                     && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
                 ActivityCompat.requestPermissions(this, PERMISSIONS_MAPS, REQUEST_MAPS);
             }
+        } else {
+
         }
     }
 

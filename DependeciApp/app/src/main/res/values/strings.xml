@@ -1,24 +1,24 @@
 <resources>
-    <string name="app_name">DependeciApp</string>
-    <string name="navigation_drawer_open">Open navigation drawer</string>
-    <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="app_name" translatable="false">DependeciApp</string>
+    <string name="navigation_drawer_open" translatable="false">Open navigation drawer</string>
+    <string name="navigation_drawer_close" translatable="false">Close navigation drawer</string>
 
     <string name="aceptar">Aceptar</string>
     <string name="cancelar">Cancelar</string>
     <string name="teriminado_button">Terminado</string>
-    <string name="appwidget_text">EXAMPLE</string>
-    <string name="add_widget">Add widget</string>
-    <string name="title_activity_login">DependenciApp</string>
+    <string name="appwidget_text" translatable="false">EXAMPLE</string>
+    <string name="add_widget" translatable="false">Add widget</string>
+    <string name="title_activity_login" translatable="false">DependenciApp</string>
     <string name="aviso_enviadio">Se ha enviado un aviso a la central</string>
     <string name="aviso_fallido">Ha habido un error enviando el aviso</string>
     <string name="no_conexion_aviso">No hay conexion, no se puede enviar el aviso</string>
     <string name="ver_informes">Ver informe de avisos</string>
 
     <!-- Strings related to login -->
-    <string name="prompt_dni">DNI</string>
+    <string name="prompt_dni" translatable="false">DNI</string>
     <string name="prompt_password">Contraseña</string>
     <string name="action_sign_in">Acceder</string>
-    <string name="action_sign_in_short">Sign in</string>
+    <string name="action_sign_in_short" translatable="false">Sign in</string>
     <string name="error_invalid_DNI">Ese DNI no es valido</string>
     <string name="error_invalid_password">La contraseña es damasiado corta</string>
     <string name="error_incorrect_password">Introduce la contraseña</string>
@@ -36,17 +36,17 @@
 
     <!-- Strings related to "MainActivity" Class -->
     <string name="tab_text_1">Recordatorios</string>
-    <string name="tab_text_2">¿Donde estoy?</string>
-    <string name="tab_text_3">Boton</string>
+    <string name="tab_text_2">¿Dónde estoy?</string>
+    <string name="tab_text_3">Botón</string>
     <string name="section_format">Avisa a un asistente</string>
 
     <!-- Strings related to "activity_main_drawer" Layout -->
     <string name="your_data">Tus datos</string>
-    <string name="assistant_data">Datos de tu asistente</string>
+    <string name="assistant_data" translatable="false">Datos de tu asistente</string>
     <string name="refresca_recordatorios">Refrescar recordatorios</string>
     <string name="cerrar_sesion">Cerrar sesión</string>
-    <string name="title_item_list">Items</string>
-    <string name="title_item_detail">Item Detail</string>
+    <string name="title_item_list" translatable="false">Items</string>
+    <string name="title_item_detail" translatable="false">Item Detail</string>
     <string name="inicia_sesion_automaticamente">Inicia sesion automaticamente</string>
     <string name="no_inicia_sesion">No se ha podido iniciar sesion, comprueba tu conexion a internet</string>
 
@@ -54,20 +54,14 @@
     <string name="tvUsuarioId">Identificador de Usuario: </string>
     <string name="tvNombre">Nombre: </string>
     <string name="tvApellidos">Apellidos: </string>
-    <string name="tvDni">DNI: </string>
+    <string name="tvDni" translatable="false">DNI: </string>
     <string name="tvFechaNacimiento">Fecha de nacimiento: </string>
     <string name="tvGenero">Genero: </string>
     <string name="tvFechaAlta">Fecha de alta: </string>
     <string name="tvTipoDependiente">Tipo de dependiente: </string>
     <string name="btnCerrar">Cerrar</string>
 
-    <!-- Contenido de los recordatorios -->
-    <string name="tomar">Tomar </string>
-    <string name="de"> de </string>
-    <string name="cuarto"> un cuarto de pastilla</string>
-    <string name="media"> media pastilla </string>
-    <string name="pastilla"> una pastilla </string>
-    <string name="pastillas"> pastillas </string>
+
     <string name="no_carga_recordatorios">No se han podido cargar los recordatorios, intentelo con conexion</string>
 
 </resources>

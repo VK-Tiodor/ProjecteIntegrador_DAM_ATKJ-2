@@ -5,6 +5,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -29,7 +30,7 @@ import dam.android.dependeciapp.Pojo.Recordatorio;
 import dam.android.dependeciapp.R;
 
 @SuppressLint("ValidFragment")
-public class RecordatorioFragment extends Fragment implements Comparator<Recordatorio> {
+public class RecordatorioFragment extends Fragment implements Comparator<Recordatorio>, SwipeRefreshLayout.OnRefreshListener {
 
     private OnListFragmentInteractionListener mListener;
     private List<Recordatorio> recordatorioList;
@@ -37,6 +38,7 @@ public class RecordatorioFragment extends Fragment implements Comparator<Recorda
     private FABToolbarLayout fabToolbar;
     private int idUsuario;
     private Conexion conexion;
+    SwipeRefreshLayout swipe;
 
     public RecordatorioFragment() {
     }
@@ -89,7 +91,7 @@ public class RecordatorioFragment extends Fragment implements Comparator<Recorda
             } while (cursor.moveToNext());
             Collections.sort(recordatorioList, this);
             cursor.close();
-           // recyclerView.getAdapter().notifyDataSetChanged();
+            // recyclerView.getAdapter().notifyDataSetChanged();
 
         } else
             obtenListaOnline();
@@ -101,9 +103,9 @@ public class RecordatorioFragment extends Fragment implements Comparator<Recorda
             cr.execute(idUsuario);
             try {
                 cr.get();
-                if(recyclerView!=null)
-                if(recyclerView.getAdapter()!=null)
-                    recyclerView.getAdapter().notifyDataSetChanged();
+                if (recyclerView != null)
+                    if (recyclerView.getAdapter() != null)
+                        recyclerView.getAdapter().notifyDataSetChanged();
                 cr = null;
             } catch (InterruptedException e) {
                 e.printStackTrace();
@@ -124,6 +126,8 @@ public class RecordatorioFragment extends Fragment implements Comparator<Recorda
         cr.execute(idUsuario);
         try {
             cr.get();
+            swipe.setRefreshing(false);
+
         } catch (InterruptedException e) {
             e.printStackTrace();
         } catch (ExecutionException e) {
@@ -139,19 +143,26 @@ public class RecordatorioFragment extends Fragment implements Comparator<Recorda
         //appBarMenu.findItem(R.id.action_close_fragment).setVisible(true);
         fabToolbar = (FABToolbarLayout) getActivity().findViewById(R.id.fabtoolbar);
         //setFabToolbar(fabToolbar);
-        if (view instanceof RecyclerView) {
-            Context context = view.getContext();
-            recyclerView = (RecyclerView) view;
-            //Le ponemos un gestor lineal
-            recyclerView.setLayoutManager(new LinearLayoutManager(context));
-            //ordenamos la lsita con un comparador de fechas
-            //Lo hice con Collections en vez de con recordatorioList.sort(this);
-            //Porque esta ultima, no esta disponible en versiones menorea a la API 24
-            recyclerView.setAdapter(new RecordatorioAdapter(recordatorioList, context, fabToolbar, idUsuario, conexion));
-            //obtenListaRecordatorios();
-            recyclerView.getAdapter().notifyDataSetChanged();
+        swipe = (SwipeRefreshLayout) view;
+        swipe.setColorSchemeResources(R.color.colorPrimary,
+                R.color.colorAccent,
+                R.color.claro,
+                android.R.color.holo_red_dark);
+        swipe.setOnRefreshListener(this);
 
-        }
+        Context context = view.getContext();
+        recyclerView = (RecyclerView) view.findViewById(R.id.list);
+
+        //Le ponemos un gestor lineal
+        recyclerView.setLayoutManager(new LinearLayoutManager(context));
+        //ordenamos la lsita con un comparador de fechas
+        //Lo hice con Collections en vez de con recordatorioList.sort(this);
+        //Porque esta ultima, no esta disponible en versiones menorea a la API 24
+        recyclerView.setAdapter(new RecordatorioAdapter(recordatorioList, context, fabToolbar, idUsuario, conexion));
+        //obtenListaRecordatorios();
+        recyclerView.getAdapter().notifyDataSetChanged();
+
+
         refrescaAvisos();
 
         return view;
@@ -170,6 +181,11 @@ public class RecordatorioFragment extends Fragment implements Comparator<Recorda
     public void onDetach() {
         super.onDetach();
         mListener = null;
+    }
+
+    @Override
+    public void onRefresh() {
+        refrescaAvisos();
     }
 
 
