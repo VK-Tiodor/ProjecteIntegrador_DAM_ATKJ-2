@@ -4,20 +4,15 @@ import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 
-import java.io.IOException;
-import java.net.InetAddress;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.text.SimpleDateFormat;
 import java.util.Properties;
 import java.util.concurrent.ExecutionException;
 
 import dam.android.dependeciapp.AsyncTasks.CreaConexion;
-import dam.android.dependeciapp.AsyncTasks.Ping;
-import dam.android.dependeciapp.Pojo.Recordatorio;
 
 /**
  * Created by adria on 06/02/2018.
@@ -70,7 +65,7 @@ public class Conexion {
     public ResultSet IniciaSesion(String DNI, String pass) {
         try {
             String sql = "call inicia_sesion(?, ?)";
-            if(con==null)
+            if (con == null)
                 return null;
             PreparedStatement login = con.prepareStatement(sql);
             login.setString(1, DNI);
@@ -115,52 +110,15 @@ public class Conexion {
         return null;
     }
 
-    //Este Metodo es el usado en el Thread principal. Hace el ping de manera Asincrona para
-    //evitar el colapso de la App
-    public static boolean isNetDisponible(Context context, boolean async) {
-        ConnectivityManager connectivityManager = (ConnectivityManager)
-                context.getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo actNetInfo = connectivityManager.getActiveNetworkInfo();
-        if (actNetInfo != null && actNetInfo.isConnected()) {
-            return true;
-           /* Ping p = new Ping();
-            p.execute();
-            try {
-                boolean hayConexion = p.get();
-                p = null;
-                return hayConexion;
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            } catch (ExecutionException e) {
-                e.printStackTrace();
-            }*/
-        }
-        return false;
-    }
 
-    //Este es el usado en Async tasks, hace el ping aqui mismo
     public static boolean isNetDisponible(Context context) {
         ConnectivityManager connectivityManager = (ConnectivityManager)
                 context.getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo actNetInfo = connectivityManager.getActiveNetworkInfo();
-        if (actNetInfo != null && actNetInfo.isConnected()) {
-           /* InetAddress ping;
-            String ip = "149.202.8.230"; // Ip de la máquina remota
-            try {
-                ping = InetAddress.getByName(ip);
-                if (ping.isReachable(5000)) {// Tiempo de espera
-                    ping = null;
-                    return true;
-                } else {
-                    ping = null;
-                    return false;
-                }
-            } catch (IOException ex) {
-                System.out.println(ex);
-            }*/
+        if (actNetInfo != null && actNetInfo.isConnected())
             return true;
-        }
-        return false;
+        else
+            return false;
     }
 
 
@@ -177,11 +135,13 @@ public class Conexion {
 
     public ResultSet getRecordatorios(int id) {
         try {
-            String sql = "call get_recordatorios(?)";
-            PreparedStatement ps = con.prepareStatement(sql);
-            ps.setInt(1, id);
+            if (con != null) {
+                String sql = "call get_recordatorios(?)";
+                PreparedStatement ps = con.prepareStatement(sql);
+                ps.setInt(1, id);
 
-            return ps.executeQuery();
+                return ps.executeQuery();
+            }
         } catch (SQLException e) {
             e.printStackTrace();
         }

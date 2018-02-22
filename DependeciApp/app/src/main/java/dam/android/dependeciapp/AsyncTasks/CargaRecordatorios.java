@@ -26,9 +26,7 @@ import dam.android.dependeciapp.R;
  */
 
 public class CargaRecordatorios extends AsyncTask<Integer, Void, Boolean> implements Comparator<Recordatorio> {
-    //Constante que controla los dias de los que obtenemos los recordatorios
-    //72 significa que se sacaran los recordatorios desde hoy hasta dentro de 3 dias
-    private static final int HORAS = 24;
+
     private List<Recordatorio> recordatorioList;
     private Context context;
     private Conexion con;
@@ -47,37 +45,38 @@ public class CargaRecordatorios extends AsyncTask<Integer, Void, Boolean> implem
         if (con != null) {
             ResultSet rs = con.getRecordatorios(integers[0]);
             try {
-                DependenciaDBManager.RecordatoriosDBManager db = new DependenciaDBManager.RecordatoriosDBManager(context);
-                //db.setAutonum(id);
+                if (rs != null) {
+                    DependenciaDBManager.RecordatoriosDBManager db = new DependenciaDBManager.RecordatoriosDBManager(context);
+                    db.vaciaTabla();
+                    while (rs.next()) {
+                        int id = rs.getInt(1);
+                        String titulo = rs.getString(3);
+                        String contenido = rs.getString(4);
+                        Date fecha = rs.getTimestamp(2);
+                        Calendar calendar = Calendar.getInstance();
+                        calendar.setTime(fecha);
 
-                while (rs.next()) {
-                    int id = rs.getInt(1);
-                    String titulo = rs.getString(3);
-                    String contenido = rs.getString(3);
-                    Date fecha = rs.getTimestamp(2);
-                    Calendar calendar = Calendar.getInstance();
-                    calendar.setTime(fecha);
+                        String fechaHora = calendar.getTime().toString();
 
+                        //Partimos el String para trabjar con el
+                        String[] fechaHoraArray = fechaHora.split(" ");
+                        String[] horaArray = fechaHoraArray[3].split(":");
 
-                    //A la fecha actual le añadimos las horas de la toma
+                        String hora = horaArray[0] + ":" + horaArray[1];
+                        //creamos el recordatorio
+                        Recordatorio r = new Recordatorio(id, titulo, contenido, hora, calendar.getTime());
 
-                    //Obtenemos la fecha y la hora de la toma
-                    String fechaHora = calendar.getTime().toString();
+                        //Establecemos una fecha para poder compararlos luego para ordenar la lista
+                        db.insert(String.valueOf(r.id), r.titulo, r.content, fechaHora, r.hora);
 
-                    //Partimos el String para trabjar con el
-                    String[] fechaHoraArray = fechaHora.split(" ");
-                    String[] horaArray = fechaHoraArray[3].split(":");
+                        recordatorioList.add(r);
+                    }
 
-                    String hora = horaArray[0] + ":" + horaArray[1];
-                    //creamos el recordatorio
-                    Recordatorio r = new Recordatorio(id, titulo, contenido, hora, calendar.getTime());
-
-                    //Establecemos una fecha para poder compararlos luego para ordenar la lista
-                    db.insert(String.valueOf(r.id), r.titulo, r.content, fechaHora, r.hora);
-
-                    recordatorioList.add(r);
+                }else{
+                    return false;
                 }
-
+                //Lo hice con Collections en vez de con recordatorioList.sort(this);
+                //Porque esta ultima, no esta disponible en versiones menorea a la API 24
                 Collections.sort(recordatorioList, this);
                 con = null;
                 return true;

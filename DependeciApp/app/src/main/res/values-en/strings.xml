@@ -39,4 +39,5 @@
     <string name="no_carga_recordatorios">Reminders could not be reloaded, try it with connections</string>
     <string name="aviso_enviadio">An alert has been sent to the central</string>
     <string name="aviso_fallido">There was an error sending the alert</string>
+    <string name="no_conexion_no_borra">You can\'t finish a task without Internet</string>
 </resources>

@@ -57,11 +57,9 @@ public class RecordatorioAdapter extends RecyclerView.Adapter<RecordatorioAdapte
             @Override
             public void onClick(View v) {
                 try {
-
                     //Creamos una nueva instancia del Fragment de Detalle
                     RecordatorioDetalleFragment fragmentDetalle = RecordatorioDetalleFragment.newInstance(holder.mItem, adapter,idUsuario);
-                    //Obtenemos la lista de fragments activos
-                    //Seleccionamos el fragment que sea RecordatorioDetalleFragment y lo eliminamos
+
                     cierraRecordatorioDetalle();
 
                     //Introducimos el Fragment Detalle en el FrameLayout correspondiente

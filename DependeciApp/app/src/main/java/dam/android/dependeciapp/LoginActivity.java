@@ -64,9 +64,7 @@ public class LoginActivity extends AppCompatActivity {
         setContentView(R.layout.activity_login);
         mProgressView = findViewById(R.id.login_progress);
         mLoginFormView = findViewById(R.id.login_form);
-
         askForMapPermission();
-
         Intent i = getIntent();
         boolean hasCerradoSesion = false;
         if (i != null)
@@ -74,7 +72,6 @@ public class LoginActivity extends AppCompatActivity {
         if (hasCerradoSesion)
             borrarPreferencias();
         boolean seHaIniciado = IniciaSesionAutomaticamente();
-
         //Si la sesion se inicia automaticamente no se cargan ni la UI ni las preferencais
         //para ahorrar recursos y tiempo
         if (!seHaIniciado) {
@@ -112,8 +109,6 @@ public class LoginActivity extends AppCompatActivity {
                     && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
                 ActivityCompat.requestPermissions(this, PERMISSIONS_MAPS, REQUEST_MAPS);
             }
-        } else {
-
         }
     }
 
@@ -132,7 +127,6 @@ public class LoginActivity extends AppCompatActivity {
         if (mAuthTask != null) {
             return;
         }
-
         showProgress(true);
 
         etDNI.setError(null);
@@ -258,7 +252,6 @@ public class LoginActivity extends AppCompatActivity {
         editor.putString("pass", pass);
         editor.putBoolean("guardaUserPass", true);
         //Si es null significa que se ha iniciado sesion automaticamente, no ha pasado por SetUI
-
         if (cbGuardaUsuarioPass == null)
             editor.putBoolean("iniciaSesion", true);
         else {
@@ -339,6 +332,7 @@ public class LoginActivity extends AppCompatActivity {
                     //A partir del result set se crea el Usuario, que sera enviado al MainActivity
                     this.user = new Usuario(rs);
                     this.user.setPass(pass);
+                    //Y lo introduciomos en la SQLite
                     DependenciaDBManager.UsuarioDBManager db = new DependenciaDBManager.UsuarioDBManager(getApplicationContext());
                     db.delete(String.valueOf(user.getIdPersona()));
                     db.insert(user.getIdPersona(), user.getDNI(), user.getNombre(), user.getApellidos(), user.getfNacimiento().toString(), user.getGenero(), user.getTipoDeDependiente(), user.getfAlta().toString(), user.getPass());
@@ -352,12 +346,11 @@ public class LoginActivity extends AppCompatActivity {
         }
 
         private boolean iniciaSesionOffline(String user, String pass) {
-
             DependenciaDBManager.UsuarioDBManager db = new DependenciaDBManager.UsuarioDBManager(getApplicationContext());
             Cursor cursor = db.getRows();
             if (cursor != null) {
                 cursor.moveToFirst();
-                if (cursor.getColumnCount() < 0) {
+                if (cursor.getCount() > 0) {
                     String userSQL = cursor.getString(1);
                     String passSQL = cursor.getString(8);
                     if (user.toUpperCase().equals(userSQL) && pass.equals(passSQL)) {

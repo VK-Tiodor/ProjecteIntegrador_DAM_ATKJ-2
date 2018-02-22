@@ -111,6 +111,7 @@ public class MainActivity extends AppCompatActivity
 
 
         recordatoriosFrame = findViewById(R.id.frameRecordatorios);
+        //Si existe este FrameLayout es una tablet, y si no existe es un telefono
         if (recordatoriosFrame == null)
             setUIPhone();
         else
@@ -133,9 +134,9 @@ public class MainActivity extends AppCompatActivity
         tabLayout.addOnTabSelectedListener(new TabLayout.ViewPagerOnTabSelectedListener(mViewPager));
         mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
         mViewPager.setAdapter(mSectionsPagerAdapter);
-        //Se ejecuta cada vez que cambiamos de tab
         tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
+            //Se ejecuta cada vez que cambiamos de tab
             public void onTabSelected(TabLayout.Tab tab) {
                 int posicion = tab.getPosition();
                 switch (posicion) {
@@ -143,7 +144,6 @@ public class MainActivity extends AppCompatActivity
                         fab.show();
                         break;
                     case 2:
-                        //Hacemos el FAB mas grande
                         View screenView = findViewById(R.id.drawer_layout);
                         float centrex = screenView.getWidth() / 3;
                         float centreY = screenView.getHeight() / 3;
@@ -198,6 +198,7 @@ public class MainActivity extends AppCompatActivity
     }
 
     //Metodo para cerrar el RecordatorioDetalleFragment que pueda haber abierto
+    //El boleano indica si ha de esconder el fab o no
     private void cierraRecordatorioDetalle(boolean escondeFab) {
         List<Fragment> listFragment = getSupportFragmentManager().getFragments();
         //Seleccionamos el fragment que sea RecordatorioDetalleFragment y lo eliminamos
@@ -207,7 +208,6 @@ public class MainActivity extends AppCompatActivity
                 fabToolbar.hide();
                 if (escondeFab)
                     fab.hide();
-                // fab.animate().scaleX(1).scaleY(1).translationX(0).translationY(0).setDuration(500);
             }
         }
     }
@@ -217,6 +217,7 @@ public class MainActivity extends AppCompatActivity
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
+            //Si el FAB esta convertido en toolbar cerramos el FrameLayout
         } else if (fabToolbar.isToolbar()) {
             cierraRecordatorioDetalle(false);
 
@@ -228,7 +229,6 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        //  getMenuInflater().inflate(R.menu.main, menu);
         return true;
     }
 
@@ -282,11 +282,9 @@ public class MainActivity extends AppCompatActivity
         super.onRestoreInstanceState(savedInstanceState);
         user = (Usuario) savedInstanceState.getSerializable("user");
         fab.animate().scaleX(1).scaleY(1).translationX(0).translationY(0).setDuration(500);
-        // recordatorioFragment.getConexion()=new Conexion();
         recordatorioFragment = RecordatorioFragment.newInstance(user.getIdPersona());
         mapFragment = new MapFragment();
         botonFragment = new BotonFragment();
-        // botonFragment.estableceSegunOrientacion();
         int i = tabLayout.getSelectedTabPosition();
         if (i == 2)
             fabContiner.setVisibility(View.INVISIBLE);

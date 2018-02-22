@@ -93,35 +93,26 @@ public class RecordatorioDetalleFragment extends Fragment {
         terminar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                adapter.getRecordatorioList().remove(recordatorio);
-                DependenciaDBManager.RecordatoriosDBManager db = new DependenciaDBManager.RecordatoriosDBManager(getContext());
-                db.delete(String.valueOf(recordatorio.id));
-                Conexion con = new Conexion();
-                RecordatorioTerminado rt = new RecordatorioTerminado(getContext(), con);
-                rt.execute(recordatorio.getId());
-                //Si no hay ningun recordatorio en el List se cargan desde la base de datos
-                CargaRecordatorios cr = null;
-                if (mapFrame != null)
-                    fabContiner.setVisibility(View.INVISIBLE);
-                if (adapter.getRecordatorioList().size() == 0) {
-                    if (Conexion.isNetDisponible(getContext(), true)) {
-                        try {
-                            cr = new CargaRecordatorios(adapter.getRecordatorioList(), getContext(), con, idUsuario);
-                            cr.execute(idUsuario);
-                            Boolean b = cr.get();
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
-                        } catch (ExecutionException e) {
-                            e.printStackTrace();
-                        }
-                    } else {
-                        Toast.makeText(getContext(), R.string.no_carga_recordatorios, Toast.LENGTH_LONG).show();
-                    }
+                if (Conexion.isNetDisponible(getContext())) {
+                    adapter.getRecordatorioList().remove(recordatorio);
+                    DependenciaDBManager.RecordatoriosDBManager db = new DependenciaDBManager.RecordatoriosDBManager(getContext());
+                    db.delete(String.valueOf(recordatorio.id));
+                    Conexion con = new Conexion();
+                    RecordatorioTerminado rt = new RecordatorioTerminado(getContext(), con);
+                    rt.execute(recordatorio.getId());
+                    //Si no hay ningun recordatorio en el List se cargan desde la base de datos
+                    CargaRecordatorios cr = null;
+                    if (mapFrame != null)
+                        fabContiner.setVisibility(View.INVISIBLE);
+
+                    getFragmentManager().beginTransaction().remove(fragment).commit();
+                    FABToolbarLayout fabToolbar = (FABToolbarLayout) getActivity().findViewById(R.id.fabtoolbar);
+                    fabToolbar.hide();
+                    adapter.notifyDataSetChanged();
+                }else{
+                    Toast.makeText(getContext(), R.string.no_conexion_no_borra, Toast.LENGTH_SHORT).show();
+
                 }
-                getFragmentManager().beginTransaction().remove(fragment).commit();
-                FABToolbarLayout fabToolbar = (FABToolbarLayout) getActivity().findViewById(R.id.fabtoolbar);
-                fabToolbar.hide();
-                adapter.notifyDataSetChanged();
             }
         });
         ImageView cerrar = (ImageView) getActivity().findViewById(R.id.cerrar);
@@ -148,15 +139,5 @@ public class RecordatorioDetalleFragment extends Fragment {
         super.onDetach();
     }
 
-    /**
-     * This interface must be implemented by activities that contain this
-     * fragment to allow an interaction in this fragment to be communicated
-     * to the activity and potentially other fragments contained in that
-     * activity.
-     * <p>
-     * See the Android Training lesson <a href=
-     * "http://developer.android.com/training/basics/fragments/communicating.html"
-     * >Communicating with Other Fragments</a> for more information.
-     */
 
 }

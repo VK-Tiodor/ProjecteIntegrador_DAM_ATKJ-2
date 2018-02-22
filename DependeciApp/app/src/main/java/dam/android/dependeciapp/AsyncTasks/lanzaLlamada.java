@@ -39,9 +39,7 @@ public class LanzaLlamada extends AsyncTask<String, Void, Boolean> {
             // Se crea la conexión con el servidor
             Socket clientSocket = new Socket();
             InetSocketAddress sockAddr = new InetSocketAddress(MACHINE, PORT);
-
             clientSocket.connect(sockAddr,500);
-
             BufferedReader br = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
             BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(clientSocket.getOutputStream()));
 

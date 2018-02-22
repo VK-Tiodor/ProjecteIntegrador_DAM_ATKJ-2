@@ -25,6 +25,7 @@ import java.util.concurrent.ExecutionException;
 import dam.android.dependeciapp.AsyncTasks.CargaRecordatorios;
 import dam.android.dependeciapp.Controladores.Conexion;
 import dam.android.dependeciapp.Controladores.RecordatorioAdapter;
+import dam.android.dependeciapp.Controladores.SQLite.DependenciaDBHelper;
 import dam.android.dependeciapp.Controladores.SQLite.DependenciaDBManager;
 import dam.android.dependeciapp.Pojo.Recordatorio;
 import dam.android.dependeciapp.R;
@@ -43,14 +44,10 @@ public class RecordatorioFragment extends Fragment implements Comparator<Recorda
     public RecordatorioFragment() {
     }
 
-    public Conexion getConexion() {
-        return conexion;
-    }
 
     public static RecordatorioFragment newInstance(int id) {
         RecordatorioFragment fragment = new RecordatorioFragment();
         fragment.SetIdUsuario(id);
-
         return fragment;
     }
 
@@ -63,77 +60,62 @@ public class RecordatorioFragment extends Fragment implements Comparator<Recorda
         super.onCreate(savedInstanceState);
         conexion = new Conexion();
         recordatorioList = new ArrayList<>();
-
         if (savedInstanceState != null)
             idUsuario = savedInstanceState.getInt("userId");
         //obtenListaRecordatorios();
     }
 
-    private void obtenListaRecordatorios() {
-        recordatorioList = new ArrayList<>();
+
+    private void obtenListaLocal() {
         DependenciaDBManager.RecordatoriosDBManager db = new DependenciaDBManager.RecordatoriosDBManager(getContext());
-        db.createTableIfNotExist();
         Cursor cursor = db.getRows();
+        if (recordatorioList!=null)
         if (cursor != null) {
-            obtenListaLocal(cursor);
-        } else
-            obtenListaOnline();
-    }
-
-    private void obtenListaLocal(Cursor cursor) {
-        int cuenta = cursor.getCount();
-        if (cuenta > 0) {
-            cursor.moveToFirst();
-            do {
-                Date fecha = new Date(cursor.getString(3));
-                Recordatorio r = new Recordatorio(cursor.getInt(0), cursor.getString(1), cursor.getString(2), cursor.getString(4), fecha);
-                recordatorioList.add(r);
-            } while (cursor.moveToNext());
-            Collections.sort(recordatorioList, this);
-            cursor.close();
-            // recyclerView.getAdapter().notifyDataSetChanged();
-
-        } else
-            obtenListaOnline();
-    }
-
-    private void obtenListaOnline() {
-        if (Conexion.isNetDisponible(getContext(), true)) {
-            CargaRecordatorios cr = new CargaRecordatorios(recordatorioList, getContext(), conexion, idUsuario);
-            cr.execute(idUsuario);
-            try {
-                cr.get();
-                if (recyclerView != null)
-                    if (recyclerView.getAdapter() != null)
-                        recyclerView.getAdapter().notifyDataSetChanged();
-                cr = null;
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            } catch (ExecutionException e) {
-                e.printStackTrace();
+            int cuenta = cursor.getCount();
+            if (cuenta > 0) {
+                cursor.moveToFirst();
+                do {
+                    Date fecha = new Date(cursor.getString(3));
+                    Recordatorio r = new Recordatorio(cursor.getInt(0), cursor.getString(1), cursor.getString(2), cursor.getString(4), fecha);
+                    recordatorioList.add(r);
+                } while (cursor.moveToNext());
+                Collections.sort(recordatorioList, this);
+                cursor.close();
             }
-        } else {
-            Toast.makeText(getContext(), R.string.no_carga_recordatorios, Toast.LENGTH_LONG).show();
         }
+        else
+            Toast.makeText(getContext(), R.string.no_carga_recordatorios, Toast.LENGTH_SHORT).show();
+
     }
+
 
     public void refrescaAvisos() {
-        DependenciaDBManager.RecordatoriosDBManager db = new DependenciaDBManager.RecordatoriosDBManager(getContext());
-        db.vaciaTabla();
-        recordatorioList.clear();
-        //recyclerView.getAdapter().notifyDataSetChanged();
-        CargaRecordatorios cr = new CargaRecordatorios(recordatorioList, getContext(), conexion, idUsuario);
-        cr.execute(idUsuario);
-        try {
-            cr.get();
-            swipe.setRefreshing(false);
+        if (conexion != null) {
+            try {
 
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        } catch (ExecutionException e) {
-            e.printStackTrace();
+                recordatorioList.clear();
+                //recyclerView.getAdapter().notifyDataSetChanged();
+                CargaRecordatorios cr = new CargaRecordatorios(recordatorioList, getContext(), conexion, idUsuario);
+                cr.execute(idUsuario);
+                try {
+                    if (!cr.get())
+                        obtenListaLocal();
+
+                    swipe.setRefreshing(false);
+
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                } catch (ExecutionException e) {
+                    e.printStackTrace();
+                }
+                recyclerView.getAdapter().notifyDataSetChanged();
+            } catch (NullPointerException e) {
+                e.printStackTrace();
+                obtenListaLocal();
+            }
+        } else {
+            obtenListaLocal();
         }
-        recyclerView.getAdapter().notifyDataSetChanged();
     }
 
     @Override
@@ -152,19 +134,11 @@ public class RecordatorioFragment extends Fragment implements Comparator<Recorda
 
         Context context = view.getContext();
         recyclerView = (RecyclerView) view.findViewById(R.id.list);
-
         //Le ponemos un gestor lineal
         recyclerView.setLayoutManager(new LinearLayoutManager(context));
-        //ordenamos la lsita con un comparador de fechas
-        //Lo hice con Collections en vez de con recordatorioList.sort(this);
-        //Porque esta ultima, no esta disponible en versiones menorea a la API 24
         recyclerView.setAdapter(new RecordatorioAdapter(recordatorioList, context, fabToolbar, idUsuario, conexion));
-        //obtenListaRecordatorios();
         recyclerView.getAdapter().notifyDataSetChanged();
-
-
         refrescaAvisos();
-
         return view;
     }
 
