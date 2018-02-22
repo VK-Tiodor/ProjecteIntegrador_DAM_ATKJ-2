@@ -1,14 +1,18 @@
 package dam.android.dependeciapp;
 
+import android.Manifest;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 
 import android.os.AsyncTask;
@@ -38,6 +42,9 @@ public class LoginActivity extends AppCompatActivity {
     /**
      * Keep track of the login task to ensure we can cancel it if requested.
      */
+    
+    private static final int REQUEST_MAPS = 1;
+    private final String[] PERMISSIONS_MAPS = {Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION};
     private UserLoginTask mAuthTask = null;
     private static final String MYPREFS = "LoginPreferences";
     // UI references.
@@ -57,10 +64,11 @@ public class LoginActivity extends AppCompatActivity {
         mProgressView = findViewById(R.id.login_progress);
         mLoginFormView = findViewById(R.id.login_form);
 
+        askForMapPermission();
 
         Intent i = getIntent();
         boolean hasCerradoSesion = false;
-        if (i != null)
+           if (i != null)
             hasCerradoSesion = i.getBooleanExtra("CIERRA_SESION", false);
         if (hasCerradoSesion)
             borrarPreferencias();
@@ -89,6 +97,24 @@ public class LoginActivity extends AppCompatActivity {
             }
         });
 
+    }
+
+    private void askForMapPermission(){
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
+                && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, PERMISSIONS_MAPS, REQUEST_MAPS);
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        if (requestCode == REQUEST_MAPS) {
+            if (grantResults[0] != PackageManager.PERMISSION_GRANTED && grantResults[1] != PackageManager.PERMISSION_GRANTED) {
+                Toast.makeText(this, R.string.maps_right_required, Toast.LENGTH_LONG).show();
+            }
+        } else {
+            super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        }
     }
 
     private void intentaLogear() {
